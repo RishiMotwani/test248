@@ -10,7 +10,7 @@ from statsmodels.stats.power import TTestIndPower
 from memory_optimizer.scoring import ImportanceScorer
 from memory_optimizer.decay import CategoryDecayEngine
 from memory_optimizer.retrieval import MemoryRetriever
-from memory_optimizer.compression import MemoryCompressor
+from memory_optimizer.compression import MemoryCompressor, _is_supersession as fact_is_supersession
 from memory_optimizer.budget import token_budget_evict
 
 
@@ -117,10 +117,20 @@ def _e2(ground_truth: list, state: dict, included_turn_ids: set, pruned_turn_ids
     superseded = [gt for gt in ground_truth if gt.get("superseded_by")]
     wrongly = None
     if superseded:
+        def _is_record(gt_sup, m):
+            prior = m.get("superseded_prior_fact")
+            if prior and _overlap(gt_sup["fact"], prior) >= 0.7:
+                return True
+            return fact_is_supersession(gt_sup["fact"], m["fact"])
+
+        def _matches(gt_sup, m):
+            return (m.get("source_turn_id") == gt_sup["source_turn"]
+                    or _overlap(gt_sup["fact"], m["fact"]) >= 0.7)
+
         retained = sum(
             1 for gt in superseded
-            if any(m.get("source_turn_id") == gt["source_turn"] or _overlap(gt["fact"], m["fact"]) >= 0.7
-                   for m in state["active_memories"]))
+            if not any(_is_record(gt, m) for m in state["active_memories"])
+            and any(_matches(gt, m) for m in state["active_memories"]))
         wrongly = {"superseded_expected": len(superseded), "wrongly_retained": retained,
                    "fraction": round(retained / len(superseded), 3)}
 

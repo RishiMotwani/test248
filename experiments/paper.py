@@ -25,12 +25,17 @@ from typing import Callable, Dict, List, Optional
 import numpy as np
 
 from memory_optimizer.budget import token_budget_evict
-from memory_optimizer.compression import MemoryCompressor
+from memory_optimizer.compression import MemoryCompressor, _is_supersession as fact_is_supersession
 from memory_optimizer.decay import CategoryDecayEngine
 from memory_optimizer.retrieval import MemoryRetriever
 from memory_optimizer.scoring import ImportanceScorer
 
-from baselines.baseline_runner import BaselineRunner, fact_matches
+from baselines.baseline_runner import (
+    MATCH_OVERLAP,
+    BaselineRunner,
+    fact_matches,
+)
+from memory_optimizer.retrieval import _token_overlap as overlap
 
 FactTokens = Callable[[str], int]
 
@@ -283,11 +288,34 @@ def _per_category_recall(gt: List[Dict], store_facts: List[Dict]) -> Dict:
 
 def _wrongly_retained(gt: List[Dict], store_facts: List[Dict]) -> Dict:
     """Stale-fact retention: of the gt facts that were superseded by a
-    correction, how many still match the store. Lower is better."""
+    correction, how many are still treated as authoritative by the store.
+    Lower is better.
+
+    A gt is only ``wrongly retained`` when NO correction record exists for it
+    (no memory whose ``superseded_prior_fact`` matches it, and no memory whose
+    stored fact is itself a supersession of it) AND its old fact still matches
+    the store. A correction record proves the supersession was APPLIED
+    (``correction recorded correctly``) — even if unrelated same-category
+    template facts still overlap the old gt lexically, that is not a stale
+    retention of the corrected fact. This keeps the detector able to tell
+    ``correction recorded correctly`` apart from ``correction ignored (stale
+    fact still authoritative)``.
+    """
     superseded = [g for g in gt if g.get("superseded_by") is not None]
     if not superseded:
         return {"superseded_expected": 0, "wrongly_retained": 0, "fraction": None}
-    n_wrong = sum(1 for g in superseded if fact_matches(g, store_facts))
+
+    def _is_record(g: Dict, f: Dict) -> bool:
+        prior = f.get("superseded_prior_fact")
+        if prior and overlap(g.get("fact", ""), prior) >= MATCH_OVERLAP:
+            return True
+        return fact_is_supersession(g.get("fact", ""), f.get("fact", ""))
+
+    n_wrong = sum(
+        1 for g in superseded
+        if not any(_is_record(g, f) for f in store_facts or [])
+        and any(fact_matches(g, [f]) for f in store_facts or [])
+    )
     return {"superseded_expected": len(superseded), "wrongly_retained": n_wrong,
             "fraction": round(n_wrong / len(superseded), 3)}
 

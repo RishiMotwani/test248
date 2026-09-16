@@ -7,11 +7,11 @@
 
 ### Correction Handling
 
-- [ ] **CORR-01**: dedupe_incremental detects supersessions via revision/negation markers + lexical overlap
-- [ ] **CORR-02**: Superseded fact text is replaced with corrected text (not merged away)
-- [ ] **CORR-03**: Superseded prior fact stored in `superseded_prior_fact` field
-- [ ] **CORR-04**: Confidence set from new fact (not max of old and new)
-- [ ] **CORR-05**: access_count and last_access_turn reinforced from correction
+- [x] **CORR-01**: dedupe_incremental detects supersessions via revision/negation markers + lexical overlap
+- [x] **CORR-02**: Superseded fact text is replaced with corrected text (not merged away)
+- [x] **CORR-03**: Superseded prior fact stored in `superseded_prior_fact` field
+- [x] **CORR-04**: Confidence set from new fact (not max of old and new)
+- [x] **CORR-05**: access_count and last_access_turn reinforced from correction
 
 ### Scoring
 
@@ -68,12 +68,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORR-01..05 | Phase 2 | Pending |
+| CORR-01..05 | Phase 2 | Validated |
 | SCOR-01..03 | Phase 3 | Pending |
 | EVAL-01..04 | Phase 4 | Pending |
 | DASH-01..02 | Phase 5 | Pending |
-| TEST-01..05 | Phase 5 | Pending |
-| CLEAN-01..02 | Phase 1 | Pending |
+| TEST-01 | Phase 2 | Implemented |
+| TEST-02..05 | Phase 5 | Pending |
+| CLEAN-01..02 | Phase 1 | Done |
 | REVAL-01..04 | Phase 6 | Pending |
 
 **Coverage:**
