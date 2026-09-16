@@ -35,44 +35,6 @@ class MemoryCompressor:
     refresh) just like a retrieval would.
     """
 
-    def compress_cluster(self, facts: List[Dict]) -> Dict:
-        """Concatenative placeholder — NOT a real summarizer.
-
-        Kept only for API compatibility. A true LLM summarizer is explicitly the
-        highest-risk maneuver in the memory stack (compression drift) and this
-        stub is never invoked on the live ingest path. Do not "improve" it into
-        a model call; consolidate via dedupe instead.
-        """
-        if not facts:
-            return {}
-        if len(facts) == 1:
-            return facts[0]
-
-        primary = facts[0]
-        combined_text = "; ".join([f["fact"] for f in facts])
-        compressed_fact = primary.copy()
-        compressed_fact["fact"] = f"Summarized Context: {combined_text}"
-        compressed_fact["compressed_from"] = len(facts)
-        return compressed_fact
-
-    def dedupe(self, memories: List[Dict], overlap_threshold: float = 0.85) -> List[Dict]:
-        """Merge near-duplicate facts of the same category, keeping the stronger one."""
-        result: List[Dict] = []
-        for mem in memories:
-            merged = False
-            for existing in result:
-                if existing["category"] == mem["category"] and _overlap(existing["fact"], mem["fact"]) >= overlap_threshold:
-                    existing["fact"] = existing["fact"]
-                    existing["confidence"] = max(existing.get("confidence", 0.5), mem.get("confidence", 0.5))
-                    existing["access_count"] = existing.get("access_count", 1) + mem.get("access_count", 1)
-                    existing["last_access_turn"] = mem.get("last_access_turn", existing.get("last_access_turn"))
-                    existing["duplicates"] = existing.get("duplicates", 1) + 1
-                    merged = True
-                    break
-            if not merged:
-                result.append(dict(mem))
-        return result
-
     def dedupe_incremental(self, existing: List[Dict], new_items: List[Dict],
                            overlap_threshold: float = 0.85, embed_fn=None) -> List[Dict]:
         """Merge only newly ingested facts into the existing store (O(new x existing)).
