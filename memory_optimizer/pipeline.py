@@ -30,7 +30,7 @@ from memory_optimizer.budget import token_budget_evict
 from memory_optimizer.compression import MemoryCompressor
 from memory_optimizer.decay import CategoryDecayEngine
 from memory_optimizer.retrieval import MemoryRetriever
-from memory_optimizer.scoring import ImportanceScorer
+from memory_optimizer.scoring import ImportanceScorer, _write_time_salience
 
 PercentCallback = Optional[Callable[[str, float], None]]
 
@@ -78,7 +78,7 @@ class AdaptiveMemoryPipeline:
         return _word_tokens(text)
 
     def ingest(self, turn_id: int, user_message: str, facts: List[Dict],
-               fact_tokens=None, embed_fn=None, query_relevance: float = 0.8) -> Dict:
+               fact_tokens=None, embed_fn=None, query_relevance: Optional[float] = None) -> Dict:
         budget = int(self.settings["max_context_tokens"])
         inj_limit = int(self.settings.get("injection_token_limit", 0))
 
@@ -88,7 +88,9 @@ class AdaptiveMemoryPipeline:
             it = dict(item)
             it["source_turn_id"] = it.get("source_turn_id", turn_id)
             it["last_access_turn"] = turn_id
-            it["base_score"] = self.scorer.compute_score(it, query_relevance=query_relevance,
+            relevance = (query_relevance if query_relevance is not None
+                         else _write_time_salience(user_message, it["fact"], embed_fn=embed_fn))
+            it["base_score"] = self.scorer.compute_score(it, query_relevance=relevance,
                                                          current_turn=turn_id)
             new_facts.append(it)
         self._latency("scoring", t0)

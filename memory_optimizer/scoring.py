@@ -1,5 +1,31 @@
 import numpy as np
-from typing import Dict, List
+from typing import Callable, Dict, List
+
+from memory_optimizer.retrieval import _cosine, _token_overlap
+
+
+def _write_time_salience(user_message: str, fact: str,
+                         embed_fn: Callable[[List[str]], list] = None) -> float:
+    """Write-time salience of a fact against the turn's user message.
+
+    Real relevance, not the constant 0.8 the scorer formerly received: cosine
+    of the user-message and fact embeddings when ``embed_fn`` is available,
+    lexical token overlap otherwise (same primitives retrieval uses). Clamped
+    to [0, 1] for use as the ``w1_relevance`` input.
+    """
+    if not user_message or not fact:
+        return 0.0
+    if embed_fn is not None:
+        try:
+            vecs = embed_fn([user_message, fact])
+            vecs = vecs[0] if isinstance(vecs, (list, tuple)) and len(vecs) == 1 else vecs
+            if isinstance(vecs, (list, tuple)) and len(vecs) >= 2:
+                cos = _cosine(vecs[0], vecs[1])
+                if cos is not None:
+                    return float(np.clip(cos, 0.0, 1.0))
+        except Exception:
+            pass
+    return float(np.clip(_token_overlap(user_message, fact), 0.0, 1.0))
 
 
 class ImportanceScorer:

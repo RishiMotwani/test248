@@ -15,9 +15,9 @@
 
 ### Scoring
 
-- [ ] **SCOR-01**: pipeline.ingest computes write-time salience from user_message ↔ fact cosine or overlap
-- [ ] **SCOR-02**: No hardcoded query_relevance=0.8 remains in any Python file
-- [ ] **SCOR-03**: live.py E5 _e5_replay uses pipeline ingest (not independent scorer.compute_score)
+- [x] **SCOR-01**: pipeline.ingest computes write-time salience from user_message ↔ fact cosine or overlap
+- [x] **SCOR-02**: No hardcoded query_relevance=0.8 remains in any Python file
+- [x] **SCOR-03**: live.py E5 _e5_replay uses pipeline ingest (not independent scorer.compute_score)
 
 ### Evaluation
 
@@ -34,7 +34,7 @@
 ### Quality
 
 - [ ] **TEST-01**: pytest suite with correction supersession tests
-- [ ] **TEST-02**: pytest suite with write-time salience tests
+- [x] **TEST-02**: pytest suite with write-time salience tests
 - [ ] **TEST-03**: Retrieval ranking regression test
 - [ ] **TEST-04**: quick gate fails if correction_recall is invalid
 - [ ] **TEST-05**: e9_correction_isolation.py standalone experiment
@@ -69,11 +69,12 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CORR-01..05 | Phase 2 | Validated |
-| SCOR-01..03 | Phase 3 | Pending |
+| SCOR-01..03 | Phase 3 | Validated |
 | EVAL-01..04 | Phase 4 | Pending |
 | DASH-01..02 | Phase 5 | Pending |
 | TEST-01 | Phase 2 | Implemented |
-| TEST-02..05 | Phase 5 | Pending |
+| TEST-02 | Phase 3 | Implemented |
+| TEST-03..05 | Phase 5 | Pending |
 | CLEAN-01..02 | Phase 1 | Done |
 | REVAL-01..04 | Phase 6 | Pending |
 

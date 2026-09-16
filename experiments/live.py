@@ -11,7 +11,6 @@ from memory_optimizer.scoring import ImportanceScorer
 from memory_optimizer.decay import CategoryDecayEngine
 from memory_optimizer.retrieval import MemoryRetriever
 from memory_optimizer.compression import MemoryCompressor, _is_supersession as fact_is_supersession
-from memory_optimizer.budget import token_budget_evict
 
 
 def _overlap(a: str, b: str) -> float:
@@ -230,17 +229,23 @@ def _e5_replay(stream: list, ground_truth: list, toggles: dict, fact_tokens=None
     dedupe = toggles.get("dedupe", True)
     budget = int(toggles.get("budget", 4096))
 
+    settings = {
+        "max_context_tokens": budget,
+        "injection_token_limit": injection_token_limit,
+        "enable_compression": dedupe,
+        "top_k": 5,
+        "similarity_threshold": 0.35,
+    }
     scorer = ImportanceScorer(weights=weights if weights else None)
     decay = CategoryDecayEngine(lambdas=lambdas, pruning_threshold=threshold)
     retriever = MemoryRetriever(top_k=5, sim_threshold=0.35, embed_fn=embed_fn,
                                 embedding_model=embedding_model)
     compressor = MemoryCompressor()
 
-    memories = []
-    pruned = []
-    inject_tokens = []
+    from memory_optimizer.pipeline import AdaptiveMemoryPipeline
+    pipe = AdaptiveMemoryPipeline(settings, scorer, decay, retriever, compressor)
 
-    max_context = budget
+    inject_tokens = []
     raw_tokens_total = 0
 
     for entry in stream:
@@ -249,29 +254,13 @@ def _e5_replay(stream: list, ground_truth: list, toggles: dict, fact_tokens=None
         if raw is None and fact_tokens is not None:
             raw = fact_tokens(entry["user"])
         raw_tokens_total += raw or 0
-        new_items = []
-        for item in entry["facts"]:
-            it = dict(item)
-            it["source_turn_id"] = t_id
-            it["last_access_turn"] = t_id
-            it["base_score"] = scorer.compute_score(it, query_relevance=0.8, current_turn=t_id)
-            new_items.append(it)
-        if dedupe:
-            compressor.dedupe_incremental(memories, new_items, embed_fn=embed_fn)
-        else:
-            memories.extend(new_items)
-        active, pr = decay.step_decay_and_prune(memories, t_id)
-        memories, pruned = active, pruned + pr
-        if fact_tokens is not None:
-            memories, _, _ = token_budget_evict(memories, max_context, fact_tokens)
-        injected = retriever.retrieve(entry["user"], memories, current_turn=t_id,
-                                      token_limit=injection_token_limit if fact_tokens is not None else 0,
-                                      fact_tokens=fact_tokens)
-        if fact_tokens is not None:
-            sizes = [fact_tokens(f["fact"]) for f in injected]
-            inject_tokens.append(sum(s for s in sizes if s is not None))
-        else:
-            inject_tokens.append(len(injected))
+        result = pipe.ingest(t_id, entry["user"], entry.get("facts", []),
+                             fact_tokens=fact_tokens, embed_fn=embed_fn)
+        inject_tokens.append(result["injected_tokens"]
+                             if fact_tokens is not None else len(result["injected"]))
+
+    memories = pipe.active_memories
+    pruned = pipe.pruned_memories
 
     recalled = _recall_proposed(ground_truth, memories)
     mean_inject = float(np.mean(inject_tokens)) if inject_tokens else 0
@@ -281,7 +270,7 @@ def _e5_replay(stream: list, ground_truth: list, toggles: dict, fact_tokens=None
         "mean_injected_tokens": round(mean_inject, 2),
         "active_count": len(memories),
         "pruned_count": len(pruned),
-        "raw_tokens_total_at_budget": min(raw_tokens_total, max_context),
+        "raw_tokens_total_at_budget": min(raw_tokens_total, budget),
         "all_transient_pruned": round(_forgetting_precision(ground_truth, {m.get("source_turn_id") for m in pruned}), 3),
     }
 
