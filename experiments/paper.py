@@ -40,6 +40,14 @@ from memory_optimizer.retrieval import _token_overlap as overlap
 FactTokens = Callable[[str], int]
 
 
+def _tok_of(text: str, fact_tokens: FactTokens) -> int:
+    if fact_tokens is not None:
+        v = fact_tokens(text)
+        if v is not None:
+            return int(v)
+    return max(1, len(str(text).split()))
+
+
 def _sanitize(obj):
     if isinstance(obj, float):
         if obj != obj:  # NaN
@@ -256,9 +264,14 @@ def evaluate_method(
         "significant": w["significant"] if not (len(set(proposed_series)) <= 1 or len(set(baseline_series)) <= 1) else None,
     }
 
+    durable = [g for g in gt if g.get("category") != "transient"]
     e2 = {
         "proposed_positive_recall": round(proposed_store_recall, 3),
         "baseline_positive_recall": round(baseline_recall, 3),
+        "proposed_durable_recall": (round(sum(1 for g in durable if fact_matches(g, store_facts)) / len(durable), 3)
+                                    if durable else None),
+        "baseline_durable_recall": (round(sum(1 for g in durable if g["source_turn"] in baseline_included_ids) / len(durable), 3)
+                                    if durable else None),
         "forgetting_horizon_note": _forgetting_horizon_note(
             gt, pruned_ids, baseline_included_ids, len(per_turn_records)),
         "proposed_forgetting_precision": round(proposed_forget, 3),
@@ -274,6 +287,9 @@ def evaluate_method(
     e4["hard_case_accuracy_by_distance"] = _needle_by_distance(
         gt, store_facts, baseline_included_ids,
         filt=lambda g: g.get("is_trap") or g.get("is_correction_target"))
+    e4["durable_accuracy_by_distance"] = _needle_by_distance(
+        gt, store_facts, baseline_included_ids,
+        filt=lambda g: g.get("category") != "transient")
 
     e6 = _power_check(proposed_series, baseline_series)
 
@@ -291,6 +307,14 @@ def evaluate_method(
         "E3_latency": e3,
         "E4_needle_in_haystack": e4,
         "E6_power_check": e6,
+"store": {
+            "count": len(store_facts),
+            "tokens": sum(_tok_of(f["fact"], fact_tokens) for f in store_facts),
+            "source_turns": sorted({f.get("source_turn_id") for f in store_facts}),
+            "categories": sorted({f.get("category") for f in store_facts}),
+        },
+        "injected": [{"turn_id": r["turn_id"], "tokens": r["injected_tokens"],
+                      "count": len(r.get("retrieved") or [])} for r in per_turn_records],
         "stats": {"proposed_series": proposed_series, "baseline_series": baseline_series,
                   "pairs": n},
     }
@@ -383,6 +407,7 @@ def run_seed(
     methods: List[str],
     write: str = "oracle",
     measured: bool = False,
+    token_mode: str = "none",
     model: str = None,
     ollama_endpoint: str = "http://localhost:11434",
     embedding_model: str = "nomic-embed-text",
@@ -400,7 +425,12 @@ def run_seed(
         embed_fn = lambda texts: embed_ollama(texts, model=embedding_model, endpoint=ollama_endpoint)
 
     measurer = TokenMeasurer(model=model, endpoint=ollama_endpoint) if measured and model else None
-    fact_tokens = measurer.measure if measurer else None
+    if measurer:
+        fact_tokens = measurer.measure
+    elif token_mode == "word_count":
+        fact_tokens = lambda text: len(str(text).split())
+    else:
+        fact_tokens = None
 
     if write == "extract":
         if extractor is None:
@@ -432,7 +462,8 @@ def run_seed(
         adaptive = replay
         pruned_ids = {p.get("source_turn_id") for p in replay["pruned"]}
         e = evaluate_method("adaptive", replay["per_turn"], replay["memories"], pruned_ids,
-                            gt, window_tokens, baseline_ids, extraction_ms=extraction_ms)
+                            gt, window_tokens, baseline_ids, fact_tokens=fact_tokens,
+                            extraction_ms=extraction_ms)
         e["E5_ablations"] = _adaptive_ablations(stream, settings, gt, window_tokens, baseline_ids,
                                                  scorer, fact_tokens, embed_fn, embedding_model)
         out_methods["adaptive"] = e
@@ -445,7 +476,8 @@ def run_seed(
         res = runner.run(stream, gt, m)
         pruned_ids = set()
         e = evaluate_method(m, res["per_turn"], res["held_facts"], pruned_ids, gt,
-                            window_tokens, baseline_ids, extraction_ms=extraction_ms)
+                            window_tokens, baseline_ids, fact_tokens=fact_tokens,
+                            extraction_ms=extraction_ms)
         out_methods[m] = e
 
     return {

@@ -703,6 +703,16 @@ facts and compressed the score distribution.
   ranking contract, corrected-fact-priority, and reinforcement bookkeeping.
 - **E9 correction isolation probe** (TEST-05, Phase 5): standalone hand-rolled
   correction/negation stream replayed through the adaptive pipeline only;
+
+### D27 ★ Context-pressure experiment: point-of-need probe recall (task E)
+  Probes are verbatim repetitions of durable facts inserted after the conversation
+  ends, evaluated against the method's *final stored* memories using strict
+  entity-token matching (key/port number within category). Probes are never appended
+  to the replay stream, so turn-window baselines cannot be credited merely because
+  the probe message sits in their window, and template re-use cannot fake a hit
+  (key_19 does not count as recalling key_25). This metric isolates actual retained
+  content from budget-efficiency effects and template inflation; it is the primary
+  evaluator for "useful information per active-context token."
   `experiments/e9_correction_isolation.py`, exit code = isolation pass.
 - **3-seed revalidation** (REVAL-01..04, Phase 6): transformer validation with
   conflict/negation density 0.1/0.1 — correction_recall 1.0, wrongly_retained
