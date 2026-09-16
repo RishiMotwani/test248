@@ -46,10 +46,10 @@
 
 ### Revalidation
 
-- [ ] **REVAL-01**: 3-seed experiment run with conflict/negation density
-- [ ] **REVAL-02**: correction_recall >= 0.5 in post-fix run
-- [ ] **REVAL-03**: wrongly_retained_after_correction.fraction <= 0.5
-- [ ] **REVAL-04**: Token efficiency regression < 15% relative
+- [x] **REVAL-01**: 3-seed experiment run with conflict/negation density
+- [x] **REVAL-02**: correction_recall >= 0.5 in post-fix run (1.0)
+- [x] **REVAL-03**: wrongly_retained_after_correction.fraction <= 0.5 (0.2)
+- [x] **REVAL-04**: Token efficiency regression < 15% relative (7.9% vs vanilla)
 
 ## v2 Requirements
 
@@ -76,7 +76,7 @@
 | TEST-02 | Phase 3 | Implemented |
 | TEST-03..05 | Phase 5 | Implemented |
 | CLEAN-01..02 | Phase 1 | Done |
-| REVAL-01..04 | Phase 6 | Pending |
+| REVAL-01..04 | Phase 6 | Validated |
 
 **Coverage:**
 - v1 requirements: 23 total
@@ -85,4 +85,4 @@
 
 ---
 *Requirements defined: 2026-09-16*
-*Last updated: 2026-09-16 after initial definition*
+*Last updated: 2026-09-16 after Phase 6 — all 23 v1 requirements implemented/validated*

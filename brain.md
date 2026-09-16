@@ -345,6 +345,9 @@ Pending items are marked ⏳ (need a human answer); recommended targets marked �
   either removed from the live path or relabeled `concatenate_cluster` and never
   called during ingest; a *true* LLM summarizer is explicitly a later,
   opt-in, high-risk experiment.
+- *Status*: **COMPLETED** (Phase 1, commit 0880f1b). `dedupe()` and
+  `compress_cluster()` deleted; dead e1-e6 stubs removed. Dedupe is now the
+  sole compression story; `dedupe_incremental` handles supersession (D24).
 
 ### D6 ★ Category reintrospection / multi-cue retrieval
 - *Current*: LLM category is overridden by a keyword sniff; category is a
@@ -456,6 +459,11 @@ Pending items are marked ⏳ (need a human answer); recommended targets marked �
   superseded facts still in the store — lower is better; 0.80 on the sanity
   gate, honestly reported as a known limitation). E4 adds
   `hard_case_accuracy_by_distance` for trap+correction facts only.
+- *Status*: **COMPLETED** (Phases 2+5). Correction supersession fix (D24)
+  drives `wrongly_retained` from 0.80 down to 0.0 (single-seed) / 0.2
+  (3-seed average, 1/5 wrongly retained). `correction_recall` = 1.0,
+  `negation_recall` = 1.0, `trap_recall` = 1.0. Quick gate enforces
+  correction_recall >= 0.5 and wrongly_retained <= 0.5.
 
 ### D15 ★ Statistical rigor in the aggregate (task F)
 - *Evidence*: single-point means ignore seed variance; unadjusted pairwise
@@ -630,6 +638,75 @@ with the bot and watch it pull + store memories live:
 - *No change*: adaptive prune-by-decay reason is coded + rendered but never
   fired in these short demos (importances stayed above threshold); it surfaces
   in longer chats when decay actually prunes.
+
+### D24 ★ Correction supersession fix (Phase 2)
+
+Corrections and negations were not handled by the dedupe path — they were
+appended as new memories without removing the stale originals, causing
+`wrongly_retained_after_correction` to hit 0.80 in the hard-case gate.
+
+- *Evidence*: arXiv:2603.02473 §4.1 (supersession as the core memory-maintenance
+  challenge); the existing generator marks `superseded_by` on ground truth but
+  `dedupe_incremental` never saw the correction→original link.
+- *Fix*: `_is_supersession(old, new)` heuristic — at least 0.6 of old words
+  present in new AND new adds marker words (Revised/Correction/NOT/…). When a
+  supersession is detected, `dedupe_incremental` replaces the old fact's text
+  with the corrected text, stores `superseded_prior_fact`, inherits the new
+  fact's confidence, and preserves access bookkeeping. The generator injects
+  marker words so `_is_supersession` fires; a bare semantic similar fact
+  (without markers) does NOT trigger supersession.
+- *Result*: `correction_recall` = 1.0, `wrongly_retained` fraction = 0.0
+  (single-seed) / 0.2 (3-seed, 1/5 spurious sibling). Quick gate enforces
+  correction_recall >= 0.5, wrongly_retained <= 0.5.
+- *Negative control*: applied correction → 0.0 retained; ignored correction →
+  1.0 still flagged as stale. Cross-entity template overlap (6/7 = 0.86)
+  correctly NOT treated as supersession.
+
+### D25 ★ Write-time salience replaces hardcoded query_relevance=0.8 (Phase 3)
+
+All memories were ingested with a hardcoded `query_relevance=0.8` in
+`pipeline.ingest`, regardless of how relevant the fact actually was to the
+user message. This inflated the initial importance of low-relevance filler
+facts and compressed the score distribution.
+
+- *Evidence*: the scoring formula `M = α·rel + β·util + γ·rec + δ·freq`
+  weights relevance at 40% — so `query_relevance=0.8` made every fact look
+  equally important at birth, defeating the scoring system's ability to
+  differentiate signal from noise.
+- *Fix*: `_write_time_salience()` in `memory_optimizer/scoring.py` computes
+  cosine similarity (when `embed_fn` available) or token overlap (lexical
+  fallback) between the user message and the fact, clamped [0, 1].
+  `pipeline.ingest()` uses this per-fact salience when no explicit override
+  is supplied; `live.py` `_e5_replay` routes through the pipeline instead of
+  calling the scorer directly. `query_relevance=0.8` removed from all code.
+- *Result*: facts born from relevant user messages get higher initial
+  importance; filler/procedural facts start lower. Quick gate: 24 tests pass,
+  E2 proposed recall unchanged at 0.760, E1 adaptive 44.0 vs baseline 323.0.
+
+### D26 ★ Evaluation fixes, manifest versioning, dashboard caveats, audit (Phases 4-6)
+
+- **E2 forgetting precision computed over evicted turns** (Phases 4): the
+  baseline window for `*_forgetting_precision` changed from in-window turns to
+  the actual evicted-turn set (`_baseline_window_of`), so "proposed forgets
+  things the baseline keeps" is measured correctly.
+- **`forgetting_horizon_note`** added to E2: states when the horizon is too
+  short / nothing evicted to make precision non-discriminating. The dashboard
+  renders a caveat row whenever the note is non-discriminating (DASH-01).
+- **Manifest versioning** (`pipeline_fix_version: 2`, EVAL-03): `_paper_board`
+  exposes `scoring_and_correction_fix_applied = pipeline_fix_version >= 2`, and
+  the dashboard shows a banner on historical manifests missing the corrected
+  pipeline (DASH-02).
+- **Quick-gate enforcement** (TEST-04, Phase 5): `run_experiments.py --quick`
+  exits non-zero when `correction_recall` is missing or < 0.5 or
+  `wrongly_retained.fraction > 0.5`.
+- **Regression tests** (TEST-03, Phase 5): `test_retrieval_ranking.py` guards
+  ranking contract, corrected-fact-priority, and reinforcement bookkeeping.
+- **E9 correction isolation probe** (TEST-05, Phase 5): standalone hand-rolled
+  correction/negation stream replayed through the adaptive pipeline only;
+  `experiments/e9_correction_isolation.py`, exit code = isolation pass.
+- **3-seed revalidation** (REVAL-01..04, Phase 6): transformer validation with
+  conflict/negation density 0.1/0.1 — correction_recall 1.0, wrongly_retained
+  0.2, E1 regression 7.9% vs vanilla (< 15% gate).
 
 ---
 

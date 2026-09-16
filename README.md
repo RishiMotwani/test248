@@ -49,7 +49,7 @@ The governing design document is `brain.md` — every change to `memory_optimize
 ```
 memory_optimizer/     # Core adaptive memory policy library (7 modules + pipeline)
 baselines/            # Comparison arms (sliding window, MemGPT, summarization, vanilla RAG)
-experiments/          # Paper engine (paper.py), live metrics (live.py), e0–e8 scripts
+experiments/          # Paper engine (paper.py), live metrics (live.py), e0–e9 scripts
   └── results/        # Manifests + JSON outputs (gitignored)
 data/                 # Synthetic conversation generator + E0 gold set
 ui/                   # Single-file dashboard SPA (index.html)
@@ -117,6 +117,7 @@ Each is independently runnable and carries a `--quick` wiring gate:
 python experiments/e0_extraction_quality.py --quick        # extraction vs 200-turn gold set
 python experiments/e7_sensitivity_sweep.py --quick         # retriever/budget geometry sweep
 python experiments/e8_external_benchmark.py --quick        # LongMemEval-style needled QA
+python experiments/e9_correction_isolation.py --quick      # correction/negation isolation probe
 python experiments/statistics.py                            # statistics helpers self-test
 python baselines/baseline_runner.py                         # baseline wiring self-test
 ```
@@ -192,6 +193,7 @@ The only external service is local Ollama (unauthenticated HTTP). All Ollama cal
 | E6 | Statistical power analysis | `run_experiments.py` / `experiments/live.py` |
 | E7 | Sensitivity sweep (retriever/budget geometry) | `experiments/e7_sensitivity_sweep.py` |
 | E8 | LongMemEval-style needled-QA benchmark | `experiments/e8_external_benchmark.py` |
+| E9 | Correction/negation isolation probe (task E regression) | `experiments/e9_correction_isolation.py` |
 
 Baselines (each a `BaseBaseline` subclass in `baselines/`): `SlidingWindowBaseline`, `MemGPTStyleBaseline`, `SummarizationOnlyBaseline`, `VanillaRAGBaseline`. All consume the identical pre-extracted fact stream (writer held fixed, brain.md D9).
 
@@ -201,16 +203,34 @@ Results are written to `experiments/results/` (gitignored): `manifest_<sha8>.jso
 
 ## Testing & Verification
 
-There is no pytest/unittest suite; verification is built into the scripts:
+Verification is a **pytest suite + assert-based script gates**:
 
 ```bash
+python -m pytest tests/                      # 24 tests: compression supersession, salience, retrieval ranking
 python run_experiments.py --quick            # whole-stack wiring gate (50 turns, 1 seed, oracle)
+                                             #   + hard-case gate: fails if correction_recall < 0.5
+                                             #     or wrongly_retained.fraction > 0.5
+python experiments/e9_correction_isolation.py --quick   # standalone correction/negation probe
 python experiments/statistics.py             # assert-based statistics self-test
 python baselines/baseline_runner.py          # LLM-free baseline wiring self-test
 python experiments/make_paper_artifacts.py --check   # anti-drift artifact/manifest check
 ```
 
 The server chains the quick gates into a single job (`RESEARCH_GATES` in `server.py`) so the dashboard can run them as a sanity check.
+
+### Post-fix validation results (Phase 6)
+
+| Metric | Pre-fix | Post-fix (3-seed) | Target | Status |
+|---|---|---|---|---|
+| `correction_recall` | 0.0 | 1.0 | >= 0.5 | PASS |
+| `wrongly_retained_after_correction.fraction` | 0.8 (0.8 gate) | 0.2 (1/5) | <= 0.5 | PASS |
+| `negation_recall` | 0.0 | 1.0 | honest report | PASS |
+| `trap_recall` | 1.0 | 1.0 | honest report | PASS |
+| E1 regression (adaptive vs vanilla) | +122% | +7.9% | < 15% | PASS |
+| E2 proposed positive recall | 0.72 | 0.76 | report | — |
+
+The 3-seed run used `--seeds 3 --turns 50 --conflict-density 0.1 --negation-density 0.1`
+(`manifest_h3795b2da.json`).
 
 ---
 
