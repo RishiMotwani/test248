@@ -848,6 +848,16 @@
             return (digits != null ? Number(x).toFixed(digits) : Number(x).toLocaleString());
         }
 
+        // DASH-01: conditional caveat on the E2 forgetting-precision row. The
+        // pipe's evaluating methods attach a forgetting_horizon_note; when it
+        // reports a short horizon / cold store the precision figures are weak,
+        // so we surface that on the row instead of letting them look decisive.
+        function forgettingCaveat(e2) {
+            const n = e2 && e2.forgetting_horizon_note;
+            if (!n || !/short horizon|cold store|not discriminating/i.test(n)) return '';
+            return `<div class="muted caveat" style="font-size:0.75rem;margin:4px 0 8px;">Forgetting precision caveat: ${esc(n)}</div>`;
+        }
+
         function esc(x) {
             return (x == null ? '' : String(x))
                 .replace(/&/g, '&amp;')
@@ -913,6 +923,7 @@
             if (e2 && e2.hard_case) {
                 cont.innerHTML += hardCaseTable(e2.hard_case);
             }
+            cont.innerHTML += forgettingCaveat(e2);
 
             table('E3 — Pipeline Latency',
                 ['Stage', 'Avg ms'],
@@ -1324,6 +1335,9 @@
                 }
                 if (b.paper) {
                     const m = b.paper.methods || {};
+                    s += (b.paper.pipeline_fix_version == null || b.paper.pipeline_fix_version < 2)
+                        ? `<div class="banner warn">⚠ Historical manifest${b.paper.pipeline_fix_version != null ? ` (pipeline_fix_version ${esc(b.paper.pipeline_fix_version)})` : ''}.<br>Correction-supersession, write-time salience, and evaluation fixes (v2) are NOT included — treat figures as pre-fix.</div>`
+                        : '';
                     s += '<h3>Paper manifest (E1/E2 + statistics)' + prov('estimated · word-count', 'est') + '</h3>';
                     s += `<table><thead><tr><th>method</th><th>E1 tok</th><th>base</th><th>95%CI</th><th>d</th><th>E2 rec</th><th>E2 base</th></tr></thead><tbody>${
                         Object.entries(m).map(([name, a]) => `<tr><td>${esc(name)}</td>
@@ -1433,6 +1447,7 @@
             if (e2 && e2.hard_case) {
                 cont.innerHTML += hardCaseTable(e2.hard_case);
             }
+            cont.innerHTML += forgettingCaveat(e2);
             table('E3 — Pipeline Latency', ['Stage', 'Avg ms'],
                 [['Extraction', num(e3.extraction_ms, 2)], ['Window replay (real LLM)', num(e3.window_replay_ms, 2)],
                  ['Answer (real LLM)', num(e3.answer_ms, 2)], ['Scoring', num(e3.scoring_ms, 3)],

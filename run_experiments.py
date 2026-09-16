@@ -92,6 +92,31 @@ def main() -> None:
                   f"E2_prop_recall={a['mean_E2_proposed_recall']:.3f} "
                   f"E2_base_recall={a['mean_E2_baseline_recall']:.3f}")
 
+    if args.quick:
+        # TEST-04: hard-case gate — with corrections enabled, the adaptive
+        # method must actually record corrected facts and not retain the stale
+        # superseded facts. correction_recall < 0.5 (or an invalid value) means
+        # the supersession fix regressed; fail the gate.
+        failed = 0
+        for seed_res in payload.get("results", []):
+            mm = seed_res.get("methods", {}).get("adaptive", {})
+            e2 = mm.get("E2_memory_accuracy", {})
+            cr = e2.get("correction_recall")
+            wr = (e2.get("wrongly_retained_after_correction") or {})
+            errs = []
+            if cr is None or not isinstance(cr, (int, float)) or cr < 0.5:
+                errs.append(f"correction_recall={cr} (< 0.5 gate)")
+            wf = wr.get("fraction")
+            if wf is not None and (not isinstance(wf, (int, float)) or wf > 0.5):
+                errs.append(f"wrongly_retained.fraction={wf} (> 0.5 gate)")
+            if errs:
+                failed += 1
+                print(f"[QUICK-GATE FAIL] seed {seed_res.get('seed')}: " + "; ".join(errs))
+        if failed:
+            print("[QUICK-GATE] run FAILED hard-case validation; correction handling is broken.")
+            sys.exit(1)
+        print("[QUICK-GATE] hard-case validation OK (corrections recorded, no stale retention).")
+
 
 if __name__ == "__main__":
     main()

@@ -28,16 +28,16 @@
 
 ### Dashboard
 
-- [ ] **DASH-01**: E2 forgetting precision row shows conditional caveat when horizon is short
-- [ ] **DASH-02**: Historical manifests (version < 2) show visible banner
+- [x] **DASH-01**: E2 forgetting precision row shows conditional caveat when horizon is short
+- [x] **DASH-02**: Historical manifests (version < 2) show visible banner
 
 ### Quality
 
-- [ ] **TEST-01**: pytest suite with correction supersession tests
+- [x] **TEST-01**: pytest suite with correction supersession tests
 - [x] **TEST-02**: pytest suite with write-time salience tests
-- [ ] **TEST-03**: Retrieval ranking regression test
-- [ ] **TEST-04**: quick gate fails if correction_recall is invalid
-- [ ] **TEST-05**: e9_correction_isolation.py standalone experiment
+- [x] **TEST-03**: Retrieval ranking regression test
+- [x] **TEST-04**: quick gate fails if correction_recall is invalid
+- [x] **TEST-05**: e9_correction_isolation.py standalone experiment
 
 ### Cleanup
 
@@ -71,10 +71,10 @@
 | CORR-01..05 | Phase 2 | Validated |
 | SCOR-01..03 | Phase 3 | Validated |
 | EVAL-01..04 | Phase 4 | Validated |
-| DASH-01..02 | Phase 5 | Pending |
+| DASH-01..02 | Phase 5 | Implemented |
 | TEST-01 | Phase 2 | Implemented |
 | TEST-02 | Phase 3 | Implemented |
-| TEST-03..05 | Phase 5 | Pending |
+| TEST-03..05 | Phase 5 | Implemented |
 | CLEAN-01..02 | Phase 1 | Done |
 | REVAL-01..04 | Phase 6 | Pending |
 

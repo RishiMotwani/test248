@@ -1263,6 +1263,11 @@ RESEARCH_PIPELINES = {
             "embedding_model": {"type": "str", "default": "nomic-embed-text"},
         },
     },
+    "e9": {
+        "label": "E9 correction isolation probe",
+        "entry": "experiments/e9_correction_isolation.py",
+        "fields": {},
+    },
     "e0": {
         "label": "E0 extraction quality vs gold set",
         "entry": "experiments/e0_extraction_quality.py",
@@ -1311,6 +1316,7 @@ RESEARCH_GATES = [
     {"label": "paper quick gate", "argv": ["run_experiments.py", "--quick"]},
     {"label": "e7 sensitivity quick gate", "argv": ["experiments/e7_sensitivity_sweep.py", "--quick"]},
     {"label": "e8 benchmark quick gate", "argv": ["experiments/e8_external_benchmark.py", "--quick"]},
+    {"label": "e9 correction isolation probe", "argv": ["experiments/e9_correction_isolation.py", "--quick"]},
     {"label": "e0 extraction quality quick gate", "argv": ["experiments/e0_extraction_quality.py", "--quick"]},
     {"label": "paper_state claim coverage", "argv": ["experiments/paper_state.py", "--quick"]},
 ]
