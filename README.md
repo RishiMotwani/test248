@@ -179,44 +179,6 @@ The only external service is local Ollama (unauthenticated HTTP). All Ollama cal
 
 ---
 
-## Docker: Isolated Ollama on an Alternate Port
-
-The firewall-hosted Ollama (`systemd ollama.service`, port 11434) may be undesirable to stop (stopping the systemd unit can time out). To run a **separate, containerized Ollama** on another port for this project, keeping the host service untouched:
-
-```bash
-# 1. Run an isolated Ollama container (GPU via the nvidia container runtime)
-docker run -d --name ollama-alt \
-  --runtime=nvidia \
-  -e NVIDIA_VISIBLE_DEVICES=all \
-  -e NVIDIA_DRIVER_CAPABILITIES=compute,utility \
-  -p 11435:11434 \
-  -v ollama_alt_data:/root/.ollama \
-  ollama/ollama:latest
-
-# 2. Pull the models inside the container
-docker exec ollama-alt ollama pull llama3.1:8b
-docker exec ollama-alt ollama pull nomic-embed-text
-
-# 3. Point the project at it
-#    config.yaml:  ollama_endpoint: http://localhost:11435
-#    Then restart the dashboard:
-python server.py
-
-# 4. When done, remove the container and its data, and revert config.yaml to :11434
-docker rm -f ollama-alt
-docker volume rm ollama_alt_data
-```
-
-Notes:
-
-- Use `--runtime=nvidia` (with the two `NVIDIA_*` env vars). Plain `--gpus all` can silently fall back to CPU inference.
-- Verify GPU use: `curl http://localhost:11435/api/tags` and watch `nvidia-smi` while generating; with a healthy runtime the model loads onto the GPU.
-- If the host Ollama is left running, unload its models to free VRAM without stopping the service:
-  `curl http://localhost:11434/api/generate -d '{"model":"llama3.1:8b","keep_alive":0}'`
-- The dashboard's model list and everything else work identically against either `ollama_endpoint`.
-
----
-
 ## Experiments (E1–E8)
 
 | ID | Experiment | Entry point |
