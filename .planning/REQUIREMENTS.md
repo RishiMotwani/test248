@@ -21,10 +21,10 @@
 
 ### Evaluation
 
-- [ ] **EVAL-01**: live.py forgetting_precision computed over evicted turns (not in-window turns)
-- [ ] **EVAL-02**: paper.py evaluate_method includes forgetting_horizon_note field
-- [ ] **EVAL-03**: Manifests carry pipeline_fix_version = 2
-- [ ] **EVAL-04**: _paper_board exposes scoring_and_correction_fix_applied field
+- [x] **EVAL-01**: live.py forgetting_precision computed over evicted turns (not in-window turns)
+- [x] **EVAL-02**: paper.py evaluate_method includes forgetting_horizon_note field
+- [x] **EVAL-03**: Manifests carry pipeline_fix_version = 2
+- [x] **EVAL-04**: _paper_board exposes scoring_and_correction_fix_applied field
 
 ### Dashboard
 
@@ -70,7 +70,7 @@
 |-------------|-------|--------|
 | CORR-01..05 | Phase 2 | Validated |
 | SCOR-01..03 | Phase 3 | Validated |
-| EVAL-01..04 | Phase 4 | Pending |
+| EVAL-01..04 | Phase 4 | Validated |
 | DASH-01..02 | Phase 5 | Pending |
 | TEST-01 | Phase 2 | Implemented |
 | TEST-02 | Phase 3 | Implemented |

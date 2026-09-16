@@ -184,6 +184,32 @@ def _wilcoxon_effect(proposed: List[int], baseline: List[int]) -> Dict:
     return {"p_value": p, "significant": bool(p < 0.05) if p is not None else None}
 
 
+def _forgetting_horizon_note(gt: List[Dict], pruned_ids: set,
+                             baseline_included_ids: set, total_turns: int) -> str:
+    """Human-readable caveat on how discriminating the forgetting figures are.
+
+    Short horizons (few evicted turns relative to the conversation length) or
+    empty eviction sets make ``*_forgetting_precision`` a weak signal, so we
+    say so on the record instead of letting a bare number overstate certainty.
+    """
+    transient = [g for g in gt if g.get("category") == "transient"]
+    evicted = [g for g in transient if g["source_turn"] in pruned_ids]
+    base_evicted = [g for g in transient if g["source_turn"] not in baseline_included_ids]
+    if not transient:
+        return "no transient facts; forgetting precision not evaluated"
+    uncovered_pruned = sum(1 for g in transient if g["source_turn"] not in pruned_ids)
+    uncovered_base = sum(1 for g in transient if g["source_turn"] in baseline_included_ids)
+    if evicted or base_evicted:
+        return (f"{total_turns} turns; adaptive pruned {len(evicted)}/{len(transient)} transient "
+                f"facts, sliding window dropped {len(base_evicted)}/{len(transient)}; "
+                f"unforgotten transients: adaptive {uncovered_pruned}, baseline {uncovered_base}"
+                if uncovered_pruned or uncovered_base
+                else f"{total_turns} turns; adaptive pruned {len(evicted)}/{len(transient)} and "
+                     f"sliding window dropped {len(base_evicted)}/{len(transient)} transient facts")
+    return (f"short horizon/cold store: no transient evictions detected in {total_turns} turns; "
+            f"forgetting precision is not discriminating")
+
+
 def evaluate_method(
     name: str,
     per_turn_records: List[Dict],
@@ -233,6 +259,8 @@ def evaluate_method(
     e2 = {
         "proposed_positive_recall": round(proposed_store_recall, 3),
         "baseline_positive_recall": round(baseline_recall, 3),
+        "forgetting_horizon_note": _forgetting_horizon_note(
+            gt, pruned_ids, baseline_included_ids, len(per_turn_records)),
         "proposed_forgetting_precision": round(proposed_forget, 3),
         "baseline_forgetting_precision": round(baseline_forget, 3),
         "per_category_recall": _per_category_recall(gt, store_facts),
@@ -596,6 +624,7 @@ def run_paper(turns: int, density: float, seeds: List[int], methods: List[str],
     token_source = "measured" if measured else "estimated(word-count)"
     return {
         "pipeline": "paper",
+        "pipeline_fix_version": 2,
         "generated_at": time.time(),
         "config": config,
         "token_source": token_source,

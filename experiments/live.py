@@ -87,8 +87,10 @@ def _e1(token_history: list) -> dict:
     return result
 
 
-def _e2(ground_truth: list, state: dict, included_turn_ids: set, pruned_turn_ids: set) -> dict:
+def _e2(ground_truth: list, state: dict, included_turn_ids: set, pruned_turn_ids: set,
+        baseline_evicted_turn_ids: set = None) -> dict:
     real = _recall_baseline_real(ground_truth, state.get("baseline_replay", []))
+    baseline_evicted_turn_ids = baseline_evicted_turn_ids or set()
     result = {
         "proposed_positive_recall": round(_recall_proposed(ground_truth, state["active_memories"]), 3),
         "baseline_positive_recall": round(real if real is not None
@@ -97,7 +99,7 @@ def _e2(ground_truth: list, state: dict, included_turn_ids: set, pruned_turn_ids
         "proposed_forgetting_precision": round(
             _forgetting_precision(ground_truth, pruned_turn_ids), 3),
         "baseline_forgetting_precision": round(
-            _forgetting_precision(ground_truth, set(included_turn_ids) - set(range(0)), categories=("transient",)), 3)
+            _forgetting_precision(ground_truth, baseline_evicted_turn_ids, categories=("transient",)), 3)
         if ground_truth else 0.0,
     }
 
@@ -332,7 +334,9 @@ def _e6(proposed: list, baseline: list) -> dict:
 def compute_all(state: dict, settings: dict, stream: list, ground_truth: list,
                 scorer, decay_engine, retriever, comparison_builder, fact_tokens=None,
                 embed_fn=None, embedding_model="nomic-embed-text", injection_token_limit=0) -> dict:
+    _, _, baseline_evicted = _baseline_window_of(state, settings)
     included_turn_ids = {h["turn_id"] for h in _baseline_window_of(state, settings)[0]}
+    baseline_evicted_turn_ids = {h["turn_id"] for h in baseline_evicted}
     pruned_turn_ids = {m.get("source_turn_id") for m in state["pruned_memories"]}
 
     token_history = list(comparison_builder()["token_history"]) if comparison_builder else []
@@ -354,7 +358,7 @@ def compute_all(state: dict, settings: dict, stream: list, ground_truth: list,
 
     replay = state.get("baseline_replay", [])
     e1 = _e1(token_history)
-    e2 = _e2(ground_truth, state, included_turn_ids, pruned_turn_ids)
+    e2 = _e2(ground_truth, state, included_turn_ids, pruned_turn_ids, baseline_evicted_turn_ids)
     e3 = _e3(state["latency_stats"])
     e4 = _e4(ground_truth, state["current_turn"], state["active_memories"], included_turn_ids, replay)
     e5 = _e5(_sampled_stream(stream, 800), ground_truth, fact_tokens=fact_tokens,

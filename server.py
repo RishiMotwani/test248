@@ -1644,6 +1644,8 @@ def _paper_board(m):
         "config": m.get("config"),
         "token_source": m.get("token_source"),
         "metric_source": m.get("metric_source"),
+        "scoring_and_correction_fix_applied": m.get("pipeline_fix_version", 0) >= 2,
+        "pipeline_fix_version": m.get("pipeline_fix_version"),
         "methods": methods,
         "hard_case": hard,
         "e4_hard_case": e4_hard,
