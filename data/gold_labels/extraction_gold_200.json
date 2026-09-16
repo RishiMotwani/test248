@@ -1,0 +1,2368 @@
+[
+  {
+    "turn_id": 1,
+    "user_turn": "Reminder for the team: Dana prefers asynchronous updates over sync standups.",
+    "expected_facts": [
+      {
+        "fact": "Dana prefers asynchronous updates over sync standups",
+        "category": "personal",
+        "confidence": 0.92
+      }
+    ]
+  },
+  {
+    "turn_id": 2,
+    "user_turn": "Decision: auth-svc owns its feature flags starting Q3, no override from the platform team.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc owns its feature flags starting Q3",
+        "category": "project_context",
+        "confidence": 0.9
+      },
+      {
+        "fact": "no override of the feature flags from the platform team",
+        "category": "project_context",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 3,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 4,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 5,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5436.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5436",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 6,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 7,
+    "user_turn": "Don't forget, Ken's birthday is next week and we usually rotate treats.",
+    "expected_facts": [
+      {
+        "fact": "Ken's birthday is next week",
+        "category": "personal",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "turn_id": 8,
+    "user_turn": "Architecture decision under discussion: sync will split its queue into two partitions.",
+    "expected_facts": [
+      {
+        "fact": "sync will split its queue into two partitions",
+        "category": "project_context",
+        "confidence": 0.85
+      },
+      {
+        "fact": "splitting {svc} queue is an architecture decision under discussion",
+        "category": "project_context",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 9,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 10,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 11,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5442.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5442",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 12,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 13,
+    "user_turn": "By the way, Tom is on call for the whole of next month.",
+    "expected_facts": [
+      {
+        "fact": "Tom is on call for the whole of next month",
+        "category": "personal",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 14,
+    "user_turn": "The gateway rollout is gated on the load test passing at 8k RPS.",
+    "expected_facts": [
+      {
+        "fact": "gateway rollout is gated on load test passing at 8k RPS",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 15,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 16,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 17,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5448.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5448",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 18,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 19,
+    "user_turn": "Marco mentioned they only check PRs after lunch, so schedule merges accordingly.",
+    "expected_facts": [
+      {
+        "fact": "Marco only checks PRs after lunch",
+        "category": "personal",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 20,
+    "user_turn": "Standards call: all new services must run under search-style canary deploy.",
+    "expected_facts": [
+      {
+        "fact": "all new services must run under canary deploy",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 21,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 22,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 23,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5454.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5454",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 24,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 25,
+    "user_turn": "FYI: Dana uses spaced repetition and prefers written context over verbal handoff.",
+    "expected_facts": [
+      {
+        "fact": "Dana uses spaced repetition",
+        "category": "personal",
+        "confidence": 0.8
+      },
+      {
+        "fact": "Dana prefers written context over verbal handoff",
+        "category": "personal",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 26,
+    "user_turn": "Project note: auth-svc is being migrated to the regional cluster next sprint.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc is being migrated to the regional cluster next sprint",
+        "category": "project_context",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "turn_id": 27,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 28,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 29,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5460.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5460",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 30,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 31,
+    "user_turn": "Reminder for the team: Ken prefers asynchronous updates over sync standups.",
+    "expected_facts": [
+      {
+        "fact": "Ken prefers asynchronous updates over sync standups",
+        "category": "personal",
+        "confidence": 0.92
+      }
+    ]
+  },
+  {
+    "turn_id": 32,
+    "user_turn": "Decision: sync owns its feature flags starting Q3, no override from the platform team.",
+    "expected_facts": [
+      {
+        "fact": "sync owns its feature flags starting Q3",
+        "category": "project_context",
+        "confidence": 0.9
+      },
+      {
+        "fact": "no override of the feature flags from the platform team",
+        "category": "project_context",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 33,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 34,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 35,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5466.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5466",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 36,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 37,
+    "user_turn": "Don't forget, Tom's birthday is next week and we usually rotate treats.",
+    "expected_facts": [
+      {
+        "fact": "Tom's birthday is next week",
+        "category": "personal",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "turn_id": 38,
+    "user_turn": "Architecture decision under discussion: gateway will split its queue into two partitions.",
+    "expected_facts": [
+      {
+        "fact": "gateway will split its queue into two partitions",
+        "category": "project_context",
+        "confidence": 0.85
+      },
+      {
+        "fact": "splitting {svc} queue is an architecture decision under discussion",
+        "category": "project_context",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 39,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 40,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 41,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5472.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5472",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 42,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 43,
+    "user_turn": "By the way, Marco is on call for the whole of next month.",
+    "expected_facts": [
+      {
+        "fact": "Marco is on call for the whole of next month",
+        "category": "personal",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 44,
+    "user_turn": "The search rollout is gated on the load test passing at 8k RPS.",
+    "expected_facts": [
+      {
+        "fact": "search rollout is gated on load test passing at 8k RPS",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 45,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 46,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 47,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5478.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5478",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 48,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 49,
+    "user_turn": "Dana mentioned they only check PRs after lunch, so schedule merges accordingly.",
+    "expected_facts": [
+      {
+        "fact": "Dana only checks PRs after lunch",
+        "category": "personal",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 50,
+    "user_turn": "Standards call: all new services must run under auth-svc-style canary deploy.",
+    "expected_facts": [
+      {
+        "fact": "all new services must run under canary deploy",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 51,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 52,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 53,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5484.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5484",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 54,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 55,
+    "user_turn": "FYI: Ken uses spaced repetition and prefers written context over verbal handoff.",
+    "expected_facts": [
+      {
+        "fact": "Ken uses spaced repetition",
+        "category": "personal",
+        "confidence": 0.8
+      },
+      {
+        "fact": "Ken prefers written context over verbal handoff",
+        "category": "personal",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 56,
+    "user_turn": "Project note: sync is being migrated to the regional cluster next sprint.",
+    "expected_facts": [
+      {
+        "fact": "sync is being migrated to the regional cluster next sprint",
+        "category": "project_context",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "turn_id": 57,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 58,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 59,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5490.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5490",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 60,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 61,
+    "user_turn": "Reminder for the team: Tom prefers asynchronous updates over sync standups.",
+    "expected_facts": [
+      {
+        "fact": "Tom prefers asynchronous updates over sync standups",
+        "category": "personal",
+        "confidence": 0.92
+      }
+    ]
+  },
+  {
+    "turn_id": 62,
+    "user_turn": "Decision: gateway owns its feature flags starting Q3, no override from the platform team.",
+    "expected_facts": [
+      {
+        "fact": "gateway owns its feature flags starting Q3",
+        "category": "project_context",
+        "confidence": 0.9
+      },
+      {
+        "fact": "no override of the feature flags from the platform team",
+        "category": "project_context",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 63,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 64,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 65,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5496.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5496",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 66,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 67,
+    "user_turn": "Don't forget, Marco's birthday is next week and we usually rotate treats.",
+    "expected_facts": [
+      {
+        "fact": "Marco's birthday is next week",
+        "category": "personal",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "turn_id": 68,
+    "user_turn": "Architecture decision under discussion: search will split its queue into two partitions.",
+    "expected_facts": [
+      {
+        "fact": "search will split its queue into two partitions",
+        "category": "project_context",
+        "confidence": 0.85
+      },
+      {
+        "fact": "splitting {svc} queue is an architecture decision under discussion",
+        "category": "project_context",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 69,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 70,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 71,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5502.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5502",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 72,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 73,
+    "user_turn": "By the way, Dana is on call for the whole of next month.",
+    "expected_facts": [
+      {
+        "fact": "Dana is on call for the whole of next month",
+        "category": "personal",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 74,
+    "user_turn": "The auth-svc rollout is gated on the load test passing at 8k RPS.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc rollout is gated on load test passing at 8k RPS",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 75,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 76,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 77,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5508.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5508",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 78,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 79,
+    "user_turn": "Ken mentioned they only check PRs after lunch, so schedule merges accordingly.",
+    "expected_facts": [
+      {
+        "fact": "Ken only checks PRs after lunch",
+        "category": "personal",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 80,
+    "user_turn": "Standards call: all new services must run under sync-style canary deploy.",
+    "expected_facts": [
+      {
+        "fact": "all new services must run under canary deploy",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 81,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 82,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 83,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5514.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5514",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 84,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 85,
+    "user_turn": "FYI: Tom uses spaced repetition and prefers written context over verbal handoff.",
+    "expected_facts": [
+      {
+        "fact": "Tom uses spaced repetition",
+        "category": "personal",
+        "confidence": 0.8
+      },
+      {
+        "fact": "Tom prefers written context over verbal handoff",
+        "category": "personal",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 86,
+    "user_turn": "Project note: gateway is being migrated to the regional cluster next sprint.",
+    "expected_facts": [
+      {
+        "fact": "gateway is being migrated to the regional cluster next sprint",
+        "category": "project_context",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "turn_id": 87,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 88,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 89,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5520.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5520",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 90,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 91,
+    "user_turn": "Reminder for the team: Marco prefers asynchronous updates over sync standups.",
+    "expected_facts": [
+      {
+        "fact": "Marco prefers asynchronous updates over sync standups",
+        "category": "personal",
+        "confidence": 0.92
+      }
+    ]
+  },
+  {
+    "turn_id": 92,
+    "user_turn": "Decision: search owns its feature flags starting Q3, no override from the platform team.",
+    "expected_facts": [
+      {
+        "fact": "search owns its feature flags starting Q3",
+        "category": "project_context",
+        "confidence": 0.9
+      },
+      {
+        "fact": "no override of the feature flags from the platform team",
+        "category": "project_context",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 93,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 94,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 95,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5526.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5526",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 96,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 97,
+    "user_turn": "Don't forget, Dana's birthday is next week and we usually rotate treats.",
+    "expected_facts": [
+      {
+        "fact": "Dana's birthday is next week",
+        "category": "personal",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "turn_id": 98,
+    "user_turn": "Architecture decision under discussion: auth-svc will split its queue into two partitions.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc will split its queue into two partitions",
+        "category": "project_context",
+        "confidence": 0.85
+      },
+      {
+        "fact": "splitting {svc} queue is an architecture decision under discussion",
+        "category": "project_context",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 99,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 100,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 101,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5432.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5432",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 102,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 103,
+    "user_turn": "By the way, Ken is on call for the whole of next month.",
+    "expected_facts": [
+      {
+        "fact": "Ken is on call for the whole of next month",
+        "category": "personal",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 104,
+    "user_turn": "The sync rollout is gated on the load test passing at 8k RPS.",
+    "expected_facts": [
+      {
+        "fact": "sync rollout is gated on load test passing at 8k RPS",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 105,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 106,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 107,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5438.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5438",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 108,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 109,
+    "user_turn": "Tom mentioned they only check PRs after lunch, so schedule merges accordingly.",
+    "expected_facts": [
+      {
+        "fact": "Tom only checks PRs after lunch",
+        "category": "personal",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 110,
+    "user_turn": "Standards call: all new services must run under gateway-style canary deploy.",
+    "expected_facts": [
+      {
+        "fact": "all new services must run under canary deploy",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 111,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 112,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 113,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5444.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5444",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 114,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 115,
+    "user_turn": "FYI: Marco uses spaced repetition and prefers written context over verbal handoff.",
+    "expected_facts": [
+      {
+        "fact": "Marco uses spaced repetition",
+        "category": "personal",
+        "confidence": 0.8
+      },
+      {
+        "fact": "Marco prefers written context over verbal handoff",
+        "category": "personal",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 116,
+    "user_turn": "Project note: search is being migrated to the regional cluster next sprint.",
+    "expected_facts": [
+      {
+        "fact": "search is being migrated to the regional cluster next sprint",
+        "category": "project_context",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "turn_id": 117,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 118,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 119,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5450.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5450",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 120,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 121,
+    "user_turn": "Reminder for the team: Dana prefers asynchronous updates over sync standups.",
+    "expected_facts": [
+      {
+        "fact": "Dana prefers asynchronous updates over sync standups",
+        "category": "personal",
+        "confidence": 0.92
+      }
+    ]
+  },
+  {
+    "turn_id": 122,
+    "user_turn": "Decision: auth-svc owns its feature flags starting Q3, no override from the platform team.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc owns its feature flags starting Q3",
+        "category": "project_context",
+        "confidence": 0.9
+      },
+      {
+        "fact": "no override of the feature flags from the platform team",
+        "category": "project_context",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 123,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 124,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 125,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5456.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5456",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 126,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 127,
+    "user_turn": "Don't forget, Ken's birthday is next week and we usually rotate treats.",
+    "expected_facts": [
+      {
+        "fact": "Ken's birthday is next week",
+        "category": "personal",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "turn_id": 128,
+    "user_turn": "Architecture decision under discussion: sync will split its queue into two partitions.",
+    "expected_facts": [
+      {
+        "fact": "sync will split its queue into two partitions",
+        "category": "project_context",
+        "confidence": 0.85
+      },
+      {
+        "fact": "splitting {svc} queue is an architecture decision under discussion",
+        "category": "project_context",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 129,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 130,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 131,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5462.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5462",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 132,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 133,
+    "user_turn": "By the way, Tom is on call for the whole of next month.",
+    "expected_facts": [
+      {
+        "fact": "Tom is on call for the whole of next month",
+        "category": "personal",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 134,
+    "user_turn": "The gateway rollout is gated on the load test passing at 8k RPS.",
+    "expected_facts": [
+      {
+        "fact": "gateway rollout is gated on load test passing at 8k RPS",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 135,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 136,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 137,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5468.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5468",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 138,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 139,
+    "user_turn": "Marco mentioned they only check PRs after lunch, so schedule merges accordingly.",
+    "expected_facts": [
+      {
+        "fact": "Marco only checks PRs after lunch",
+        "category": "personal",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 140,
+    "user_turn": "Standards call: all new services must run under search-style canary deploy.",
+    "expected_facts": [
+      {
+        "fact": "all new services must run under canary deploy",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 141,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 142,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 143,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5474.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5474",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 144,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 145,
+    "user_turn": "FYI: Dana uses spaced repetition and prefers written context over verbal handoff.",
+    "expected_facts": [
+      {
+        "fact": "Dana uses spaced repetition",
+        "category": "personal",
+        "confidence": 0.8
+      },
+      {
+        "fact": "Dana prefers written context over verbal handoff",
+        "category": "personal",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 146,
+    "user_turn": "Project note: auth-svc is being migrated to the regional cluster next sprint.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc is being migrated to the regional cluster next sprint",
+        "category": "project_context",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "turn_id": 147,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 148,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 149,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5480.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5480",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 150,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 151,
+    "user_turn": "Reminder for the team: Ken prefers asynchronous updates over sync standups.",
+    "expected_facts": [
+      {
+        "fact": "Ken prefers asynchronous updates over sync standups",
+        "category": "personal",
+        "confidence": 0.92
+      }
+    ]
+  },
+  {
+    "turn_id": 152,
+    "user_turn": "Decision: sync owns its feature flags starting Q3, no override from the platform team.",
+    "expected_facts": [
+      {
+        "fact": "sync owns its feature flags starting Q3",
+        "category": "project_context",
+        "confidence": 0.9
+      },
+      {
+        "fact": "no override of the feature flags from the platform team",
+        "category": "project_context",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 153,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 154,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 155,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5486.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5486",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 156,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 157,
+    "user_turn": "Don't forget, Tom's birthday is next week and we usually rotate treats.",
+    "expected_facts": [
+      {
+        "fact": "Tom's birthday is next week",
+        "category": "personal",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "turn_id": 158,
+    "user_turn": "Architecture decision under discussion: gateway will split its queue into two partitions.",
+    "expected_facts": [
+      {
+        "fact": "gateway will split its queue into two partitions",
+        "category": "project_context",
+        "confidence": 0.85
+      },
+      {
+        "fact": "splitting {svc} queue is an architecture decision under discussion",
+        "category": "project_context",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 159,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 160,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 161,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5492.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5492",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 162,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 163,
+    "user_turn": "By the way, Marco is on call for the whole of next month.",
+    "expected_facts": [
+      {
+        "fact": "Marco is on call for the whole of next month",
+        "category": "personal",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 164,
+    "user_turn": "The search rollout is gated on the load test passing at 8k RPS.",
+    "expected_facts": [
+      {
+        "fact": "search rollout is gated on load test passing at 8k RPS",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 165,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 166,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 167,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5498.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5498",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 168,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 169,
+    "user_turn": "Dana mentioned they only check PRs after lunch, so schedule merges accordingly.",
+    "expected_facts": [
+      {
+        "fact": "Dana only checks PRs after lunch",
+        "category": "personal",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 170,
+    "user_turn": "Standards call: all new services must run under auth-svc-style canary deploy.",
+    "expected_facts": [
+      {
+        "fact": "all new services must run under canary deploy",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 171,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 172,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 173,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5504.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5504",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 174,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 175,
+    "user_turn": "FYI: Ken uses spaced repetition and prefers written context over verbal handoff.",
+    "expected_facts": [
+      {
+        "fact": "Ken uses spaced repetition",
+        "category": "personal",
+        "confidence": 0.8
+      },
+      {
+        "fact": "Ken prefers written context over verbal handoff",
+        "category": "personal",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 176,
+    "user_turn": "Project note: sync is being migrated to the regional cluster next sprint.",
+    "expected_facts": [
+      {
+        "fact": "sync is being migrated to the regional cluster next sprint",
+        "category": "project_context",
+        "confidence": 0.95
+      }
+    ]
+  },
+  {
+    "turn_id": 177,
+    "user_turn": "Setup fact: the orders-api container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "orders-api container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 178,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 179,
+    "user_turn": "Sounds like routine noise, but log this anyway: the billing failover port must stay 5510.",
+    "expected_facts": [
+      {
+        "fact": "billing failover port must stay 5510",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 180,
+    "user_turn": "Actually, scrap the last decision: search keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "search keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 181,
+    "user_turn": "Reminder for the team: Tom prefers asynchronous updates over sync standups.",
+    "expected_facts": [
+      {
+        "fact": "Tom prefers asynchronous updates over sync standups",
+        "category": "personal",
+        "confidence": 0.92
+      }
+    ]
+  },
+  {
+    "turn_id": 182,
+    "user_turn": "Decision: gateway owns its feature flags starting Q3, no override from the platform team.",
+    "expected_facts": [
+      {
+        "fact": "gateway owns its feature flags starting Q3",
+        "category": "project_context",
+        "confidence": 0.9
+      },
+      {
+        "fact": "no override of the feature flags from the platform team",
+        "category": "project_context",
+        "confidence": 0.8
+      }
+    ]
+  },
+  {
+    "turn_id": 183,
+    "user_turn": "Setup fact: the render container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "render container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 184,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 185,
+    "user_turn": "Sounds like routine noise, but log this anyway: the orders-api failover port must stay 5516.",
+    "expected_facts": [
+      {
+        "fact": "orders-api failover port must stay 5516",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 186,
+    "user_turn": "Actually, scrap the last decision: auth-svc keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 187,
+    "user_turn": "Don't forget, Marco's birthday is next week and we usually rotate treats.",
+    "expected_facts": [
+      {
+        "fact": "Marco's birthday is next week",
+        "category": "personal",
+        "confidence": 0.85
+      }
+    ]
+  },
+  {
+    "turn_id": 188,
+    "user_turn": "Architecture decision under discussion: search will split its queue into two partitions.",
+    "expected_facts": [
+      {
+        "fact": "search will split its queue into two partitions",
+        "category": "project_context",
+        "confidence": 0.85
+      },
+      {
+        "fact": "splitting {svc} queue is an architecture decision under discussion",
+        "category": "project_context",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 189,
+    "user_turn": "Setup fact: the ingest container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "ingest container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 190,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 191,
+    "user_turn": "Sounds like routine noise, but log this anyway: the render failover port must stay 5522.",
+    "expected_facts": [
+      {
+        "fact": "render failover port must stay 5522",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 192,
+    "user_turn": "Actually, scrap the last decision: sync keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "sync keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 193,
+    "user_turn": "By the way, Dana is on call for the whole of next month.",
+    "expected_facts": [
+      {
+        "fact": "Dana is on call for the whole of next month",
+        "category": "personal",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 194,
+    "user_turn": "The auth-svc rollout is gated on the load test passing at 8k RPS.",
+    "expected_facts": [
+      {
+        "fact": "auth-svc rollout is gated on load test passing at 8k RPS",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  },
+  {
+    "turn_id": 195,
+    "user_turn": "Setup fact: the billing container uses the slim image, never the full one.",
+    "expected_facts": [
+      {
+        "fact": "billing container uses the slim image",
+        "category": "technical_preference",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 196,
+    "user_turn": "Just a heads up, the coffee machine on floor 4 is out this morning.",
+    "expected_facts": [
+      {
+        "fact": "coffee machine on floor 4 is out this morning",
+        "category": "transient",
+        "confidence": 0.7
+      }
+    ]
+  },
+  {
+    "turn_id": 197,
+    "user_turn": "Sounds like routine noise, but log this anyway: the ingest failover port must stay 5528.",
+    "expected_facts": [
+      {
+        "fact": "ingest failover port must stay 5528",
+        "category": "technical_preference",
+        "confidence": 0.9,
+        "is_trap": true
+      }
+    ]
+  },
+  {
+    "turn_id": 198,
+    "user_turn": "Actually, scrap the last decision: gateway keeps the old table name, rename is cancelled.",
+    "expected_facts": [
+      {
+        "fact": "gateway keeps the old table name",
+        "category": "project_context",
+        "confidence": 0.9,
+        "correction_target": true
+      }
+    ]
+  },
+  {
+    "turn_id": 199,
+    "user_turn": "Ken mentioned they only check PRs after lunch, so schedule merges accordingly.",
+    "expected_facts": [
+      {
+        "fact": "Ken only checks PRs after lunch",
+        "category": "personal",
+        "confidence": 0.88
+      }
+    ]
+  },
+  {
+    "turn_id": 200,
+    "user_turn": "Standards call: all new services must run under sync-style canary deploy.",
+    "expected_facts": [
+      {
+        "fact": "all new services must run under canary deploy",
+        "category": "project_context",
+        "confidence": 0.9
+      }
+    ]
+  }
+]

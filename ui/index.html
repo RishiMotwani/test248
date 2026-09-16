@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Adaptive Memory Manager Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; background: #0f172a; color: #f8fafc; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 24px; border-bottom: 1px solid #334155; background: #0b1120; position: sticky; top: 0; z-index: 10; }
+        .topbar h1 { font-size: 1.05rem; margin: 0; }
+        .topbar .group { display: flex; align-items: center; gap: 8px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 40vh; }
+        .panel { padding: 20px 24px; overflow-y: auto; border-right: 1px solid #334155; }
+        .panel h2 { margin-top: 4px; }
+        .card { background: #1e293b; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid #334155; }
+        .card.highlight { border-color: #16a34a; box-shadow: 0 0 0 1px #16a34a; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .transient { background: #7f1d1d; color: #fca5a5; }
+        .personal { background: #14532d; color: #86efac; }
+        .technical_preference { background: #1e3a8a; color: #bfdbfe; }
+        .project_context { background: #701a75; color: #f5d0fe; }
+        input[type="text"], input[type="number"], select { padding: 8px 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; font-size: 0.85rem; }
+        input[type="text"] { flex: 1; }
+        button { padding: 8px 14px; border-radius: 6px; background: #2563eb; color: white; border: none; cursor: pointer; font-size: 0.82rem; }
+        button.secondary { background: #475569; }
+        button.primary { background: #16a34a; }
+        button:hover { filter: brightness(1.15); }
+        .btn-sm { display:inline-block; padding:4px 10px; border-radius:4px; background:#475569; color:white; border:none; cursor:pointer; font-size:0.75rem; }
+        .btn-sm:hover { filter: brightness(1.15); }
+        .pruned { color: #f87171; }
+        .vram-chip { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 6px 10px; font-size: 0.78rem; color: #94a3b8; white-space: nowrap; }
+        .vram-chip b { color: #f8fafc; }
+
+        .compare { padding: 20px 24px; border-top: 1px solid #334155; background: #0b1120; }
+        .stats-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+        .mem-list { max-height: 240px; overflow-y: auto; padding-right: 4px; }
+        .mem-item { font-size: 0.8rem; padding: 4px 0; border-bottom: 1px solid #1e293b; }
+        .bar-wrap { background: #1e293b; border-radius: 6px; height: 18px; margin: 8px 0; overflow: hidden; border: 1px solid #334155; }
+        .bar { height: 100%; transition: width 0.6s ease; }
+        .bar.red { background: linear-gradient(90deg, #dc2626, #ef4444); }
+        .bar.green { background: linear-gradient(90deg, #16a34a, #4ade80); }
+        .note { font-size: 0.8rem; color: #94a3b8; margin-top: 6px; }
+        .note .kept { color: #4ade80; }
+        .legend { display: flex; gap: 20px; margin-top: 8px; font-size: 0.8rem; color: #94a3b8; flex-wrap: wrap; }
+        .sw { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+        .sw.red { background: #ef4444; }
+        .sw.green { background: #4ade80; }
+        .tip { margin-top: 12px; color: #fcd34d; font-size: 0.85rem; }
+        svg text { fill: #94a3b8; font-size: 10px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
+        th, td { border: 1px solid #334155; padding: 6px 10px; text-align: left; }
+        th { background: #1e293b; color: #cbd5e1; }
+        td { background: #0f172a; }
+        .good { color: #4ade80; }
+        .bad { color: #f87171; }
+        .num { text-align: right; font-variant-numeric: tabular-nums; }
+        .muted { color: #94a3b8; font-size: 0.8rem; }
+
+        #timeline { max-height: 320px; overflow-y: auto; padding-right: 4px; }
+        .tl-entry { border-left: 3px solid #475569; padding: 6px 10px; margin: 6px 0; background: #111c33; border-radius: 0 6px 6px 0; font-size: 0.82rem; }
+        .tl-entry .turn { color: #38bdf8; font-weight: 600; }
+        .tl-entry .lost { color: #f87171; }
+        .tl-entry .saved { color: #4ade80; }
+
+        .subnav { position: sticky; top: 0; z-index: 20; display: flex; gap: 6px; background: #1e293b; border-bottom: 1px solid #334155; padding: 8px 24px; flex-wrap: wrap; }
+        .subnav a.sn { color: #cbd5e1; text-decoration: none; padding: 4px 12px; border-radius: 6px; border: 1px solid #334155; font-size: 0.85rem; }
+        .subnav a.sn:hover { background: #334155; }
+        .subnav a.sn.active { background: #0ea5e9; color: #0f172a; font-weight: 600; border-color: #0ea5e9; }
+        .seeall { color: #38bdf8; font-size: 0.8rem; text-decoration: none; margin-left: 10px; }
+        .seeall:hover { text-decoration: underline; }
+        .subview { padding: 20px 24px; }
+        .subview h2 { margin-top: 0; }
+        .bb-turn { display: flex; gap: 10px; padding: 6px 10px; margin: 4px 0; background: #111c33; border-radius: 6px; font-size: 0.82rem; align-items: baseline; }
+        .bb-turn.old { opacity: 0.75; }
+        .bb-turn .bb-idx { color: #475569; font-size: 0.7rem; min-width: 74px; }
+        .bb-ev { color: #f87171; }
+        .h2h-row td { vertical-align: top; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <h1>Adaptive Memory Manager — Live Demo</h1>
+        <div class="group">
+            <select id="model-select" title="Extraction model"></select>
+            <button class="secondary" onclick="loadModels()" title="Refresh model list">↻</button>
+        </div>
+        <div class="group">
+            <label class="muted" for="budget-input">Budget</label>
+            <input type="number" id="budget-input" value="4096" step="256" min="256" style="width:90px;">
+            <button class="secondary" onclick="applyBudget()">Apply</button>
+        </div>
+        <div class="group">
+            <div class="vram-chip" id="vram-chip">VRAM: —</div>
+        </div>
+        <div class="group">
+            <label class="muted" for="turns-preset">Turns</label>
+            <select id="turns-preset" style="width:66px;">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="150" selected>150</option>
+                <option value="250">250</option>
+                <option value="400">400</option>
+                <option value="500">500</option>
+            </select>
+            <input type="number" id="turns-input" value="150" min="20" max="500" style="width:66px;" title="Turn count up to 500">
+            <label class="muted">Density&nbsp;%</label>
+            <input type="number" id="density-input" value="20" min="0" max="100" step="1" style="width:56px;" title="% of turns that re-mention planted facts (0-100)">
+            <label class="muted">Planted</label>
+            <input type="number" id="planted-input" value="5" min="1" max="50" step="1" style="width:56px;" title="Number of distinct planted facts (1-50)">
+            <label class="muted" for="filler-select">Filler</label>
+            <select id="filler-select" title="Routine-turn length; longer = more baseline eviction pressure">
+                <option value="short">Short</option>
+                <option value="normal" selected>Normal</option>
+                <option value="long">Long</option>
+            </select>
+            <label style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;">
+                <input type="checkbox" id="hardcases-input" checked onclick="syncHardCaseInputs(this)"
+                       title="Include correction + negation turns and hard-case metrics">
+                <span class="muted">Hard cases</span>
+            </label>
+            <input type="number" id="corrections-input" value="2" min="0" max="8" step="1" style="width:46px;" title="Number of correction turns to plant (0-8)">
+            <label class="muted" for="corrections-input">Corrections</label>
+            <input type="number" id="negations-input" value="1" min="0" max="4" step="1" style="width:46px;" title="Number of negation turns to plant (0-4)">
+            <label class="muted" for="negations-input">Negations</label>
+        </div>
+        <div class="group">
+            <button class="primary" onclick="runExperiments()">Run Experiments (E1–E6)</button>
+            <button class="primary" onclick="loadDemo()">Load Demo</button>
+            <button class="secondary" onclick="resetMemory()">Reset Memory</button>
+        </div>
+    </div>
+
+    <div id="demo-progress" hidden style="padding:10px 24px;background:#1e293b;border-bottom:1px solid #334155;">
+        <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;">
+            <span id="demo-progress-label">Extracting…</span>
+            <button class="secondary" onclick="cancelDemoJob()">Cancel Run</button>
+        </div>
+        <div class="bar-wrap" style="margin:6px 0 0;"><div class="bar green" id="demo-progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="subnav">
+        <a href="#/" class="sn">Dashboard</a>
+        <a href="#/barebones" class="sn">Barebones Window</a>
+        <a href="#/memory" class="sn">Memory</a>
+        <a href="#/timeline" class="sn">Timeline</a>
+        <a href="#/experiments" class="sn">Experiments</a>
+        <a href="#/research" class="sn">Research</a>
+    </div>
+
+    <div id="view-dashboard">
+    <div class="grid">
+        <div class="panel">
+            <h2>Live Conversation <button class="btn-sm" onclick="purgeChat()" style="float:right;">New chat (purge)</button></h2>
+            <div id="chat-history"></div>
+            <div style="margin-top:20px;display:flex;gap:8px;">
+                <input type="text" id="user-input" placeholder='Try: "I have a cat named Whiskers", then "What is my cat\'s name?"'>
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <div class="panel">
+            <h2>Adaptive Memory State</h2>
+            <h3>Active Memories (<span id="active-count">0</span>)</h3>
+            <div id="active-memories"></div>
+            <h3 class="pruned">Pruned / Forgotten (<span id="pruned-count">0</span>)</h3>
+            <div id="pruned-memories"></div>
+        </div>
+    </div>
+
+    <div class="compare">
+        <h2>Optimized vs Barebones — Live Comparison</h2>
+        <div class="stats-cards">
+            <div class="card">
+                <b>Barebones (raw transcript fed to model)</b>
+                <div class="bar-wrap"><div class="bar red" id="baseline-bar" style="width:0%"></div></div>
+                <span id="baseline-tokens">0 / 0 tokens in context</span>
+                <div id="baseline-evicted" class="note"></div>
+                <div class="note" id="planted-stats"></div>
+            </div>
+            <div class="card">
+                <b>Optimized (your memory system)</b>
+                <div class="bar-wrap"><div class="bar green" id="optimized-bar" style="width:0%"></div></div>
+                <span id="optimized-tokens">0 tokens in curated context</span>
+                <div class="note" id="optimized-mem"></div>
+                <div id="forgot-kept" class="note"></div>
+            </div>
+        </div>
+
+        <h3>Context Growth per Turn</h3>
+        <svg id="chart" viewBox="0 0 600 200" width="100%"></svg>
+        <div class="legend">
+            <span><span class="sw red"></span>Barebones raw transcript (clipped at token budget)</span>
+            <span><span class="sw green"></span>Optimized active-memory tokens (bounded)</span>
+        </div>
+        <p class="tip" id="tips"></p>
+    </div>
+
+    <div class="compare" id="barebones-panel" style="border-top:1px solid #334155;">
+        <h2>What the Barebones Model Actually Sees (Original Context Window) <a class="seeall" href="#/barebones">See all ▸</a></h2>
+        <div id="barebones-preview" class="note">Load the demo to inspect the raw-turn window and how many planted facts survive in the baseline's immediate context.</div>
+    </div>
+
+    <div class="compare" id="both-sides-panel">
+        <h2>Both Sides' Memory — Same Facts, Different Fate <a class="seeall" href="#/memory">See all ▸</a></h2>
+        <div id="both-sides" class="note">Load a demo, then see which planted facts each system still remembers vs has forgotten.</div>
+    </div>
+
+    <div class="compare" id="timeline-panel">
+        <h2>Per-Turn Memory Log <span class="muted">(updates live)</span> <a class="seeall" href="#/timeline">See all ▸</a></h2>
+        <div id="timeline"></div>
+    </div>
+
+    <div class="compare" id="experiments-panel">
+        <h2>Live Experiments — Proposed vs Barebones on the Same Test Case <a class="seeall" href="#/experiments">See all ▸</a></h2>
+        <p class="muted" id="exp-meta">Click "Run Experiments (E1–E6)" to evaluate both systems on the currently loaded scenario.</p>
+        <div id="experiments"></div>
+    </div>
+    </div>
+
+    <div id="view-barebones" class="subview" style="display:none;">
+        <h2>Barebones Original Context Window — All Turns</h2>
+        <p class="muted" id="bb-full-meta">Loading…</p>
+        <div id="bb-full"></div>
+        <div style="margin:12px 0;display:flex;gap:8px;">
+            <button class="secondary" onclick="BB.loadMoreEvicted()">Show more evicted turns (+200)</button>
+        </div>
+    </div>
+
+    <div id="view-memory" class="subview" style="display:none;">
+        <h2>Both Sides' Memory — Full Detail</h2>
+        <p class="muted" id="mem-full-meta">Loading…</p>
+        <div id="mem-full"></div>
+        <div style="margin:12px 0;display:flex;gap:8px;">
+            <button class="secondary" onclick="MEM.loadMore()">Load more (+100)</button>
+        </div>
+    </div>
+
+    <div id="view-timeline" class="subview" style="display:none;">
+        <h2>Per-Turn Memory Log — Full History</h2>
+        <div style="margin:10px 0;display:flex;gap:8px;align-items:center;">
+            <button class="secondary" onclick="TL.page(-1)">‹ Prev</button>
+            <span id="tl-range" class="muted">…</span>
+            <button class="secondary" onclick="TL.page(1)">Next ›</button>
+        </div>
+        <div id="tl-full"></div>
+    </div>
+
+    <div id="view-experiments" class="subview" style="display:none;">
+        <h2>Live Experiments — Full Detail</h2>
+        <p class="muted" id="exp-full-meta">Loading…</p>
+        <div id="exp-full"></div>
+        <div style="margin:12px 0;"><button class="secondary" onclick="EXP.showRaw()">Toggle raw manifest JSON</button></div>
+        <pre id="exp-raw" style="display:none;max-height:480px;overflow:auto;"></pre>
+    </div>
+
+    <div id="view-research" class="subview" style="display:none;">
+        <div id="rc-console"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;margin-top:12px;">
+            <div id="rc-runners"></div>
+            <div id="rc-board"></div>
+        </div>
+    </div>
+
+    <script>
+        const BUDGET_KEY = 'system_token_budget';
+        let modelReady = false;
+
+        function overlap(a, b) {
+            if (!a || !b) return 0;
+            const as = new Set(a.toLowerCase().split(/\s+/));
+            const bs = new Set(b.toLowerCase().split(/\s+/));
+            let inter = 0;
+            as.forEach(w => { if (bs.has(w)) inter++; });
+            return inter / Math.max(as.size, 1);
+        }
+
+        function _normText(t) { return String(t || '').toLowerCase().trim().replace(/[.]+$/, ''); }
+
+        function gtChains(gt) {
+            const byTurn = {};
+            (gt || []).forEach(g => { byTurn[g.source_turn] = g; });
+            const chains = [];
+            const covered = new Set();
+            (gt || []).forEach(g => {
+                if (g.supersedes_turn != null) {
+                    const orig = byTurn[g.supersedes_turn] || null;
+                    chains.push({ canonical: g, originals: orig ? [orig] : [], superseded: !!orig, negation: false });
+                    covered.add(g.source_turn);
+                    if (orig) covered.add(orig.source_turn);
+                }
+            });
+            (gt || []).forEach(g => {
+                if (covered.has(g.source_turn)) return;
+                if (g.is_negation) {
+                    const pos = String(g.fact || '').replace(/^Correction to requirement: NOT /i, '').replace(/[.]+$/, '');
+                    const orig = (gt || []).find(o => o.source_turn !== g.source_turn && !o.is_correction_target && _normText(o.fact) === _normText(pos));
+                    chains.push({ canonical: g, originals: orig ? [orig] : [], superseded: false, negation: true });
+                    covered.add(g.source_turn);
+                } else {
+                    chains.push({ canonical: g, originals: [], superseded: !!g.superseded_by, negation: false });
+                    covered.add(g.source_turn);
+                }
+            });
+            return chains;
+        }
+
+        function _h2hMatch(chain, facts) {
+            const can = chain.canonical;
+            const mOver = (a, b) => Math.min(overlap(a, b), overlap(b, a));
+            const holding = f => !!(f && f.fact);
+            if (chain.negation) {
+                const pos = _normText(can.fact.replace(/^Correction to requirement: NOT /i, ''));
+                const keepsPositive = facts.some(f => {
+                    if (!holding(f)) return false;
+                    if (/^correction to requirement: not/i.test(_normText(f.fact))) return false;
+                    return mOver(f.fact, pos) >= 0.7;
+                });
+                return { truth: !keepsPositive, cell: keepsPositive ? '✘ still keeps the negated positive' : '✔ handled' };
+            }
+            const holds = facts.some(f => holding(f) && (f.turn === can.source_turn || mOver(f.fact, can.fact) >= 0.7));
+            if (holds) return { truth: true, cell: chain.superseded ? '✔ (current, corrected)' : '✔' };
+            const stale = chain.originals.find(o => facts.some(f => holding(f) && (f.turn === o.source_turn || mOver(f.fact, o.fact) >= 0.7)));
+            if (stale) return { truth: false, cell: `✘ holds only the superseded version (turn ${stale.source_turn})` };
+            return { truth: false, cell: '✘' };
+        }
+
+        function h2hTable(gt, adaptiveFacts, baselineFacts) {
+            if (!gt || !gt.length) return '';
+            const chains = gtChains(gt);
+            const planted = gt.filter(g => g.planted).length;
+            const hc = gt.filter(g => g.hard_case);
+            const hcCorr = hc.filter(g => g.is_correction_target).length;
+            const hcNeg = hc.filter(g => g.is_negation).length;
+            const aF = (adaptiveFacts || []).map(m => ({ fact: m.fact, turn: m.source_turn_id ?? m.source_turn }));
+            const bF = (baselineFacts || []).map(f => ({ fact: f.fact, turn: f.source_turn }));
+            const rows = chains.map(ch => {
+                const av = _h2hMatch(ch, aF);
+                const raw = _h2hMatch(ch, bF);
+                const bv = ch.negation ? { truth: null, cell: '<span class="muted">transcript keeps both wordings</span>' } : raw;
+                const aTxt = av.cell.replace(/✔|✘/, av.truth ? '✔' : '✘');
+                const detail = (ch.superseded ? '<span class="muted" style="font-size:0.68rem;">· superseded</span>' : '') +
+                               (ch.negation ? '<span class="muted" style="font-size:0.68rem;">· negation</span>' : '');
+                return `<tr><td><span class="tag ${esc(ch.canonical.category)}">${esc(ch.canonical.category)}</span> "${esc(ch.canonical.fact)}" <span class="muted">(turn ${ch.canonical.source_turn})</span>${detail}</td>` +
+                    `<td class="${av.truth ? 'good' : 'bad'}">${aTxt}</td>` +
+                    `<td class="${bv.truth == null ? '' : (bv.truth ? 'good' : 'bad')}">${bv.cell}</td></tr>`;
+            }).join('');
+            return `<h3>Planted-fact retention — head to head (${planted} planted${hc.length ? ` + ${hcCorr} corrections + ${hcNeg} negations` : ''})<span class="muted" style="font-size:0.68rem;"> · verdict = knows the current truth</span></h3>` +
+                `<div class="muted" style="font-size:0.72rem;">Each row is the latest (canonical) version of a fact. Dropping a superseded or negated old version counts as ✓; still stashing it counts as ✘.</div>` +
+                `<table><thead><tr><th>Planted fact (latest version)</th><th>Proposed (adaptive)</th><th>Barebones (raw window)</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const txt = input.value.trim();
+            if (!txt) return;
+
+            const hist = document.getElementById('chat-history');
+            const turnEl = document.createElement('div');
+            turnEl.className = 'chat-turn';
+            turnEl.innerHTML = `
+                <div class="mem-item"><b>You:</b> ${esc(txt)}</div>
+                <div class="thinking" data-role="thinking" style="color:#94a3b8;font-size:0.85rem;">extracting → retrieving → storing…</div>
+                <div class="card highlight" style="margin-top:8px;"><b>Bot:</b> <span class="bot-answer"></span></div>
+                <div class="turn-detail"></div>`;
+            hist.appendChild(turnEl);
+            input.value = '';
+
+            const stageEl = turnEl.querySelector('[data-role="thinking"]');
+            const ansEl = turnEl.querySelector('.bot-answer');
+            const detailEl = turnEl.querySelector('.turn-detail');
+
+            let payload = null;
+            try {
+                const res = await fetch('/api/chat/stream', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_message: txt})
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    stageEl.innerHTML = `⚠ ${esc(err.detail || ('HTTP ' + res.status))}`;
+                    return;
+                }
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let buf = '';
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buf += decoder.decode(value, {stream: true});
+                    let idx;
+                    while ((idx = buf.indexOf('\n\n')) !== -1) {
+                        const raw = buf.slice(0, idx).trim();
+                        buf = buf.slice(idx + 2);
+                        if (!raw.startsWith('data: ')) continue;
+                        let ev;
+                        try { ev = JSON.parse(raw.slice(6)); } catch (e) { continue; }
+                        if (ev.type === 'stage') {
+                            stageEl.innerHTML = `stage: ${esc(ev.stage)}…`;
+                        } else if (ev.type === 'token') {
+                            ansEl.textContent += ev.text;
+                        } else if (ev.type === 'error') {
+                            stageEl.innerHTML = `<span class="bad">error: ${esc(ev.detail)}</span>`;
+                        } else if (ev.type === 'done') {
+                            payload = ev;
+                            stageEl.innerHTML = '<span class="good">done</span>';
+                        }
+                    }
+                }
+            } catch (e) {
+                stageEl.innerHTML = `<span class="bad">request failed: ${esc(String(e))}</span>`;
+                return;
+            }
+            if (!payload) { stageEl.innerHTML = '<span class="bad">no response</span>'; return; }
+            detailEl.innerHTML = renderThisTurn(payload.detail);
+            appendBaselineToggle(detailEl, payload);
+            renderBothSides(payload);
+            if (payload.active_memories) renderState(payload.active_memories, payload.pruned_memories, payload.comparison, payload.budget_evicted_memories);
+        }
+
+        function purgeChat() {
+            fetch('/api/ethics/purge', {method: 'DELETE'}).then(r => r.json()).then(() => {
+                document.getElementById('chat-history').innerHTML =
+                    '<div class="card"><b>System:</b> Memory purged — start a fresh conversation.</div>';
+                fetch('/api/state').then(r => r.json()).then(s => {
+                    renderState(s.active_memories, s.pruned_memories, s.comparison, s.budget_evicted_memories);
+                    renderBothSides(s);
+                    renderTimeline(s.timeline || []);
+                });
+            });
+        }
+
+        function renderThisTurn(t) {
+            if (!t) return '';
+            const es = v => esc(v);
+            const lat = t.latency || {};
+            const latChips = Object.entries(lat).map(([k, v]) => `<span class="tag" title="${k}">${k} ${num(v, 0)}ms</span>`).join(' ') || '';
+            const ret = t.retrieval || {};
+            const ranks = ret.ranked || [];
+            const retRows = ranks.slice(0, 10).map((r, i) => {
+                const inj = r.injected ? ' <span class="good">✓ injected</span>' : ' <span class="muted">ranked only</span>';
+                return `<tr><td>#${r.rank}</td><td><span class="tag ${esc(r.category || '')}">${esc(r.category || '')}</span> "${es(r.fact)}" <span class="muted">· turn ${r.source_turn_id ?? '?'}</span>${inj}</td>
+                    <td class="${r.retrieval_engine === 'embedding' ? 'good' : ''}">${r.retrieval_engine || ''}</td>
+                    <td class="num">${num(r.retrieval_sim, 3)}</td><td class="num">${num(r.importance, 3)}</td><td class="num">${num(r.measured_tokens, 0)}</td></tr>`;
+            }).join('') || '<div class="muted">no memories scored ≥ threshold</div>';
+            const st = t.storage || {};
+            const stores = (st.written || []).map(f => {
+                const cls = f.kind === 'new' ? 'good' : (f.kind === 'reinforced' ? 'kept' : 'bad');
+                return `<div class="mem-item"><span class="tag ${cls}">${f.kind}</span> "${es(f.fact)}" <span class="muted">· ${es(f.note)} · ${num(f.tokens, 0)} tok · M(t)=${num(f.importance, 3)}</span></div>`;
+            }).join('') || '<div class="muted">no durable facts extracted this turn</div>';
+            const evics = (t.evictions || {}).pruned_this_turn || [];
+            const budgetEvics = (t.evictions || {}).budget_this_turn || [];
+            const evRows = budgetEvics.map(b => {
+                const why = b.eviction_reason ? (b.eviction_reason.detail || b.eviction_reason.reason || '') : 'budget squeeze';
+                return `<div class="mem-item"><span class="tag bad">budget-evicted</span> "${es(b.fact)}" <span class="muted">· turn ${b.source_turn_id ?? '?'} · ${es(why)}</span></div>`;
+            }).join('');
+            const pRows = evics.map(p =>
+                `<div class="mem-item"><span class="tag pruned">decay-pruned</span> "${es(p.fact)}" <span class="muted">· ${es(p.reason || '')}</span></div>`).join('');
+            return `
+                <details class="turn-detail-box" open>
+                    <summary>The turn's memory work — retrieved ${ret.injected_count} injected of ${ranks.length} scored, ${(st.written || []).length} stored</summary>
+                    <div style="margin:8px 0;">${latChips}</div>
+                    <h4>Pulled from memory (ranked)</h4>
+                    <table><thead><tr><th>Rank</th><th>Memory</th><th>Engine</th><th>sim</th><th>M(t)</th><th>tok</th></tr></thead>
+                        <tbody>${retRows}</tbody></table>
+                    <div class="muted" style="margin-top:4px;">injection limit ${num(ret.injection_token_limit, 0)} · ${num(ret.injected_tokens, 0)} tokens injected into the answer prompt</div>
+                    <h4>Stored this turn</h4>${stores}
+                    ${(evRows || pRows) ? `<h4>Forgot this turn</h4>${evRows}${pRows}` : ''}
+                </details>`;
+        }
+
+        function appendBaselineToggle(detailEl, payload) {
+            detailEl.insertAdjacentHTML('beforeend',
+                `<div style="margin-top:8px;"><button class="btn-sm" onclick="chatBaseline(this)">Compare: what would the barebones window say?</button>
+                <div data-baseline></div></div>`);
+        }
+
+        async function chatBaseline(btn) {
+            btn.disabled = true;
+            const box = btn.parentElement.querySelector('[data-baseline]');
+            box.innerHTML = '<span class="muted">replaying the last N in-window turns through the raw-window model…</span>';
+            const res = await fetch('/api/chat/baseline', {method: 'POST'});
+            const d = await res.json();
+            const se = (x, n) => {
+                const s = (x || '').replace(/</g, '&lt;');
+                return s.length > (n || 400) ? s.slice(0, n) + '…' : s;
+            };
+            box.innerHTML =
+                `<div class="card" style="margin-top:6px;"><b>Barebones (raw window) answered:</b> ${se(d.baseline_answer)}</div>
+                <div class="muted" style="font-size:0.8rem;">window: last ${d.window_turn_count} turns (<span class="num">${num(d.window_tokens, 0)}</span> measured tokens) · ${num(d.latency_ms, 0)}ms · facts seen: ${(d.facts_seen || []).slice(0, 8).map(f => `"${se(f, 60)}"`).join(', ') || 'none'}</div>`;
+        }
+
+        async function loadModels() {
+            const res = await fetch('/api/models');
+            const data = await res.json();
+            const sel = document.getElementById('model-select');
+            sel.innerHTML = data.models.map(m =>
+                `<option value="${m.name}" ${m.name === data.active ? 'selected' : ''}>${m.name}</option>`).join('');
+            sel.onchange = async () => {
+                await fetch('/api/models/select', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({model: sel.value})
+                });
+                loadModels();
+            };
+            modelReady = true;
+        }
+
+        async function applyBudget() {
+            const budget = parseInt(document.getElementById('budget-input').value, 10) || 4096;
+            const res = await fetch('/api/settings', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({max_context_tokens: budget})
+            });
+            const data = await res.json();
+            if (data.comparison) renderComparison(data.comparison);
+        }
+
+        async function loadDemo() {
+            const params = demoParams();
+            setProgressVisible(true);
+            const res = await fetch('/api/demo/scenario', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(params)
+            });
+            const data = await res.json();
+            if (data.detail) {
+                setProgressVisible(false);
+                alert(data.detail);
+                return;
+            }
+            document.getElementById('chat-history').innerHTML =
+                `<div class="card"><b>System:</b> LLM demo started — ${params.turns} turns, ${params.planted_count} planted facts, every turn parsed by llama3.1 (${params.density_pct}% re-mention density, ${params.filler} filler)${params.hard_cases ? `, with ${params.n_corrections} corrections + ${params.n_negations} negations hard cases` : ''}.</div>`;
+            startDemoProgressPoll();
+        }
+
+        function syncHardCaseInputs(cb) {
+            document.getElementById('corrections-input').disabled = !cb.checked;
+            document.getElementById('negations-input').disabled = !cb.checked;
+        }
+
+        function demoParams() {
+            document.getElementById('turns-preset').value = document.getElementById('turns-input').value;
+            const hardCases = document.getElementById('hardcases-input').checked;
+            return {
+                turns: Math.min(500, Math.max(20, parseInt(document.getElementById('turns-input').value, 10) || 150)),
+                density_pct: Math.min(100, Math.max(0, parseFloat(document.getElementById('density-input').value) || 20)),
+                planted_count: Math.min(50, Math.max(1, parseInt(document.getElementById('planted-input').value, 10) || 5)),
+                filler: document.getElementById('filler-select').value,
+                hard_cases: hardCases,
+                n_corrections: hardCases ? Math.min(8, Math.max(0, parseInt(document.getElementById('corrections-input').value, 10) || 2)) : 0,
+                n_negations: hardCases ? Math.min(4, Math.max(0, parseInt(document.getElementById('negations-input').value, 10) || 1)) : 0
+            };
+        }
+
+        let demoPollTimer = null;
+
+        function setProgressVisible(on) {
+            document.getElementById('demo-progress').hidden = !on;
+        }
+
+        function updateProgress(job) {
+            const done = job.turns_done || 0, total = job.turns_total || 0;
+            const pct = total ? Math.round(done / total * 100) : 0;
+            document.getElementById('demo-progress-bar').style.width = pct + '%';
+            const now = parseInt(job.current_turn || done, 10);
+            document.getElementById('demo-progress-label').innerText =
+                `Extracting turn ${now} of ${total} (${pct}%)` +
+                (job.eta_s != null ? ` · ~${Math.round(job.eta_s / 60)} min ${job.eta_s % 60}s left` : '');
+        }
+
+        async function startDemoProgressPoll() {
+            clearInterval(demoPollTimer);
+            demoPollTimer = setInterval(async () => {
+                try {
+                    const res = await fetch('/api/demo/job');
+                    const { job } = await res.json();
+                    if (!job || !job.running) {
+                        clearInterval(demoPollTimer);
+                        demoPollTimer = null;
+                        setProgressVisible(false);
+                        if (job?.cancelled) {
+                            document.getElementById('chat-history').innerHTML +=
+                                '<div class="card"><b>System:</b> LLM demo cancelled mid-run.</div>';
+                        } else if (job?.error) {
+                            alert('Demo failed: ' + job.error);
+                        } else {
+                            const s = await (await fetch('/api/state')).json();
+                            renderState(s.active_memories, s.pruned_memories, s.comparison, s.budget_evicted_memories);
+                            renderTimeline(s.timeline || []);
+                            renderBothSides(s);
+                            const hc = (s.ground_truth || []).filter(g => g.hard_case);
+                            const hcCorr = hc.filter(g => g.is_correction_target).length;
+                            const hcNeg = hc.filter(g => g.is_negation).length;
+                            document.getElementById('chat-history').innerHTML =
+                                `<div class="card"><b>System:</b> LLM demo complete — ${s.current_turn} turns replayed via real extraction, ${(s.ground_truth || []).filter(g => g.planted).length} planted facts${hc.length ? ` + ${hcCorr} corrections + ${hcNeg} negations ground-truth` : ''}.</div>`;
+                        }
+                    } else {
+                        updateProgress(job);
+                    }
+                } catch (e) { /* server restarting */ }
+            }, 1500);
+        }
+
+        async function cancelDemoJob() {
+            await fetch('/api/demo/job/cancel', {method: 'POST'});
+        }
+
+        async function resetMemory() {
+            clearInterval(demoPollTimer);
+            demoPollTimer = null;
+            setProgressVisible(false);
+            try {
+                await fetch('/api/demo/job/cancel', {method: 'POST'});
+                await new Promise(r => setTimeout(r, 600));
+            } catch (e) {}
+            await fetch('/api/ethics/purge', {method: 'DELETE'});
+            renderState([], [], null);
+            document.getElementById('chat-history').innerHTML =
+                '<div class="card"><b>System:</b> Memory purged. Click "Load Demo" to replay the test, or chat live.</div>';
+            document.getElementById('timeline').innerHTML = '';
+            document.getElementById('barebones-preview').innerHTML =
+                'Load the demo to inspect the raw-turn window and how many planted facts survive in the baseline\'s immediate context.';
+            document.getElementById('both-sides').innerHTML = 'Load a demo to compare what each side remembers vs forgets.';
+            document.getElementById('experiments').innerHTML = '';
+            document.getElementById('exp-meta').innerText = 'Click "Run Experiments (E1–E6)" to evaluate both systems on the currently loaded scenario.';
+        }
+
+        function renderState(active, pruned, comparison, budgetEvicted) {
+            renderMemories(active, 'active-memories', 'active-count');
+            renderMemories((pruned || []).concat(budgetEvicted || []), 'pruned-memories', 'pruned-count', true);
+            if (comparison) renderComparison(comparison);
+        }
+
+        function renderComparison(c) {
+            if (!c) {
+                document.getElementById('baseline-bar').style.width = '0%';
+                document.getElementById('optimized-bar').style.width = '0%';
+                document.getElementById('baseline-tokens').innerText = '0 / 0 tokens in context';
+                document.getElementById('optimized-tokens').innerText = '0 tokens in curated context';
+                document.getElementById('optimized-mem').innerText = '';
+                document.getElementById('baseline-evicted').innerText = '';
+                document.getElementById('forgot-kept').innerText = '';
+                document.getElementById('planted-stats').innerText = '';
+                drawChart(null, 4096);
+                return;
+            }
+            const budget = c[BUDGET_KEY] || 4096;
+
+            document.getElementById('baseline-bar').style.width = Math.min(100, (c.baseline_context_tokens || 0) / budget * 100) + '%';
+            document.getElementById('baseline-tokens').innerText =
+                `${num(c.baseline_context_tokens)} / ${budget.toLocaleString()} tokens in context — measured live (${c.baseline_turns_in_context} turns, cumulative ${num(c.cumulative_history_tokens)})` +
+                ((c.baseline_memory_preview || {}).format_tokens_per_turn ? ` ~${(c.baseline_memory_preview || {}).format_tokens_per_turn} tokens/turn formatting counted against budget` : '');
+            document.getElementById('optimized-bar').style.width = Math.min(100, (c.active_memory_tokens || 0) / budget * 100) + '%';
+            const engines = (c.retrieval_engines || []).join(' / ') || 'lexical';
+            document.getElementById('optimized-tokens').innerText =
+                `${num(c.optimized_context_tokens)} tokens injected this turn — measured live · ${num(c.active_memory_tokens)} total in memory · ${num(c.active_memory_tokens)} / ${budget.toLocaleString()} total context usage · via ${engines}`;
+            let optMem = `${c.active_memory_count} active memories · ${c.pruned_memory_count} deliberately forgotten`;
+            if (c.budget_squeezed) {
+                const ev = c.adaptive_budget_evictions || [];
+                optMem += ` · <span class="bad">⚠ token budget ${num(c.adaptive_budget_cap)}: ${ev.length} evicted (lowest M(t)) — first: "${((ev[0] || {}).fact || '')}"</span>`;
+            }
+            document.getElementById('optimized-mem').innerHTML = optMem;
+
+            const evictions = c.baseline_evicted_turn_ids || [];
+            const preview = c.baseline_memory_preview || {};
+            document.getElementById('baseline-evicted').innerHTML = evictions.length
+                ? `Barebones window already dropped ${evictions.length} earliest turns (#${evictions[0]}–#${evictions[evictions.length - 1]}). Any fact they held is gone from the model's context.`
+                : `No turns evicted yet — keep typing or load the demo.`;
+
+            if (preview.planted_facts_total) {
+                const iv = preview.planted_facts_in_window_vs_evicted || {in_window: 0, evicted: 0};
+                const kept = c.facts_barebones_forgot_you_still_keep || [];
+                const hc = preview.hard_case_facts || 0;
+                const hcCorr = preview.hard_case_corrections || 0;
+                const hcNeg = preview.hard_case_negations || 0;
+                document.getElementById('planted-stats').innerHTML =
+                    `<b>Planted facts by context</b> (${preview.planted_facts_total} planted${hc ? ` + ${hcCorr} corrections + ${hcNeg} negations ground-truth` : ''}):<br>` +
+                    `${iv.in_window} planted in window · <span class="bad">${iv.evicted} planted evicted (lost by baseline)</span>` +
+                    (iv.evicted ? ` · <span class="good">you still remember ${kept.length} of ${iv.evicted}</span>`
+                                : (c.forgot_by_both || 0) > 0 ? ` · <span class="bad">adaptive also lost ${c.forgot_by_both}</span>` : '');
+            }
+
+            const kept = c.facts_barebones_forgot_you_still_keep || [];
+            const extraOther = c.kept_extra_other || [];
+            const lostBoth = c.forgot_by_both || 0;
+            let keptHtml = '';
+            if (kept.length) {
+                keptHtml = '<b class="kept">Barebones forgot these planted facts, but you still remember:</b><br>' +
+                    kept.map(f => `• <span class="tag ${esc(f.category)}">${esc(f.category)}</span> "${esc(f.fact)}" (turn ${f.source_turn}, M(t)=${f.current_importance})`).join('<br>');
+            }
+            if (extraOther.length) {
+                keptHtml += `<div class="muted" style="margin-top:6px;">…plus ${extraOther.length} other (non-planted) ${extraOther.length === 1 ? 'memory' : 'memories'} from evicted turns also kept.</div>`;
+            }
+            if (lostBoth > 0) {
+                keptHtml += `<div class="bad" style="margin-top:6px;">Heads-up: adaptive also lost ${lostBoth} planted ${lostBoth === 1 ? 'fact' : 'facts'} from evicted turns.</div>`;
+            }
+            document.getElementById('forgot-kept').innerHTML = keptHtml;
+
+            renderBarebonesWindow(preview);
+            renderVram(c.vram);
+            drawChart(c.token_history, budget);
+        }
+
+        function renderBarebonesWindow(preview) {
+            const cont = document.getElementById('barebones-preview');
+            if (!preview || !preview.included_turns) { cont.innerHTML = 'Load the demo to inspect the raw-turn window.'; return; }
+            const snippet = (t) => t.excerpt.replace(/\.\.\..*/, '…');
+            const details = preview.evicted_turns_detail || [];
+            const fmtNote = preview.format_tokens_per_turn
+                ? ` · <span class="muted">~${preview.format_tokens_per_turn} tokens/turn of transcript formatting counted against the budget</span>` : '';
+            const evictedList = details.length
+                ? `<div class="muted" style="margin-top:8px;"><b>Why each evicted turn was dropped:</b></div>` +
+                  details.slice(-12).reverse().map(d =>
+                      `<div class="card" style="padding:6px 10px;font-size:0.82rem;"><span class="tl-entry"><span class="turn">#${d.turn_id}</span> · ${d.tokens.toLocaleString()} tok</span> <span class="lost">${esc(d.reason)}</span></div>`
+                  ).join('') +
+                  (details.length > 12 ? `<div class="muted" style="margin-top:4px;">…and ${details.length - 12} older evicted turns.</div>` : '')
+                : '';
+            cont.innerHTML =
+                `<div class="legend" style="margin-top:0;">` +
+                `<span><span class="sw green"></span>Window holds the last ${preview.included_turns.length} turns — the model sees only these as raw transcript.</span>` +
+                `<span><span class="sw red"></span>${(preview.evicted_turn_ids || []).length} earlier turns evicted (~${(preview.evicted_tokens || 0).toLocaleString()} content tokens dropped)${fmtNote}.</span>` +
+                `</div>` +
+                `<div style="max-height:220px;overflow-y:auto;">` +
+                preview.included_turns.slice(-8).reverse().map(t =>
+                    `<div class="card" style="padding:6px 10px;"><span class="tl-entry"><span class="turn">#${t.turn_id}</span> · ${t.tokens.toLocaleString()} tokens</span> <span class="muted">"${snippet(t)}"</span></div>`
+                ).join('') +
+                `</div>` +
+                evictedList;
+        }
+
+        function renderBothSides(s) {
+            const cont = document.getElementById('both-sides');
+            const c = s.comparison || {};
+            const summary = c.baseline_memory_summary || {};
+            const active = s.active_memories || [];
+            const pruned = s.pruned_memories || [];
+            const budgetEvicted = s.budget_evicted_memories || [];
+            const gt = s.ground_truth || [];
+            if (!s.current_turn) {
+                cont.innerHTML = 'Load a demo to compare what each side remembers vs forgets.';
+                return;
+            }
+            const proposedActs = active.filter(m => m.source_turn_id != null);
+            const proposedPruned = pruned.filter(m => m.source_turn_id != null);
+            const dupReMentions = proposedActs.reduce((a, m) => a + Math.max(0, ((m.duplicates || 1) - 1)), 0);
+            const dupMergedInto = proposedActs.filter(m => (m.duplicates || 1) > 1).length;
+
+            const memLine = (f, extra = '') =>
+                `<div class="mem-item"><span class="tag ${esc(f.category || 'transient')}">${esc(f.category || '')}</span> "${esc(f.fact)}" <span class="muted">· turn ${f.source_turn ?? f.source_turn_id}${extra}</span></div>`;
+            const reasonLine = (f) => {
+                if (f.lost_reason) return ` <span class="lost" title="${esc(f.lost_reason)}">lost at eviction · ${esc(f.lost_reason)}</span>`;
+                if (f.prune_reason) return ` <span class="lost" title="${esc(f.prune_reason)}">${esc(f.prune_reason)}</span>`;
+                if (f.eviction_reason) {
+                    const why = f.eviction_reason.detail || f.eviction_reason.reason || 'budget squeeze';
+                    return ` <span class="lost" title="${esc(why)}">budget-evicted · ${esc(why)}</span>`;
+                }
+                return '';
+            };
+
+            const proposedR = proposedActs.slice(0, 30).map(f => memLine(f,
+                ` · M(t)=${((f.current_importance ?? f.base_score) || 0).toFixed(3)}` +
+                (((f.duplicates || 1) > 1) ? ` · <span class="muted" title="N re-mentions folded into this entry">dup×${f.duplicates}</span>` : '')
+            )).join('') || '<div class="mem-item muted">none</div>';
+            const adaptiveL = proposedPruned.slice(-15).reverse().map(f => memLine(f, reasonLine(f))).join('') +
+                budgetEvicted.slice(-10).reverse().map(f => memLine(f, ' <span class="lost" title="' + esc(f.eviction_reason?.detail || 'budget squeeze') + '">budget-evicted · ' + esc(f.eviction_reason?.detail || 'budget squeeze') + '</span>')).join('');
+            const gap = (summary.remembered || []).length - proposedActs.length;
+            const proposedL = adaptiveL || (gap > 0
+                ? `<div class="mem-item muted">adaptive is smaller than the raw window even with no deliberate forgetting — ${dupReMentions} re-mentions were folded into ${dupMergedInto} existing entries (dup×).</div>`
+                : '<div class="mem-item muted">nothing deliberately forgotten</div>');
+            const baselineR = (summary.remembered || []).slice(0, 30).map(f => memLine(f)).join('') ||
+                '<div class="mem-item muted">none</div>';
+            const baselineL = (summary.lost || []).slice(-15).reverse().map(f => memLine(f, reasonLine(f))).join('') ||
+                '<div class="mem-item muted">nothing lost yet</div>';
+
+            let head2head = '';
+            if (gt.length) {
+                head2head = h2hTable(gt, proposedActs, summary.remembered || []);
+            }
+
+            cont.innerHTML = `
+                <div style="max-width:860px;margin:6px 0;padding:8px 10px;background:#0f172a;border-radius:6px;font-size:0.78rem;color:#94a3b8;">
+                    <b>Why each side forgets:</b> adaptive deliberately forgets — importance M(t) decayed below the prune threshold, or budget squeeze (no room, lowest M(t) evicted). Barebones forgets mechanically — its source turn fell out of the raw transcript window once newer turns filled the token budget.
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div class="card"><b>Proposed (adaptive memory)</b>
+                        <h4>Remembers <span class="good">(${proposedActs.length} active${dupReMentions ? ` · ${dupReMentions} re-mentions deduped into ${dupMergedInto}` : ''})</span></h4>
+                        <div class="mem-list">${proposedR}</div>
+                        <h4 class="pruned">Forgotten <span class="pruned">(${proposedPruned.length} pruned · ${budgetEvicted.length} evicted for budget)</span></h4>
+                        <div class="mem-list">${proposedL}</div>
+                    </div>
+                    <div class="card"><b>Barebones (raw transcript window)</b>
+                        <h4>Remembers <span class="good">(${(summary.remembered || []).length} facts in window)</span></h4>
+                        <div class="mem-list">${baselineR}</div>
+                        <h4 class="pruned">Forgotten <span class="pruned">(${(summary.lost || []).length} facts lost at eviction)</span></h4>
+                        <div class="mem-list">${baselineL}</div>
+                    </div>
+                </div>
+                ${head2head}`;
+        }
+
+        function renderVram(v) {
+            const chip = document.getElementById('vram-chip');
+            if (!v) return;
+            const s = v.sampled || {};
+            const used = s.used_mib != null ? `${s.used_mib} / ${s.total_mib} MiB` : 'n/a';
+            const kv = (v.kv_baseline_mib != null && v.kv_optimized_mib != null && v.kv_delta_mib != null)
+                ? `KV est: barebones <b>${v.kv_baseline_mib.toFixed(1)}</b> · adaptive <b>${v.kv_optimized_mib.toFixed(1)}</b> MiB · Δ <b>−${v.kv_delta_mib.toFixed(1)}</b>`
+                : '';
+            chip.innerHTML = `GPU: <b>${used}</b> &nbsp;|&nbsp; ${kv} &nbsp;|&nbsp; ${v.active_model}`;
+        }
+
+        function renderTimeline(timeline) {
+            const cont = document.getElementById('timeline');
+            if (!timeline || !timeline.length) { cont.innerHTML = '<span class="muted">No turns yet.</span>'; return; }
+            const escShort = x => esc(x).slice(0, 220);
+            cont.innerHTML = timeline.slice().reverse().slice(0, 12).map(e => {
+                const saved = (e.optimized_retrieved_this_turn || []).length;
+                const lost = e.baseline_newly_lost_facts || [];
+                const ans = (e.baseline_answer || e.optimized_answer) ?
+                    `<div style="margin-top:4px;"><span class="good">opt:</span> ${esc(e.optimized_answer)}<br><span class="bb-ev">base:</span> ${esc(e.baseline_answer)}</div>` : '';
+                return `<div class="tl-entry">
+                    <span class="turn">turn ${e.turn_id}</span> —
+                    <span class="muted">"${escShort((e.user_message || '').substring(0, 60))}"</span><br>
+                    <span class="muted">optimized: ${saved} fact(s) injected (${e.optimized_injected_tokens ?? 0} tok)${e.optimized_budget_squeezed ? ' <span class="bad">⚠ squeezed</span>' : ''} · ${(e.optimized_pruned_this_turn || []).length} pruned this turn · barebones: ${e.baseline_window_tokens ?? 0}-tok window${(e.baseline_facts_seen || []).length ? `, saw ${e.baseline_facts_seen.length} fact(s)` : ''}</span>
+                    ${lost.length ? `<br><span class="lost">☓ baseline lost this fact: ${lost.map(f => `"${esc(f.fact)}"`).join('; ')}</span>` : ''}${ans}
+                </div>`;
+            }).join('');
+        }
+
+        async function runExperiments() {
+            const btn = document.querySelector('#experiments-panel button');
+            if (btn) { btn.disabled = true; btn.innerText = 'Running…'; }
+            const res = await fetch('/api/experiments/run', {method: 'POST'});
+            const data = await res.json();
+            if (btn) { btn.disabled = false; btn.innerText = 'Run Experiments (E1–E6)'; }
+            if (!data) return;
+            if (data.detail) { alert(data.detail); return; }
+            renderExperiments(data);
+        }
+
+        function num(x, digits) {
+            if (x === null || x === undefined || Number.isNaN(x)) return '—';
+            return (digits != null ? Number(x).toFixed(digits) : Number(x).toLocaleString());
+        }
+
+        function esc(x) {
+            return (x == null ? '' : String(x))
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function hardCaseTable(hc) {
+            const rows = [
+                ['Trap recall (trap facts retained)', num(hc.trap_recall, 3)],
+                ['Correction recall (revised facts retained)', num(hc.correction_recall, 3)],
+                ['Negation recall (negated requirements stored)', num(hc.negation_recall, 3)],
+            ];
+            if (hc.wrongly_retained_after_correction) {
+                const w = hc.wrongly_retained_after_correction;
+                rows.push(['Wrongly retained after correction (stale kept)',
+                    `${num(w.fraction, 3)} (${w.wrongly_retained}/${w.superseded_expected})`]);
+            }
+            const cats = hc.per_category_recall ? Object.entries(hc.per_category_recall) : [];
+            const catTbl = cats.length ?
+                `<div class="muted" style="font-size:0.78rem;margin-bottom:8px;">per-category: ${
+                    cats.map(([c, r]) => `${c}=${num(r.recall, 3)} (${r.matched}/${r.expected})`).join(' · ')}</div>` : '';
+            return `<h3>E2 — Hard cases (corrections/negations turned on)</h3><table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody>${
+                rows.map(r => `<tr><td>${r[0]}</td><td class="num">${r[1]}</td></tr>`).join('')}</tbody></table>${catTbl}`;
+        }
+
+        function renderExperiments(d) {
+            document.getElementById('exp-meta').innerHTML =
+                `Model under test: <b>${d.model_under_test}</b> · token budget <b>${d.max_context_tokens}</b> · evaluated live on the loaded scenario.` +
+                ` <span class="muted">(E1 = Wilcoxon signed-rank on per-turn tokens; E2 = recall + forgetting precision; E3 = pipeline latency; E4 = needle-in-haystack by distance; E5 = ablations vs full system; E6 = statistical power of E1.)</span>`;
+            const s = (on) => `<span class="${on ? 'good' : 'bad'}">${on ? '✔' : '✘'}</span>`;
+            const cont = document.getElementById('experiments');
+            const e1 = d.E1_token_efficiency, e2 = d.E2_memory_accuracy, e3 = d.E3_latency;
+            const e4 = d.E4_needle_in_haystack, e5 = d.E5_ablations, e6 = d.E6_power_check;
+            cont.innerHTML = '';
+
+            const table = (title, headers, rows) => {
+                cont.innerHTML += `<h3>${title}</h3><table><thead><tr>${
+                    headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${
+                    rows.map(r => `<tr>${
+                        r.map(c => `<td class="${/^[0-9.\-–—]+$/.test(c) ? 'num' : ''}">${c}</td>`).join('')}</tr>`)
+                    .join('')}</tbody></table>`;
+            };
+
+            table('E1 — Token Efficiency (Wilcoxon signed-rank, per turn)',
+                ['Metric', 'Proposed', 'Baseline', 'Significance'],
+                [[
+                    `Injected context tokens (mean of ${e1.n})`,
+                    num(e1.proposed_mean_tokens, 1),
+                    num(e1.baseline_mean_tokens, 1),
+                    (e1.significant ? s(true) : e1.significant === false ? s(false) : '—') +
+                    (e1.p_value != null && !Number.isNaN(e1.p_value) ? ` p=${e1.p_value < 0.001 ? e1.p_value.toExponential(2) : num(e1.p_value, 3)}` : '')
+                ]]);
+
+            table('E2 — Memory Accuracy vs Ground Truth' + (e2.baseline_recall_real ? ' (real LLM replay)' : ' (estimate)'),
+                ['Metric', 'Proposed', 'Baseline'],
+                [
+                    ['Positive recall (found facts)', num(e2.proposed_positive_recall, 3), num(e2.baseline_positive_recall, 3)],
+                    ['Forgetting precision (transient correctly dropped)', num(e2.proposed_forgetting_precision, 3), num(e2.baseline_forgetting_precision, 3)],
+                ]);
+            if (e2 && e2.hard_case) {
+                cont.innerHTML += hardCaseTable(e2.hard_case);
+            }
+
+            table('E3 — Pipeline Latency',
+                ['Stage', 'Avg ms'],
+                [['Extraction', num(e3.extraction_ms, 2)],
+                 ['Window replay (real LLM)', num(e3.window_replay_ms, 2)],
+                 ['Answer (real LLM)', num(e3.answer_ms, 2)],
+                 ['Scoring', num(e3.scoring_ms, 3)],
+                 ['Compression', num(e3.compression_ms, 3)],
+                 ['Decay', num(e3.decay_ms, 3)],
+                 ['Budget evict', num(e3.budget_evict_ms, 3)],
+                 ['Retrieval', num(e3.retrieval_ms, 3)],
+                 ['Embedding', num(e3.embedding_ms, 3)]]);
+
+            const e4Rows = (e4.distances || []).map((d, i) =>
+                [`≥ ${d} turns back`, num(e4.proposed_accuracy[i], 3), num(e4.baseline_accuracy[i], 3)]);
+            table('E4 — Needle-in-Haystack by Recency Distance (recall)',
+                ['Distance', 'Proposed', 'Baseline'], e4Rows);
+
+            const e5Rows = Object.values(e5 || {}).map(a => [
+                a.ablation, num(a.accuracy, 3), num(a.token_overhead_vs_full, 2) + '×', a.pruned_count]);
+            table('E5 — Ablations (replay of same scenario)',
+                ['Component', 'Accuracy', 'Token overhead vs full', 'Pruned'],
+                e5Rows);
+
+            table('E6 — Statistical Power (of E1 comparison)',
+                ['Metric', 'Value'],
+                [['Observed Cohen\'s d', num(e6.observed_cohens_d, 3)],
+                 ['Required n per group (power=0.80, α=0.05)', num(e6.required_n_per_group)],
+                 ['Actual n (turns evaluated)', num(e6.n_actual)]]);
+        }
+
+        function renderMemories(list, elementId, countId, isPruned) {
+            if (!document.getElementById(countId)) return;
+            document.getElementById(countId).innerText = list.length;
+            const container = document.getElementById(elementId);
+            container.innerHTML = list.map(m => `
+                <div class="card">
+                    <span class="tag ${esc(m.category)}">${esc(m.category)}</span>
+                    <p style="margin:8px 0;">${esc(m.fact)}</p>
+                    <small style="color:#94a3b8;">
+                        Turn: ${m.source_turn_id} |
+                        ${isPruned ? (m.prune_reason || (m.eviction_reason ? (m.eviction_reason.detail || m.eviction_reason.reason || 'budget evicted') : m.evicted_at_turn ? 'budget evicted' : 'pruned')) : 'M(t): ' + (m.current_importance !== undefined ? m.current_importance : m.base_score).toFixed(3)}
+                    </small>
+                </div>
+            `).join('');
+        }
+
+        function drawChart(th, budget) {
+            const svg = document.getElementById('chart');
+            if (!th || th.length === 0) {
+                svg.innerHTML = '<text x="20" y="100">Load the demo to see context growth.</text>';
+                return;
+            }
+            if (th.length > 300) {
+                const step = (th.length - 1) / 299;
+                th = th.map((_, i) => th[Math.min(th.length - 1, Math.round(i * step))]);
+            }
+            const W = 600, H = 200, pad = 30;
+            const maxY = Math.max(budget, ...th.map(p => p.raw_cumulative)) * 1.05;
+            const n = th.length;
+            const x = i => pad + (W - 2 * pad) * i / (n - 1 || 1);
+            const y = v => H - pad - (H - 2 * pad) * Math.min(v, maxY) / maxY;
+
+            const rawPts = th.map((p, i) => `${x(i).toFixed(1)},${y(Math.min(p.raw_cumulative, budget)).toFixed(1)}`).join(' ');
+            const actPts = th.map((p, i) => `${x(i).toFixed(1)},${y(p.active_tokens).toFixed(1)}`).join(' ');
+
+            svg.innerHTML =
+                `<line x1="${pad}" y1="${y(budget)}" x2="${W - pad}" y2="${y(budget)}" stroke="#f87171" stroke-width="1" stroke-dasharray="4,4"/>` +
+                `<text x="${W - pad}" y="${y(budget) - 4}" text-anchor="end">token budget ${budget}</text>` +
+                `<polyline points="${rawPts}" fill="none" stroke="#ef4444" stroke-width="2"/>` +
+                `<polyline points="${actPts}" fill="none" stroke="#4ade80" stroke-width="2"/>` +
+                `<text x="${pad}" y="${H - 8}">turn 1</text>` +
+                `<text x="${W - pad}" y="${H - 8}" text-anchor="end">turn ${n}</text>`;
+        }
+
+        async function poll() {
+            try {
+                const [stateRes, tlRes] = await Promise.all([
+                    fetch('/api/state'), fetch('/api/timeline')
+                ]);
+                const s = await stateRes.json();
+                const tl = await tlRes.json();
+                renderState(s.active_memories, s.pruned_memories, s.comparison, s.budget_evicted_memories);
+                renderTimeline(tl.timeline);
+                renderBothSides(s);
+                if (currentPage() === 'memory') { MEM.load(); }
+                if (currentPage() === 'barebones') { BB.load(); }
+                if (currentPage() === 'experiments') { EXP.load(); }
+                if (currentPage() === 'timeline') { TL.loadCurrent(); }
+            } catch (e) { /* server restarting */ }
+        }
+
+        const VIEWS = ['dashboard', 'barebones', 'memory', 'timeline', 'experiments', 'research'];
+        function currentPage() {
+            const h = (location.hash || '#/').replace(/^#\//, '').trim() || 'dashboard';
+            return VIEWS.includes(h) ? h : 'dashboard';
+        }
+        function showPage(name) {
+            VIEWS.forEach(v => {
+                document.getElementById('view-' + v).style.display = v === name ? '' : 'none';
+            });
+            document.querySelectorAll('.subnav a.sn').forEach(a =>
+                a.classList.toggle('active', (a.getAttribute('href') === '#/' && name === 'dashboard') ||
+                                            a.getAttribute('href') === '#/' + name));
+            if (name === 'barebones' && !window.__bbLoaded) { BB.load(); window.__bbLoaded = true; }
+            if (name === 'memory') { MEM.load(); }
+            if (name === 'experiments') { EXP.load(); }
+            if (name === 'timeline') { TL.load(); }
+            if (name === 'research') { RCTL.load(); } else { RCTL.stopPoll(); }
+        }
+        window.addEventListener('hashchange', () => showPage(currentPage()));
+
+        const BB = { evictShown: 200, last: null,
+            async load() {
+                try {
+                    const res = await fetch('/api/comparison/full');
+                    if (!res.ok) return;
+                    const c = await res.json();
+                    BB.last = c;
+                    const incl = c.baseline_memory_preview.included_turns || [];
+                    const evict = c.baseline_evicted_turn_ids || [];
+                    const p = c.baseline_memory_preview || {};
+                    document.getElementById('bb-full-meta').innerHTML =
+                        `<b>${incl.length}</b> turns in window (${(c.baseline_context_tokens ?? 0).toLocaleString()} of ${(c.system_token_budget ?? 4096).toLocaleString()} tokens) · <b class="bb-ev">${evict.length}</b> earlier turns evicted (~${(p.evicted_tokens || 0).toLocaleString()} tokens dropped)`;
+                    const rows = incl.map((t, i) =>
+                        `<div class="bb-turn"><span class="bb-idx">#${t.turn_id} · ${t.tokens.toLocaleString()} tok</span>
+                            <span class="muted">"${(t.excerpt || '').replace(/\.\.\..*/, '…').replace(/</g, '&lt;')}"</span>
+                            ${i === incl.length - 1 ? '<span class="good" style="margin-left:auto;">(latest)</span>' : ''}</div>`).join('');
+                    const evDetail = p.evicted_turns_detail || [];
+                    const evWhy = id => (evDetail.find(d => d.turn_id === id) || {}).reason || '';
+                    const evRows = evict.slice(0, BB.evictShown).map(t =>
+                        `<div class="bb-turn old"><span class="bb-idx">#${t} · evicted</span><span class="bb-ev">outside the model's context — ${esc(evWhy(t)) || 'any fact it held is gone for the baseline.'}</span></div>`).join('');
+                    document.getElementById('bb-full').innerHTML =
+                        `<h3>Window (what the model actually receives)</h3>${rows || '<div class="muted">No turns yet.</div>'}` +
+                        (evict.length ? `<h3 class="pruned">Evicted turns (${evict.length}) ${evict.length > BB.evictShown ? '— showing first ' + BB.evictShown : ''}</h3>${evRows}` : '');
+                } catch (e) {}
+            },
+            loadMoreEvicted() { BB.evictShown += 200; BB.load(); }
+        };
+
+        const MEM = { shown: 100, last: null,
+            async load() {
+                try {
+                    const [stateRes, fullRes] = await Promise.all([fetch('/api/state'), fetch('/api/comparison/full')]);
+                    const st = await stateRes.json();
+                    const c = await fullRes.json();
+                    MEM.last = { st, c };
+                    const gt = st.ground_truth || [];
+                    const summary = c.baseline_memory_summary || {};
+                    let gapNote = '';
+                    const dupMerged = st.active_memories.filter(m => (m.duplicates || 1) > 1);
+                    const gap = (summary.remembered || []).length - st.active_memories.length;
+                    if (gap > 0 && st.pruned_memories.length === 0 && st.budget_evicted_memories.length === 0) {
+                        const dupReMentions = dupMerged.reduce((a, m) => a + Math.max(0, (m.duplicates || 1) - 1), 0);
+                        gapNote = `<div class="muted" style="font-size:0.72rem;margin:4px 0;">${st.active_memories.length} active vs ${(summary.remembered || []).length} in the raw window — ${dupReMentions} re-mentions were deduped into ${dupMerged.length} existing entries; nothing pruned or budget-evicted (no deliberate forgetting).</div>`;
+                    }
+                    const hcGt = (gt || []).filter(g => g.hard_case);
+                    document.getElementById('mem-full-meta').innerHTML =
+                        `<b>${st.active_memories.length}</b> active · <b>${st.pruned_memories.length}</b> pruned · ${(gt || []).filter(g => g.planted).length} planted + ${hcGt.filter(g => g.is_correction_target).length} corrections + ${hcGt.filter(g => g.is_negation).length} negations ground-truth · baseline: ${(summary.remembered || []).length} in window, ${(summary.lost || []).length} lost` + gapNote;
+                    const memItem = (f, extra) =>
+                        `<div class="mem-item"><span class="tag ${esc(f.category || 'transient')}">${esc(f.category || '')}</span> "${esc(f.fact)}" <span class="muted">· turn ${f.source_turn ?? f.source_turn_id}${extra || ''}</span></div>`;
+                    const why = (f) => {
+                        if (f.duplicates > 1) return ' <span class="muted" title="re-mentions folded into this entry">dup×' + f.duplicates + '</span>';
+                        if (f.prune_reason) return ' <span class="lost">' + f.prune_reason + '</span>';
+                        if (f.lost_reason) return ' <span class="lost" title="' + esc(f.lost_reason) + '">' + esc(f.lost_reason) + '</span>';
+                        if (f.eviction_reason) return ' <span class="lost">budget: ' + esc(f.eviction_reason.detail || f.eviction_reason.reason) + '</span>';
+                        return '';
+                    };
+                    const sect = (title, list, n, cls) => {
+                        const slice = (list || []).slice(0, n);
+                        return `<h3 class="${cls || ''}">${title} (${(list || []).length})${(list || []).length > n ? ' — showing ' + n : ''}</h3>${slice.map(f => memItem(f, why(f))).join('') || '<div class="muted">none</div>'}`;
+                    };
+                    let h2h = '';
+                    if (gt.length) {
+                        h2h = h2hTable(gt, st.active_memories, summary.remembered || []);
+                    }
+                    document.getElementById('mem-full').innerHTML =
+                        `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                            <div class="card"><b>Proposed (adaptive)</b>${sect('Active', st.active_memories, MEM.shown)}${sect('Pruned', st.pruned_memories, MEM.shown, 'pruned')}${sect('Budget-evicted', st.budget_evicted_memories, MEM.shown, 'pruned')}</div>
+                            <div class="card"><b>Barebones (raw window)</b>${sect('In window', summary.remembered, MEM.shown)}${sect('Lost at eviction', summary.lost, MEM.shown, 'pruned')}</div>
+                        </div>${h2h}`;
+                    document.querySelector('#view-memory button').innerText = MEM.shown >= Math.max(st.active_memories.length, st.pruned_memories.length, (summary.lost || []).length, (summary.remembered || []).length)
+                        ? 'Load more (+100)' : `Showing ${MEM.shown} — load more (+100)`;
+                } catch (e) {}
+            },
+            loadMore() { MEM.shown += 100; MEM.load(); }
+        };
+
+        const TL = { offset: 0, limit: 50, total: 0,
+            esc: x => (x || '').replace(/</g, '&lt;'),
+            async load() { TL.offset = Math.max(0, Math.min(TL.offset, Math.max(0, TL.total - TL.limit || 0))); TL.loadCurrent(); },
+            async loadCurrent() {
+                try {
+                    const res = await fetch(`/api/timeline/full?offset=${TL.offset}&limit=${TL.limit}`);
+                    const d = await res.json();
+                    TL.total = d.total;
+                    document.getElementById('tl-range').innerText = `turns ${TL.total ? d.offset + 1 : 0}–${Math.min(d.total, d.offset + d.limit)} of ${d.total}`;
+                    document.getElementById('tl-full').innerHTML = (d.entries || []).slice().reverse().map(e => {
+                        const saved = (e.optimized_retrieved_this_turn || []).length;
+                        const ans = (e.baseline_answer || e.optimized_answer) ?
+                            `<div style="margin-top:4px;"><span class="good">opt:</span> ${TL.esc(e.optimized_answer)}<br><span class="bb-ev">base:</span> ${TL.esc(e.baseline_answer)}</div>` : '';
+                        return `<div class="tl-entry">
+                            <span class="turn">turn ${e.turn_id}</span> — <span class="muted">"${TL.esc((e.user_message || '').substring(0, 80))}"</span><br>
+                            <span class="muted">opt: ${saved} fact(s) · ${e.optimized_injected_tokens ?? 0} tok injected · ${(e.optimized_pruned_this_turn || []).length} pruned · base window ${e.baseline_window_tokens ?? 0} tok${(e.baseline_facts_seen || []).length ? ' · saw ' + e.baseline_facts_seen.length + ' fact(s)' : ''}</span>
+                            ${((e.baseline_newly_lost_facts || []).length ? '<br><span class="lost">☓ baseline lost: ' + e.baseline_newly_lost_facts.map(f => '"' + esc(f.fact) + '"').join('; ') + '</span>' : '')}${ans}
+                        </div>`;
+                    }).join('') || '<div class="muted">No turns yet.</div>';
+                } catch (e) {}
+            },
+            page(d) { TL.offset = Math.max(0, Math.min(Math.max(0, TL.total - TL.limit), TL.offset + d * TL.limit)); TL.loadCurrent(); }
+        };
+
+        const EXP = { last: null,
+            async load() {
+                try {
+                    const res = await fetch('/api/experiments/latest');
+                    const d = await res.json();
+                    if (d && d.detail && !d.E1_token_efficiency) {
+                        document.getElementById('exp-full-meta').innerText = 'No experiments run yet — run them from the dashboard.';
+                        document.getElementById('exp-full').innerHTML = '';
+                        return;
+                    }
+                    EXP.last = d;
+                    document.getElementById('exp-full-meta').innerHTML =
+                        `Model: <b>${d.model_under_test}</b> · budget <b>${d.max_context_tokens}</b>${d.e3 ? '' : ''}`;
+                    document.getElementById('exp-full').innerHTML = '';
+                    renderExperimentsInto(document.getElementById('exp-full'), d);
+                } catch (e) {}
+            },
+            showRaw() {
+                const pre = document.getElementById('exp-raw');
+                pre.style.display = pre.style.display === 'none' ? '' : 'none';
+                if (pre.style.display !== 'none' && EXP.last) pre.innerText = JSON.stringify(EXP.last, null, 2);
+            }
+        };
+
+        // ===================== Research / Pipeline Control ====================
+        const RCTL = {
+            pipelines: null,
+            pollTimer: null,
+            lastBoard: null,
+            async load() {
+                if (!RCTL.pipelines) {
+                    try {
+                        const res = await fetch('/api/research/pipelines');
+                        RCTL.pipelines = await res.json();
+                    } catch (e) { return; }
+                    RCTL.renderRunners();
+                }
+                await RCTL.refresh();
+                if (document.getElementById('rc-board').style.display !== 'none') RCTL.startPoll();
+            },
+            renderRunners() {
+                const cont = document.getElementById('rc-runners');
+                cont.innerHTML = '<h3>Runner Cards</h3>' +
+                    Object.entries(RCTL.pipelines).map(([key, spec]) => RCTL.runnerCard(key, spec)).join('');
+            },
+            runnerCard(key, spec) {
+                const fields = spec.fields || {};
+                const inputs = Object.entries(fields).map(([fname, f]) => {
+                    const id = `rc-${key}-${fname}`;
+                    const dv = f.default;
+                    if (f.type === 'bool') {
+                        return `<label class="row" style="display:flex;align-items:center;gap:4px;">
+                            <input type="checkbox" id="${id}" ${dv ? 'checked' : ''}> <span>${fname.replace(/_/g, ' ')}</span></label>`;
+                    }
+                    if (f.type === 'choice') {
+                        return `<label class="row"><span class="muted">${fname.replace(/_/g, ' ')}</span>
+                            <select id="${id}">${(f.choices || []).map(c => `<option ${c === dv ? 'selected' : ''}>${c}</option>`).join('')}</select></label>`;
+                    }
+                    const placeholder = f.type === 'strlist' ? (dv || 'a,b,c') : (dv ?? '');
+                    return `<label class="row"><span class="muted">${fname.replace(/_/g, ' ')}</span>
+                        <input type="text" id="${id}" value="${dv ?? ''}" placeholder="${esc(placeholder)}" title="${esc(f.help || '')}"></label>`;
+                }).join('');
+                const warn = spec.llm_warn ? `<div class="muted" style="font-size:0.72rem;">${esc(spec.llm_warn)}</div>` : '';
+                return `<div class="card" style="margin-bottom:10px;">
+                    <b>${esc(spec.label)}</b>${warn}
+                    ${inputs ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin:6px 0;">${inputs}</div>` : ''}
+                    <button class="${spec.is_gated ? 'secondary' : 'primary'} tiny" onclick="RCTL.run('${key}')">
+                        ${spec.is_gated ? 'Run all quick gates' : 'Run'}</button>
+                </div>`;
+            },
+            readParams(key) {
+                const spec = RCTL.pipelines[key];
+                const params = {};
+                Object.entries(spec.fields || {}).forEach(([fname, f]) => {
+                    const el = document.getElementById(`rc-${key}-${fname}`);
+                    if (!el) return;
+                    if (f.type === 'bool') params[fname] = el.checked;
+                    else { const v = el.value.trim(); if (v !== '') params[fname] = v; }
+                });
+                return params;
+            },
+            async run(key) {
+                const params = key === 'gates' ? {} : RCTL.readParams(key);
+                const res = await fetch('/api/research/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pipeline: key, params })
+                });
+                const data = await res.json();
+                if (data.detail) { alert(data.detail); return; }
+                RCTL.startPoll();
+            },
+            async refresh() {
+                try {
+                    const [jobsRes, boardRes] = await Promise.all([fetch('/api/research/jobs'), fetch('/api/research/board')]);
+                    const jobs = await jobsRes.json();
+                    const board = await boardRes.json();
+                    RCTL.lastBoard = board;
+                    RCTL.renderConsole(jobs);
+                    RCTL.renderBoard(board);
+                    if (jobs.busy || (jobs.active && jobs.active.length)) RCTL.startPoll();
+                } catch (e) { /* server restarting */ }
+            },
+            renderConsole(jobs) {
+                const cont = document.getElementById('rc-console');
+                const active = jobs.active || [];
+                const history = jobs.history || [];
+                let h = '<h2>Job Console</h2>';
+                const act = active[0];
+                if (act) {
+                    const pct = act.progress_pct != null ? act.progress_pct : null;
+                    const bar = pct != null
+                        ? `<div class="bar-wrap"><div class="bar green" style="width:${pct}%"></div></div>`
+                        : `<div class="bar-wrap"><div class="bar green" style="width:100%;opacity:0.35;"></div></div>`;
+                    h += `<div class="card highlight">
+                        <b>${esc(act.label)}</b> <span class="muted">(${act.id})</span>
+                        <div class="muted">${act.stage_label || ''} · status <b>${act.status}</b> · ${esc(act.progress_label || '')} · ${act.elapsed_s ?? 0}s</div>${bar}
+                        <pre style="max-height:190px;overflow:auto;background:#0f172a;padding:8px;font-size:0.75rem;border-radius:6px;">${esc((act.log || []).join('\n'))}</pre>
+                        <button class="secondary tiny" onclick="RCTL.cancel('${act.id}')">Cancel Job</button>
+                    </div>`;
+                } else {
+                    h += '<div class="muted">No research job running.</div>';
+                }
+                if (history.length) {
+                    h += `<h3>History (persisted to experiments/results/jobs_history.json)</h3>
+                        <table><thead><tr><th>run</th><th>pipeline</th><th>status</th><th>elapsed</th><th>exit</th><th></th></tr></thead><tbody>${
+                        history.slice().reverse().map(j =>
+                            `<tr><td>${esc(j.id)}</td><td>${esc(j.label)}</td>
+                            <td class="${j.status === 'success' ? 'good' : 'bad'}">${j.status}</td>
+                            <td>${j.elapsed_s ?? '—'}s</td><td>${j.exit_code ?? '—'}</td>
+                            <td><button class="secondary tiny" onclick="RCTL.showLog('${j.id}')">log</button></td></tr>`).join('')}</tbody></table>
+                        <pre id="rc-history-log" style="display:none;max-height:220px;overflow:auto;background:#0f172a;padding:8px;font-size:0.75rem;border-radius:6px;"></pre>`;
+                }
+                cont.innerHTML = h;
+            },
+            async cancel(id) {
+                await fetch(`/api/research/jobs/${id}/cancel`, { method: 'POST' });
+                RCTL.refresh();
+            },
+            async showLog(id) {
+                const pre = document.getElementById('rc-history-log');
+                try {
+                    const res = await fetch(`/api/research/jobs/${id}?lines=200`);
+                    const data = await res.json();
+                    pre.style.display = pre.style.display === 'none' ? '' : 'none';
+                    if (pre.style.display !== 'none') pre.innerText = (data.log || []).join('\n');
+                } catch (e) {}
+            },
+            renderBoard(b) {
+                const cont = document.getElementById('rc-board');
+                const prov = (lbl, kind) => `<span style="margin-left:6px;font-size:0.66rem;padding:1px 5px;border-radius:4px;border:1px solid ${
+                    kind === 'real' ? '#2c5282' : '#975a16'};color:${kind === 'real' ? '#90cdf4' : '#fbd38d'};">${lbl}</span>`;
+                let s = '<h2>Results Board</h2><div class="muted" style="font-size:0.75rem;">refreshed live from experiments/results/*.json · <span style="color:#90cdf4;border:1px solid #2c5282;padding:0 4px;border-radius:4px;">real</span> = live-measured · <span style="color:#fbd38d;border:1px solid #975a16;padding:0 4px;border-radius:4px;">estimated</span> = offline/word-count/arch-const</div>';
+                if (b.live) {
+                    const e1 = b.live.E1 || {}, e2 = b.live.E2 || {}, e3 = b.live.E3 || {};
+                    const e4 = b.live.E4 || {}, e5 = b.live.E5 || {}, e6 = b.live.E6 || {};
+                    const series = (e1.per_turn || []).map(t => `<tr><td>${t.turn}</td><td class="num">${t.proposed}</td><td class="num">${t.baseline}</td></tr>`).join('');
+                    s += `<h3>LIVE measured E1–E6${prov('real', 'real')}</h3>`;
+                    s += `<div class="muted" style="font-size:0.72rem;">model <b>${esc(b.live.model)}</b> · budget ${b.live.budget} · ${esc(b.live.metric_source || '')}</div>`;
+                    s += `<table><thead><tr><th>E1 tokens/turn</th><th class="num">adaptive mean</th><th class="num">barebones mean</th><th class="num">Δ</th><th class="num">p</th></tr></thead><tbody>${
+                        `<tr><td>n=${num(e1.n, 0)} (${e1.significant ? 'significant' : 'n.s.'})</td>` +
+                        `<td class="num"><b>${num(e1.proposed_mean_tokens, 1)}</b></td>` +
+                        `<td class="num">${num(e1.baseline_mean_tokens, 1)}</td>` +
+                        `<td class="num">−${num((e1.baseline_mean_tokens || 0) - (e1.proposed_mean_tokens || 0), 1)}</td>` +
+                        `<td class="num">${num(e1.p_value, 3)}</td></tr>`}</tbody></table>`;
+                    if (series) {
+                        s += `<details style="margin:4px 0;"><summary class="muted" style="cursor:pointer;font-size:0.78rem;">per-turn series (${(e1.per_turn || []).length} turns)</summary>` +
+                            `<table style="max-height:260px;overflow-y:auto;display:block;"><thead><tr><th>turn</th><th>adaptive</th><th>barebones</th></tr></thead><tbody>${series}</tbody></table></details>`;
+                    }
+                    if (e2.proposed_recall != null) {
+                        s += `<table style="margin-top:6px;"><thead><tr><th>E2 memory accuracy</th><th class="num">adaptive</th><th class="num">barebones</th></tr></thead><tbody>` +
+                            `<tr><td>known-fact recall</td><td class="num"><b>${num(e2.proposed_recall, 3)}</b></td><td class="num">${num(e2.baseline_recall, 3)}</td></tr>` +
+                            `<tr><td>forgetting precision</td><td class="num">${num(e2.forgetting_precision, 3)}</td><td class="num">—</td></tr></tbody></table>`;
+                        const hc = e2.hard_case || {};
+                        if (Object.keys(hc).length) {
+                            s += `<div class="muted" style="font-size:0.75rem;">hard case: correction ${num(hc.correction_recall, 3)} · negation ${num(hc.negation_recall, 3)}`;
+                            if (hc.wrongly_retained_after_correction) s += ` · wrongly retained ${hc.wrongly_retained_after_correction.wrongly_retained}/${hc.wrongly_retained_after_correction.superseded_expected}`;
+                            s += `</div>`;
+                        }
+                    }
+                    if (e3.extraction_ms != null) {
+                        s += `<div class="muted" style="font-size:0.75rem;">E3 real ms: ${Object.entries(e3).filter(([, v]) => v != null).map(([k, v]) => `${k.replace('_ms', '')}=${num(v, 1)}`).join(' · ')}</div>`;
+                    }
+                    if (e4.distances && e4.proposed) {
+                        s += `<div class="muted" style="font-size:0.75rem;">E4 needle@10: adaptive ${num(e4.proposed[0], 3)} vs barebones ${num(e4.baseline[0], 3)}</div>`;
+                    }
+                    if (e5 && e5.full_system) {
+                        s += `<table style="margin-top:6px;"><thead><tr><th>E5 ablation</th><th class="num">acc</th><th class="num">tok ×full</th><th class="num">pruned</th></tr></thead><tbody>${
+                            Object.values(e5).filter(a => a && a.token_source == null).map(a => `<tr><td>${esc(a.ablation)}</td><td class="num">${num(a.accuracy, 3)}</td><td class="num">${num(a.token_overhead_vs_full, 2)}</td><td class="num">${num(a.pruned_count, 0)}</td></tr>`).join('')}</tbody></table>`;
+                    }
+                    if (e6.cohens_d != null) {
+                        s += `<div class="muted" style="font-size:0.75rem;">E6 power: d=${num(e6.cohens_d, 2)} · required n/group=${num(e6.required_n, 0)} (α=0.05, ${num(e6.target_power, 2)} power) · actual n=${num(e6.n_actual, 0)}</div>`;
+                    }
+                    s += '<div style="height:8px;"></div>';
+                } else {
+                    s += '<h3>LIVE measured E1–E6</h3><div class="muted">No live_manifest.json yet — run the live-metric research job.</div>';
+                }
+                if (b.paper) {
+                    const m = b.paper.methods || {};
+                    s += '<h3>Paper manifest (E1/E2 + statistics)' + prov('estimated · word-count', 'est') + '</h3>';
+                    s += `<table><thead><tr><th>method</th><th>E1 tok</th><th>base</th><th>95%CI</th><th>d</th><th>E2 rec</th><th>E2 base</th></tr></thead><tbody>${
+                        Object.entries(m).map(([name, a]) => `<tr><td>${esc(name)}</td>
+                            <td class="num">${num(a.mean_E1_proposed_tokens, 1)}</td>
+                            <td class="num">${num(a.mean_E1_baseline_tokens, 1)}</td>
+                            <td class="num">${(a.E1_proposed_pooled_ci95 || []).map(v => num(v, 1)).join('–')}</td>
+                            <td class="num">${num(a.cohens_d_paired_vs_baseline, 2)}</td>
+                            <td class="num">${num(a.mean_E2_proposed_recall, 3)}</td>
+                            <td class="num">${num(a.mean_E2_baseline_recall, 3)}</td></tr>`).join('')}</tbody></table>`;
+                    s += `<div class="muted" style="font-size:0.72rem;">${esc(b.paper.metric_source || '')} · config ${esc(JSON.stringify(b.paper.config || {}))}</div>`;
+                    if (b.paper.hard_case) {
+                        const hc = b.paper.hard_case;
+                        const rows = [
+                            ['trap recall', hc.trap_recall], ['correction recall', hc.correction_recall],
+                            ['negation recall', hc.negation_recall]];
+                        s += '<h3>Hard cases (seed 0)</h3><table><thead><tr><th>metric</th><th>value</th></tr></thead><tbody>' +
+                            rows.map(r => `<tr><td>${r[0]}</td><td class="num">${num(r[1], 3)}</td></tr>`).join('') +
+                            (hc.wrongly_retained_after_correction ?
+                                `<tr><td>wrongly retained after correction</td><td class="num">${num(hc.wrongly_retained_after_correction.fraction, 3)} (${hc.wrongly_retained_after_correction.wrongly_retained}/${hc.wrongly_retained_after_correction.superseded_expected})</td></tr>` : '') +
+                            '</tbody></table>' +
+                            ((hc.per_category_recall && Object.keys(hc.per_category_recall).length) ?
+                                `<div class="muted" style="font-size:0.75rem;">per-category: ${Object.entries(hc.per_category_recall).map(([c, r]) => `${c}=${num(r.recall, 3)}`).join(' · ')}</div>` : '');
+                    }
+                    const mc = b.paper.multiple_comparisons || {};
+                    if (mc.holms_adjusted) {
+                        s += `<div class="muted" style="font-size:0.75rem;">E1 Holm-adjusted p: ${Object.entries(mc.holms_adjusted).map(([k, v]) => `${k}=${v}`).join(' · ')}</div>`;
+                    }
+                } else {
+                    s += '<h3>Paper manifest</h3><div class="muted">No paper manifest yet — run the paper pipeline.</div>';
+                }
+                s += '<h3>Multi-model' + prov('real', 'real') + '</h3>';
+                if (b.models && b.models.rows && b.models.rows.length) {
+                    s += `<table><thead><tr><th>model</th><th>E1 tok</th><th>95%CI</th><th>E2 rec</th><th>extract ms</th></tr></thead><tbody>${
+                        b.models.rows.map(r => `<tr><td>${esc(r.model)}</td>
+                            <td class="num">${num(r.mean_E1_proposed_tokens, 1)}</td>
+                            <td class="num">${(r.e1_ci95 || []).map(v => num(v, 1)).join('–')}</td>
+                            <td class="num">${num(r.mean_E2_recall, 3)}</td>
+                            <td class="num">${num(r.mean_extraction_ms, 0)}</td></tr>`).join('')}</tbody></table>
+                        <div class="muted" style="font-size:0.72rem;">${esc(b.models.note || '')}</div>`;
+                } else {
+                    s += '<div class="muted">No multi-model run yet — launch from the runner card (hours, background).</div>';
+                }
+                if (b.e8) {
+                    s += `<h3>E8 needled-QA benchmark${prov('offline · lexical', 'est')}</h3><table><thead><tr><th>method</th><th>recall</th><th>tok</th></tr></thead><tbody>${
+                        b.e8.methods.map(m => `<tr><td>${esc(m.method)}</td><td class="num">${num(m.overall_recall, 3)}</td><td class="num">${num(m.mean_injected_tokens, 1)}</td></tr>`).join('')}</tbody></table>`;
+                }
+                if (b.e0) {
+                    const pm = b.e0.exact_or_paraphrase || {};
+                    s += `<h3>E0 extraction quality${prov('real', 'real')}</h3><div class="muted" style="font-size:0.75rem;">mode <b>${esc(b.e0.write_mode)}</b> · model <b>${esc(b.e0.model || '—')}</b> · turns ${b.e0.turns_scored} · P/R/F1 <b>${num(pm.precision, 3)}/${num(pm.recall, 3)}/${num(pm.f1, 3)}</b></div>`;
+                }
+                if (b.e7) {
+                    s += `<h3>C7 sensitivity sweep${prov('estimated · word-count', 'est')}</h3><div class="muted" style="font-size:0.75rem;">baseline ${esc(JSON.stringify(b.e7.baseline_point))} · ${b.e7.n_rows} grid cells · seeds ${(b.e7.seeds || []).join(',')}</div>`;
+                }
+                if (b.claims) {
+                    s += `<h3>Claim coverage (${b.claims.supported}/${b.claims.total})${prov('offline', 'est')}</h3><ul class="muted" style="font-size:0.78rem;">${
+                        (b.claims.coverage || []).map(c => `<li>${c.supported ? '✔' : '✘'} ${esc(c.claim_id)} — ${esc(c.claim)}</li>`).join('')}</ul>`;
+                }
+                if (b.qualitative) {
+                    s += `<h3>Qualitative trace${prov('real', 'real')}</h3>`;
+                    const q = b.qualitative, pc = q.phase_contrast || [];
+                    if (q.config) s += `<div class="muted" style="font-size:0.72rem;">config ${esc(JSON.stringify(q.config))}</div>`;
+                    if (q.narrative) s += `<div class="muted" style="font-size:0.75rem;">${esc(q.narrative)}</div>`;
+                    if (pc.length) {
+                        s += `<table><thead><tr><th>phase</th><th class="num">turns</th><th class="num">mean inj</th><th class="num">max inj</th><th class="num">raw window</th><th>top cats</th></tr></thead><tbody>${
+                            pc.map(p => `<tr><td>${esc(p.phase)}</td><td class="num">${p.n_turns}</td><td class="num"><b>${num(p.mean_injected_tokens, 2)}</b></td><td class="num">${num(p.max_injected_tokens, 0)}</td><td class="num">${num(p.mean_raw_window_tokens, 2)}</td><td>${esc(Object.entries(p.dominant_retrieved_categories || {}).map(([c, n]) => `${c}=${n}`).join(' · '))}</td></tr>`).join('')}</tbody></table>`;
+                    }
+                    if (q.edge_passages && q.edge_passages.spike_turns && q.edge_passages.spike_turns.length) {
+                        s += `<details><summary class="muted" style="cursor:pointer;font-size:0.78rem;">spike turns (${q.edge_passages.spike_turns.length})</summary>${
+                            q.edge_passages.spike_turns.map(sp => `<div style="margin:4px 0;padding:4px;border-left:2px solid #2c5282;font-size:0.74rem;"><b>turn ${sp.turn_id}</b> · ${num(sp.injected_tokens, 0)} tok · <span class="muted">${esc(sp.user_turn_quoted || '')}</span>${(sp.retrieved_facts || []).map(f => `<div class="muted">→ ${esc(f)}</div>`).join('')}</div>`).join('')}</details>`;
+                    }
+                }
+                cont.innerHTML = s;
+            },
+            startPoll() {
+                if (RCTL.pollTimer) return;
+                RCTL.pollTimer = setInterval(async () => RCTL.refresh(), 1500);
+            },
+            stopPoll() {
+                if (RCTL.pollTimer) { clearInterval(RCTL.pollTimer); RCTL.pollTimer = null; }
+            }
+        };
+
+        // experiments table builder (shared by dashboard + detail page)
+        function renderExperimentsInto(cont, d) {
+            const s = (on) => `<span class="${on ? 'good' : 'bad'}">${on ? '✔' : '✘'}</span>`;
+            const e1 = d.E1_token_efficiency, e2 = d.E2_memory_accuracy, e3 = d.E3_latency;
+            const e4 = d.E4_needle_in_haystack, e5 = d.E5_ablations, e6 = d.E6_power_check;
+            const table = (title, headers, rows, cls) => {
+                cont.innerHTML += `<h3>${title}</h3><table class="${cls || ''}"><thead><tr>${
+                    headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${
+                    rows.map(r => `<tr>${
+                        r.map(c => `<td class="${/^[0-9.\-–—]+$/.test(c) ? 'num' : ''}">${c}</td>`).join('')}</tr>`)
+                        .join('')}</tbody></table>`;
+            };
+            cont.innerHTML += `<h3>E1 — Token Efficiency (Wilcoxon signed-rank, per turn)</h3><table><thead><tr><th>Metric</th><th>Proposed</th><th>Baseline</th><th>Significance</th></tr></thead><tbody><tr>
+                <td>Injected context tokens (mean of ${e1.n})</td>
+                <td class="num">${num(e1.proposed_mean_tokens, 1)}</td><td class="num">${num(e1.baseline_mean_tokens, 1)}</td>
+                <td>${(e1.significant ? s(true) : e1.significant === false ? s(false) : '—') + (e1.p_value != null && !Number.isNaN(e1.p_value) ? ` p=${e1.p_value < 0.001 ? e1.p_value.toExponential(2) : num(e1.p_value, 3)}` : '')}</td></tr></tbody></table>`;
+            if (e1.per_turn && e1.per_turn.length) {
+                const per = e1.per_turn.slice().reverse();
+                cont.innerHTML += `<div class="muted" style="font-size:0.78rem;">Per-turn (latest ${Math.min(50, per.length)}): ${per.slice(0, 50).map(p => `#${p.turn} ${p.proposed}/${p.baseline}`).join(' · ')}</div>`;
+            }
+            table('E2 — Memory Accuracy vs Ground Truth' + (e2.baseline_recall_real ? ' (real LLM replay)' : ''),
+                ['Metric', 'Proposed', 'Baseline'],
+                [['Positive recall (found facts)', num(e2.proposed_positive_recall, 3), num(e2.baseline_positive_recall, 3)],
+                 ['Forgetting precision', num(e2.proposed_forgetting_precision, 3), num(e2.baseline_forgetting_precision, 3)]]);
+            if (e2 && e2.hard_case) {
+                cont.innerHTML += hardCaseTable(e2.hard_case);
+            }
+            table('E3 — Pipeline Latency', ['Stage', 'Avg ms'],
+                [['Extraction', num(e3.extraction_ms, 2)], ['Window replay (real LLM)', num(e3.window_replay_ms, 2)],
+                 ['Answer (real LLM)', num(e3.answer_ms, 2)], ['Scoring', num(e3.scoring_ms, 3)],
+                 ['Compression', num(e3.compression_ms, 3)], ['Decay', num(e3.decay_ms, 3)], ['Retrieval', num(e3.retrieval_ms, 3)]]);
+            const e4Rows = (e4.distances || []).map((dd, i) =>
+                [`≥ ${dd} turns back`, num(e4.proposed_accuracy[i], 3), num(e4.baseline_accuracy[i], 3)]);
+            table('E4 — Needle-in-Haystack by Recency Distance (recall)' + (e4.baseline_real ? ' — real' : ' (estimate)'),
+                ['Distance', 'Proposed', 'Baseline'], e4Rows);
+            const e5Rows = Object.values(e5 || {}).map(a => [a.ablation, num(a.accuracy, 3), num(a.token_overhead_vs_full, 2) + '×', a.pruned_count]);
+            table('E5 — Ablations (replay of same scenario)', ['Component', 'Accuracy', 'Token overhead vs full', 'Pruned'], e5Rows);
+            table('E6 — Statistical Power (of E1 comparison)', ['Metric', 'Value'],
+                [["Observed Cohen's d", num(e6.observed_cohens_d, 3)],
+                 ['Required n per group (power=0.80, α=0.05)', num(e6.required_n_per_group)], ['Actual n (turns)', num(e6.n_actual)]]);
+        }
+        document.getElementById('turns-preset').onchange = () => {
+            document.getElementById('turns-input').value = document.getElementById('turns-preset').value;
+        };
+
+        loadModels();
+        poll();
+        setInterval(poll, 2000);
+        showPage(currentPage());
+    </script>
+</body>
+</html>
