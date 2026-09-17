@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 8 (E12 architectural fixes: separate store/active budgets, query-first retrieval)
+**Current phase:** Phase 10 (E14 retention diagnosis complete)
 
 ## Completed Phases
 
@@ -14,9 +14,11 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 3** — Write-time salience + offline sync · commit `70866c3`
 - **Phase 4** — Evaluation fixes + manifest versioning · commit `134d5b5`
 - **Phase 5** — Dashboard + quick gate + regression tests · commits `f011d2c`, `91fa6b4`
-- **Phase 6** — Revalidation + documentation + final audit · (this session) complete
+- **Phase 6** — Revalidation + documentation + final audit · commit `bf581ba`
 - **Phase 7** — E12 coding-context benchmark (negative result) · commit `60de0c5`
-- **Phase 8** — E12 architectural fixes (store/active separation, query-first retrieval) · in progress
+- **Phase 8** — E12 architectural fixes (store/active separation, query-first retrieval) · commit `4f429d0`
+- **Phase 9** — E13 generalization + causal ablations (store capacity + retrieval policy) · commit `f6da170`
+- **Phase 10** — E14 retention diagnosis (causal analysis of store losses) · in progress
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -43,7 +45,7 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - Fairness fixes (not tuning): facts spread across whole session (was first-half + decay-prune artifact); distinct predicate families replace near-duplicate templates (dedupe retains ~86–88%, was 332→189).
 - Tests: 33 passing (`tests/test_coding_benchmark.py` 9).
 
-## E12 Architectural Fixes (D29) — Phase 8 Target Metrics
+## E12 Architectural Fixes (D29) — Phase 8 Results (POST-FIX)
 
 **Changes implemented:**
 1. Separate `memory_store_token_budget` (long-term) from `max_context_tokens` (active context) + `injection_token_limit` (explicit override)
@@ -51,26 +53,75 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 3. E12 uses `memory_store_token_budget=max(4096, budget*4)` + `injection_token_limit=budget`
 4. Retrieval diagnostics: `store_recall`, `retrieval_loss`, `mean_context_utilization`
 
-**Targeted validation pending:** Run E12 with new architecture and compare BEFORE vs AFTER:
-- store_recall (should rise with independent store budget)
-- context_recall (should rise with query-first retrieval)
-- retrieval_loss = store_recall - context_recall (should decrease)
-- correction_recall (should not regress)
-- obsolete_retention (should not regress)
-- mean_context_tokens (should respect active budget)
+**Phase 8 Results (E12 POST-FIX, 3 seeds):**
+- adaptive ctx_recall: 0.71 / 0.80 / 0.92 at 128/256/512 (vs 0.15/0.17/0.17 pre-fix)
+- adaptive store_recall: 0.79 / 0.85 / 0.92 (vs 0.19/0.35/0.53 pre-fix)
+- retrieval_loss: 0.075 → 0.056 → 0.000 (decreases with budget)
+- correction_recall: 0.83 / 1.0 / 1.0 (vs 0.5 pre-fix)
+- store_tokens: 751 / 869 / 983 (independent 4096 store budget)
+- mean_context_utilization: 0.98+ at all budgets (active budget fully utilized)
+- vanilla_rag unchanged at 0.905; summarization scales 0.18→0.33→0.58
 
-**Acceptance criteria (Change 8):**
-1. Active-context budget actually enforced (mean_context_tokens ≤ budget)
-2. Store capacity independent from active context (store_tokens can exceed active budget)
-3. Query similarity dominates historical importance (query relevance beats importance test passes)
-4. Store recall and context recall distinguishable (retrieval_loss measured)
-5. Correction/negation behavior does not regress (tests pass)
-6. All 33+ tests pass
+## E13 Generalization + Causal Ablations (D30) — Phase 9 Results
+
+**E13 Generalization (5 seeds × 5 budgets × 5 methods):**
+- adaptive ctx_recall: 0.58 / 0.71 / 0.80 / 0.92 / 0.92 at 64/128/256/512/1024
+- adaptive store_recall: 0.67 / 0.77 / 0.85 / 0.92 / 0.92
+- retrieval_loss: 0.10 → 0.07 → 0.05 → 0.00 → 0.00 (decreases with budget)
+- correction_recall: 0.50 / 0.70 / 1.0 / 1.0 / 1.0
+- mean_context_utilization: 0.96+ at all budgets; zero budget violations
+- vanilla_rag stable at 0.905; summarization scales 0.08→0.18→0.33→0.58→0.89
+
+**Ablation A — Store-Capacity Separation (3 seeds × 4 policies × 5 budgets):**
+- coupled_old_behavior (store=active): ctx_recall 0.18 at 128
+- matched_budget (store=active): ctx_recall 0.18 at 128  
+- separated_4x (Phase-8): ctx_recall 0.71 at 128, store 735 tok
+- unbounded (0): ctx_recall 0.71 at 128, store 735 tok
+- *Store separation is necessary for high retention; 4x ≈ unbounded at this workload scale*
+
+**Ablation B — Retrieval Policy (3 seeds × 4 profiles × 3 budgets):**
+- phase8 (0.15/0.85): ctx_recall 0.71, loss 0.07
+- legacy_phase7 (0.6/0.4): ctx_recall 0.27, loss 0.37
+- pure_similarity (0/1): ctx_recall 0.86, loss 0.01
+- pure_importance (1/0): ctx_recall 0.18, loss 0.42
+- *Query-first retrieval is the primary driver; pure similarity slightly outperforms Phase-8*
+
+**Embedding vs Lexical (2 seeds × 3 budgets):**
+- embeddings: ctx_recall 0.70, loss 0.08
+- lexical: ctx_recall 0.57, loss 0.20
+- *Phase-8 benefit partially depends on embedding similarity discrimination*
+
+**Tests:** 40 passing (11 retrieval + 9 coding + 8 compression + 6 scoring + 7 pipeline)
+
+## E14 Retention Diagnosis (D31) — Phase 10
+
+**Objective:** Identify exactly why useful task facts disappear from the long-term store (pure diagnosis, no policy change).
+
+**Implementation:**
+- Store-pressure instrumentation in `pipeline.py`: per-ingest `last_store_pressure` (pre/post tokens, eviction count, over-budget delta); `write_time_salience` stamped at ingest
+- `experiments/e14_retention_diagnosis.py`: instrumented replay + 9-state lifecycle classifier + ablations
+- Lifecycle states: PRESENT_AND_RETRIEVED, PRESENT_BUT_NOT_RETRIEVED, REMOVED_BY_DECAY, REMOVED_BY_STORE_BUDGET, MERGED_BY_DEDUPE, SUPERSEDED_CORRECTLY, SUPERSEDED_INCORRECTLY, NEVER_STORED, OTHER
+
+**Results (5 seeds × 4 budgets, turns=400, scale=3):**
+- Dominant store loss = **decay-driven pruning** at low budgets:
+  - decay removals: 31.4 / 20.4 / 10.6 / 0.2 facts at 64/128/256/512
+  - store-budget eviction: 0.0 everywhere (4096 store never binds at 86 facts)
+  - dedupe: 4.0 constant (template collision, by design); supersession: 2 correct / 0 incorrect
+- ctx_recall: 0.576 / 0.705 / 0.800 / 0.917; store_recall: 0.672 / 0.774 / 0.852 / 0.917
+- Ablation A (no decay): decay losses → 0, store_recall 0.917, correction_recall 1.0 at ALL budgets (vs 0.5 at 64 with decay)
+- Ablation B (decay applied, no prune): decay losses → 0, store_recall 0.917; ctx_recall 64 → 0.862 (decayed importance lowers retrieval rank but facts survive)
+- Ablation D: write-time salience ≈0.98 for all facts (no discrimination); retrieval_sim ≈0.48; spearman ≈ -0.08
+- Correction/obsolete gate never regressed (obsolete_retention = 0 in every run)
+- Retrieval loss (PRESENT_BUT_NOT_RETRIEVED) ≈ 5–6 facts/cell, consistent across budgets
+
+**Conclusion:** the mechanism responsible for useful-fact loss is the decay→prune path, not budget eviction and not dedupe/supersession. Budget only matters indirectly: fewer injected facts → less reinforcement → faster decay. No policy change made (Phase 10 is diagnosis-only).
+
+**Tests:** 54 passing (+14 new: lifecycle tracking, classifier, store-pressure eviction, production-defaults guard)
 
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -93,9 +144,11 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 4. Embed-path dependence changes per-seed misuse fraction (0.0 vs 0.2)
 5. Default 50-turn config does not stress 4096 budget; barebone fits entirely
 6. D27: point-of-need probe recall isolates retained content from budget effects
-7. D29: Phase 8 validation pending — E12 BEFORE/AFTER metrics needed to confirm fix
+7. D29: Phase 8 validation complete — E12 POST-FIX metrics confirm fix
+8. D30: Phase 9 complete — Phase 8 generalized; query-first retrieval is primary causal driver
+9. D31: Phase 10 complete — decay→prune is the dominant store-loss mechanism; no policy change made
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-17 after Phase 7 E12 negative result + Phase 8 implementation
+Last updated: 2026-09-17 after Phase 10 E14 retention diagnosis

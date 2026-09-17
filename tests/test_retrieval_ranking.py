@@ -13,6 +13,7 @@ Also guards the new query-first retrieval semantics (Change 2):
 import pytest
 
 from memory_optimizer.retrieval import MemoryRetriever, _token_overlap
+from memory_optimizer.pipeline import AdaptiveMemoryPipeline
 
 TOPIC = "project feature flag configuration key_31 is enabled"
 OTHER = "our team prefers heading over heading based management"
@@ -113,3 +114,156 @@ class TestTokenOverlapContract:
     def test_overlap_is_bounded(self):
         assert 0.0 <= _token_overlap(TOPIC, OTHER) <= 1.0
         assert _token_overlap(TOPIC, TOPIC) >= 0.9
+
+
+class TestActiveContextBudgetEnforcement:
+    """Strict architectural regression tests for active-context budget."""
+
+    def test_token_limit_exceeds_top_k(self):
+        """retrieve(..., token_limit=budget) can return more than top_k
+        when the budget permits, and never exceeds the token limit."""
+        retriever = MemoryRetriever(top_k=2, sim_threshold=0.1, imp_weight=0.15, sim_weight=0.85)
+        # Four small facts, each ~10 tokens
+        facts = [
+            _mem("Fact one about alpha service", 1, "project_context", importance=0.9),
+            _mem("Fact two about beta service", 2, "project_context", importance=0.8),
+            _mem("Fact three about gamma service", 3, "project_context", importance=0.7),
+            _mem("Fact four about delta service", 4, "project_context", importance=0.6),
+        ]
+
+        # token_limit=35 allows 3 facts (~30 tokens), top_k=2 would only allow 2
+        retrieved = retriever.retrieve("alpha", facts,
+                                       token_limit=35, fact_tokens=lambda t: len(t.split()),
+                                       current_turn=10)
+
+        # Should fit 3 facts within 35 tokens (not limited to top_k=2)
+        assert len(retrieved) >= 3, f"Expected >= 3 facts, got {len(retrieved)}"
+        total_tokens = sum(len(f["fact"].split()) for f in retrieved)
+        assert total_tokens <= 35, f"Exceeded token limit: {total_tokens}"
+
+    def test_token_limit_never_exceeded(self):
+        """retrieve(..., token_limit) must never exceed the token limit."""
+        retriever = MemoryRetriever(top_k=10, sim_threshold=0.1)
+        facts = [_mem(f"Fact {i} about service", i, "project_context", importance=0.5) for i in range(20)]
+
+        for limit in [10, 25, 50, 100]:
+            retrieved = retriever.retrieve("service", facts,
+                                           token_limit=limit, fact_tokens=lambda t: len(t.split()),
+                                           current_turn=10)
+            total_tokens = sum(len(f["fact"].split()) for f in retrieved)
+            assert total_tokens <= limit, f"Limit {limit} exceeded: {total_tokens}"
+
+
+class TestStorePressureIndependence:
+    """Strict architectural regression test: store capacity independent of active context."""
+
+    def test_store_budget_independent_of_active_context(self):
+        """Active-context budget=32, store budget=256: store should retain facts
+        exceeding active budget but bounded by store budget."""
+        settings = {
+            "max_context_tokens": 32,
+            "memory_store_token_budget": 256,
+            "injection_token_limit": 32,
+            "top_k": 5,
+            "similarity_threshold": 0.35,
+            "scoring_weights": {
+                "w1_relevance": 0.4,
+                "w2_utility": 0.3,
+                "w3_recency": 0.15,
+                "w4_frequency": 0.15,
+            },
+            "decay_lambdas": {
+                "transient": 0.0,
+                "personal": 0.0,
+                "technical_preference": 0.0,
+                "project_context": 0.0,
+            },
+            "pruning": {"threshold": 0.0},
+            "compression": {"enabled": False},
+        }
+
+        # Construct facts: each ~15 tokens. We need enough to exceed 32 (active)
+        # but remain below 256 (store). 10 facts * 15 = 150 tokens.
+        facts = []
+        for i in range(10):
+            facts.append({
+                "fact": f"Requirement: the service_{i} API must handle {100 + i * 10} requests per second",
+                "category": "technical_preference",
+                "confidence": 0.5,
+            })
+
+        pipe = AdaptiveMemoryPipeline.from_settings(settings)
+        # Disable decay and compression for this pure budget test
+        pipe.decay.lambdas = {k: 0.0 for k in pipe.decay.lambdas}
+        pipe.settings["enable_compression"] = False
+
+        # Ingest all facts in one turn
+        result = pipe.ingest(1, "test message", facts, fact_tokens=lambda t: len(t.split()))
+
+        # Active context injected should be bounded by 32 tokens
+        assert result["injected_tokens"] <= 32
+
+        # Store should have retained more than active context (bounded by 256)
+        store_tokens = sum(len(m["fact"].split()) for m in pipe.active_memories)
+        assert store_tokens > 32, f"Store tokens {store_tokens} should exceed active budget 32"
+        assert store_tokens <= 256, f"Store tokens {store_tokens} should not exceed store budget 256"
+
+        # Now test that store budget is enforced: add more facts exceeding 256
+        more_facts = []
+        for i in range(10, 25):  # 15 more * ~15 = 225 tokens -> total ~375 > 256
+            more_facts.append({
+                "fact": f"Constraint: the service_{i} service may use at most {64 + i * 5} megabytes of memory",
+                "category": "technical_preference",
+                "confidence": 0.5,
+            })
+
+        result = pipe.ingest(2, "more facts", more_facts, fact_tokens=lambda t: len(t.split()))
+
+        # Store should be capped at 256
+        store_tokens = sum(len(m["fact"].split()) for m in pipe.active_memories)
+        assert store_tokens <= 256, f"Store tokens {store_tokens} should not exceed store budget 256"
+
+    def test_unbounded_store_allows_growth(self):
+        """memory_store_token_budget=0 means no hard store cap; retention governed by decay/dedupe."""
+        settings = {
+            "max_context_tokens": 32,
+            "memory_store_token_budget": 0,  # unbounded
+            "injection_token_limit": 32,
+            "top_k": 5,
+            "similarity_threshold": 0.35,
+            "scoring_weights": {
+                "w1_relevance": 0.4,
+                "w2_utility": 0.3,
+                "w3_recency": 0.15,
+                "w4_frequency": 0.15,
+            },
+            "decay_lambdas": {
+                "transient": 0.0,
+                "personal": 0.0,
+                "technical_preference": 0.0,
+                "project_context": 0.0,
+            },
+            "pruning": {"threshold": 0.0},
+            "compression": {"enabled": False},
+        }
+
+        facts = []
+        for i in range(10):
+            facts.append({
+                "fact": f"Requirement: the service_{i} API must handle {100 + i * 10} requests per second",
+                "category": "technical_preference",
+                "confidence": 0.5,
+            })
+
+        pipe = AdaptiveMemoryPipeline.from_settings(settings)
+        pipe.decay.lambdas = {k: 0.0 for k in pipe.decay.lambdas}
+        pipe.settings["enable_compression"] = False
+
+        result = pipe.ingest(1, "test", facts, fact_tokens=lambda t: len(t.split()))
+
+        # Active context bounded by 32
+        assert result["injected_tokens"] <= 32
+
+        # Store can exceed active budget (no hard cap)
+        store_tokens = sum(len(m["fact"].split()) for m in pipe.active_memories)
+        assert store_tokens > 32, f"Unbounded store should exceed active budget: {store_tokens}"

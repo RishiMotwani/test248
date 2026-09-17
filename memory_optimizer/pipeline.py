@@ -52,6 +52,7 @@ class AdaptiveMemoryPipeline:
         self.memories = store if store is not None else []
         self.pruned_memories = pruned if pruned is not None else []
         self.last_budget_evictions: List[Dict] = []
+        self.last_store_pressure: Dict = {}
         self.on_stage = on_stage
 
     @classmethod
@@ -95,6 +96,7 @@ class AdaptiveMemoryPipeline:
             it["last_access_turn"] = turn_id
             relevance = (query_relevance if query_relevance is not None
                          else _write_time_salience(user_message, it["fact"], embed_fn=embed_fn))
+            it["write_time_salience"] = relevance
             it["base_score"] = self.scorer.compute_score(it, query_relevance=relevance,
                                                          current_turn=turn_id)
             new_facts.append(it)
@@ -124,18 +126,37 @@ class AdaptiveMemoryPipeline:
 
         t0 = time.perf_counter()
         if store_budget > 0 and fact_tokens is not None:
-            kept, evicted_by_budget, _ = token_budget_evict(self.memories, store_budget, fact_tokens)
+            pre_store_tokens = sum(fact_tokens(m["fact"]) for m in self.memories)
+            kept, evicted_by_budget, post_store_tokens = token_budget_evict(self.memories, store_budget, fact_tokens)
             self.memories = kept
             self.last_budget_evictions = [{
                 "fact": m["fact"],
                 "category": m.get("category", ""),
                 "current_importance": round(m.get("current_importance", 0), 3),
                 "source_turn_id": m.get("source_turn_id"),
+                "eviction_reason": m.get("eviction_reason"),
             } for m in evicted_by_budget]
+            # Store-pressure instrumentation
+            self.last_store_pressure = {
+                "pre_store_tokens": pre_store_tokens,
+                "store_budget": store_budget,
+                "store_over_budget_before_eviction": max(0, pre_store_tokens - store_budget),
+                "evicted_count": len(evicted_by_budget),
+                "post_store_tokens": post_store_tokens,
+                "eviction_occurred": len(evicted_by_budget) > 0,
+            }
         else:
             # No independent store cap: do not confuse active-context capacity
             # with long-term memory capacity.
             self.last_budget_evictions = []
+            self.last_store_pressure = {
+                "pre_store_tokens": sum(fact_tokens(m["fact"]) for m in self.memories) if fact_tokens else 0,
+                "store_budget": store_budget,
+                "store_over_budget_before_eviction": 0,
+                "evicted_count": 0,
+                "post_store_tokens": sum(fact_tokens(m["fact"]) for m in self.memories) if fact_tokens else 0,
+                "eviction_occurred": False,
+            }
         self._latency("budget_evict", t0)
 
         t0 = time.perf_counter()
@@ -154,6 +175,7 @@ class AdaptiveMemoryPipeline:
             "injected_tokens": injected_tokens,
             "pruned": pruned_this_turn,
             "budget_evictions": self.last_budget_evictions,
+            "store_pressure": self.last_store_pressure,
             "active_tokens": active_tokens,
         }
 

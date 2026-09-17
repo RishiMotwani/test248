@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 6
+**Phases:** 10
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -64,3 +64,59 @@
 4. README.md updated with actual post-fix results
 5. brain.md D5/D14 updated
 6. Final end-to-end audit confirms all layers agree
+
+### Phase 7: E12 Coding-Context Usefulness Benchmark
+**Goal:** Build a deterministic coding-context benchmark to measure task usefulness at equal active-context budget
+**Mode:** mvp
+**Success Criteria:**
+1. `data/coding_workload.py` generates deterministic coding sessions with ground truth
+2. `experiments/e12_coding_benchmark.py` scores query-time injected context by exact token presence
+3. Workload includes requirements, architecture, constraints, implementation, bugs, corrections, obsolete, filler
+4. Budget genuinely binding (natural store 2–8× budget)
+5. Production retrieval path (nomic-embed-text via Ollama)
+6. Results show adaptive context_recall 0.15–0.17 vs vanilla_rag 0.905 at same budget
+4. Root causes documented: bounded store + decay + importance-dominant retrieval
+
+### Phase 8: E12 Architectural Fixes — Separate Store/Active + Query-First Retrieval
+**Goal:** Fix the two structural issues diagnosed in E12: coupled store/active budget + importance-dominant retrieval
+**Mode:** mvp
+**Success Criteria:**
+1. Separate `memory_store_token_budget` (long-term) from `max_context_tokens` (active) + `injection_token_limit`
+2. Retrieval defaults: `imp_weight=0.15, sim_weight=0.85, cat_bonus=0.02`; formula `sim*sim + imp*imp + bonus`
+3. E12 uses `memory_store_token_budget=max(4096, budget*4)` + `injection_token_limit=budget`
+4. Retrieval diagnostics: `store_recall`, `retrieval_loss`, `mean_context_utilization`
+5. POST-FIX E12: adaptive ctx_recall 0.71/0.80/0.92 (vs 0.15/0.17/0.17 pre-fix)
+6. Retrieval loss decreases 0.075→0.056→0.00; correction_recall 0.5→1.0
+4. Store uses independent 4096 budget; active budget fully utilized (utilization ~0.99)
+5. All tests pass (40 total)
+
+### Phase 9: E13 Generalization + Causal Ablations
+**Goal:** Validate Phase-8 improvements generalize; isolate causal drivers (store separation vs retrieval policy)
+**Mode:** mvp
+**Success Criteria:**
+1. E13 generalization: 5 seeds × 5 budgets × 5 methods with Phase-8 defaults
+2. Causal Ablation A: 4 store policies (coupled/matched/separated_4x/unbounded) on same workload
+3. Causal Ablation B: 4 retrieval profiles (phase8/legacy/pure_sim/pure_imp) on separated store
+4. Embedding vs lexical sensitivity (embeddings vs lexical fallback)
+4. Query-family breakdown by qtype (requirements, architecture, constraints, etc.)
+5. Strict regression tests: token_limit > top_k, token_limit never exceeded, store independent of active
+4. All 40 tests pass
+5. **Findings documented:**
+   - Store separation necessary: coupled ctx_recall 0.18 vs separated_4x 0.71 at 128 budget
+   - Query-first retrieval primary driver: legacy 0.27 vs phase8 0.71 vs pure_sim 0.86 at 128
+   - Embeddings outperform lexical: 0.70 vs 0.57 ctx_recall at 128
+   - Phase-8 improvements **generalized** across seeds, budgets, query families
+   - **Both store separation AND query-first retrieval are causal; retrieval is larger contributor**
+
+### Phase 10: E14 Retention Diagnosis
+**Goal:** Causally diagnose why useful facts disappear from the long-term store (pure diagnosis, NO policy change)
+**Mode:** mvp
+**Success Criteria:**
+1. Store-pressure instrumentation (`last_store_pressure`) + `write_time_salience` stamping in pipeline (additive only)
+2. 9-state lifecycle classifier (PRESENT/RETRIEVED, decay, store-budget, dedupe, superseded, never-stored, other)
+3. `experiments/e14_retention_diagnosis.py` replaying 400 turns × 4 budgets × 5 seeds deterministically
+4. Ablation A (no decay), B (no prune threshold), C (score components), D (write-time salience) — experimental toggles only
+5. Correction/obsolete safety gate in every run (obsolete_retention = 0 everywhere; correction_recall preserved in ablations)
+6. **Finding documented:** decay→prune is the dominant store loss (31/20/11/0 facts at 64/128/256/512); store-budget eviction = 0; budget affects loss only via retrieval-reinforcement feeding decay
+7. No production policy changed; all defaults verified unchanged (weights 0.15/0.85/0.02, threshold 0.2)
+8. All 54 tests pass (+14 new)

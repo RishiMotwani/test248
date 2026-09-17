@@ -800,6 +800,168 @@ facts and compressed the score distribution.
 
   **Status:** implementation complete; targeted validation pending (Change 8).
 
+### D30 ★ Phase 9 Generalization and Causal Ablation Validation
+  **Objective:** determine whether the Phase-8 architectural improvements
+  (separate store/active budgets, query-first retrieval) generalize across
+  seeds, budgets, query families, and retrieval modes — and isolate which
+  change caused the improvement.
+
+  **30.1 E13 Generalization Experiment (experiments/e13_generalization.py):**
+  - 5 seeds × 5 budgets × 5 methods with Phase-8 defaults
+  - Budget range expanded: [64, 128, 256, 512, 1024]
+  - 5 seeds: [42, 43, 44, 45, 46]
+  - Metrics per cell: context_recall, store_recall, retrieval_loss, long_range_recall,
+    correction_recall, obsolete_retention, mean/max_context_tokens,
+    mean/max_context_utilization, budget_violation_count, store_tokens,
+    store_count, store_budget_binding, budget_eviction_count
+  - Query-family breakdown by qtype: requirements, architecture, constraints,
+    implementation, bug_fix, module_relation, feature_flag, correction, obsolete
+  - All results deterministic and machine-readable
+
+  **30.2 Causal Ablation A — Store-Capacity Separation:**
+  - Four store policies tested on identical workload/active budgets:
+    1. **coupled_old_behavior**: store_budget = active_budget (pre-Phase-8)
+    2. **matched_budget**: store_budget = active_budget (direct comparison)
+    3. **separated_4x**: store_budget = max(4096, active × 4) (Phase-8 default)
+    4. **unbounded**: store_budget = 0 (no hard cap; decay/dedupe only)
+  - Key comparison: store_recall and context_recall at each policy
+  - Workload scale verified: natural_store_tokens (1024) < 4x budget at 1024 → unbounded ≠ separated_4x
+  - *Finding*: coupled/matched policies collapse store_recall to ~0.18 at 128 budget;
+    separated_4x/unbounded achieve ~0.79 store_recall with only ~0.08 retrieval loss
+
+  **30.3 Causal Ablation B — Retrieval Policy Profiles:**
+  - Four fixed profiles on separated_4x store (128, 256, 512 budgets; seeds 42-44):
+    1. **phase8**: imp_weight=0.15, sim_weight=0.85, cat_bonus=0.02 (default)
+    2. **legacy_phase7**: imp_weight=0.60, sim_weight=0.40, cat_bonus=0.10
+    3. **pure_similarity**: imp_weight=0.00, sim_weight=1.00, cat_bonus=0.00
+    4. **pure_importance**: imp_weight=1.00, sim_weight=0.00, cat_bonus=0.00
+  - Admission rule unchanged: `sim >= threshold or importance > 0.6`
+  - *Finding*: Phase-8 (0.15/0.85) achieves 0.70 ctx_recall vs legacy 0.27;
+    pure similarity reaches 0.86 ctx_recall; pure importance drops to 0.18
+    → query-first retrieval is the primary driver of Phase-8 gains
+
+  **30.4 Embedding vs Lexical Sensitivity:**
+  - Embeddings (nomic-embed-text): 0.70 ctx_recall, 0.08 retrieval_loss
+  - Lexical fallback: 0.57 ctx_recall, 0.20 retrieval_loss
+  - Effect does not disappear without embeddings but is substantially weaker
+  - Phase-8 retrieval relies on embedding similarity discrimination
+
+  **30.5 Architectural Regression Tests Added:**
+  - `test_token_limit_exceeds_top_k`: token_limit allows > top_k when budget permits
+  - `test_token_limit_never_exceeded`: hard cap never violated
+  - `test_store_budget_independent_of_active_context`: store can exceed active budget
+  - `test_unbounded_store_allows_growth`: memory_store_token_budget=0 removes hard cap
+
+  **30.6 Evidence Summary:**
+  | Comparison | ctx_recall Δ | store_recall Δ | retrieval_loss Δ |
+  |------------|-------------|---------------|------------------|
+  | coupled vs separated_4x (128) | +0.53 | +0.61 | -0.29 |
+  | legacy_phase7 vs phase8 (128) | +0.43 | +0.14 | -0.29 |
+  | pure_sim vs phase8 (128) | +0.16 | +0.08 | -0.07 |
+  | embedding vs lexical (128) | +0.13 | +0.01 | -0.12 |
+
+  **30.7 Limitations:**
+  - Natural store tokens (1024) < 4× budget at 1024 → unbounded ≈ separated_4x at high budgets
+  - 64-token budget may be too restrictive for meaningful retrieval
+  - Only nomic-embed-text tested; other embeddings untested
+  - Decay policy fixed per directive; store pressure × decay interaction unexplored
+
+  **Status:** Validation complete. Phase-8 improvements **generalized** across seeds,
+  budgets, and query families. Store-capacity separation and query-first retrieval
+  are **both causal drivers**; query-first retrieval is the larger contributor.
+
+### D31 ★ Phase 10 Retention Diagnosis — Causal Analysis of Store Losses
+  **Motivation:** Phase 8 separated long-term memory capacity from active context
+  and changed retrieval to query-first. Phase 9 confirmed generalization and
+  isolated two causal drivers. However, at low active-context budgets,
+  adaptive still trails vanilla RAG, and a significant fraction of remaining
+  loss occurs **inside the memory store** before query-time retrieval.
+
+  **Objective:** Identify exactly **why useful task facts are disappearing from
+  the long-term store** — before changing the memory policy.
+
+  **31.1 Instrumentation Enhancements (pipeline.py):**
+  - Per-ingest store-pressure tracking: `pre_store_tokens`, `store_budget`,
+    `store_over_budget_before_eviction`, `evicted_count`, `post_store_tokens`,
+    `eviction_occurred` — recorded every ingest turn.
+  - Per-fact survival diagnostics fields added to memory records:
+    `initial_importance`, `write_time_salience`, `max_importance`,
+    `final_importance`, `dedupe_count`, `superseded`, `last_access_turn`,
+    `access_count`, `decay_steps_survived`, `pruned_by_decay`,
+    `removed_by_store_budget`, `retrieval_candidate`, `retrieval_selected`.
+  - Budget-eviction count now recorded from actual `token_budget_evict()` calls.
+
+  **31.2 Fact Lifecycle Classification:**
+  Every ground-truth coding fact is classified into exactly one terminal state:
+  - `PRESENT_AND_RETRIEVED` — in store and retrieved at query time
+  - `PRESENT_BUT_NOT_RETRIEVED` — in store but retrieval failed to select it
+  - `REMOVED_BY_DECAY` — pruned by decay engine (M(t) < threshold)
+  - `REMOVED_BY_STORE_BUDGET` — evicted by token_budget_evict
+  - `MERGED_BY_DEDUPE` — merged into another fact via compression
+  - `SUPERSEDED_CORRECTLY` — replaced by a correction fact
+  - `SUPERSEDED_INCORRECTLY` — stale fact not properly superseded
+  - `NEVER_STORED` — never entered the store
+  - `OTHER` — unclassified
+
+  **31.3 E14 Retention Diagnosis Experiment (experiments/e14_retention_diagnosis.py):**
+  - Coding workload: 400 turns, scale=3, budgets [64, 128, 256, 512],
+    seeds [42, 43, 44, 45, 46], nomic-embed-text
+  - Store budget: max(4096, budget × 4) — intentionally larger than active context
+  - Per-fact survival diagnostics tracked from extraction through retrieval
+  - Category survival: requirements, architecture, constraints, implementation,
+    bug_fix, module_relation, feature_flag, correction, obsolete, long-range
+  - Retention-time curves: 8 age buckets (0–49, 50–99, ..., 350–399 turns)
+  - Ablation A: no decay (decay_enabled=false)
+  - Ablation B: no pruning threshold (decay runs but no threshold deletion)
+  - Ablation C: score component diagnosis (relevance, utility, recency, frequency)
+  - Ablation D: write-time salience diagnosis (writer relevance vs query-time similarity)
+  - Correction/obsolete safety gate maintained in all ablations
+
+  **31.6 Observed Results (E14, 5 seeds × 4 budgets):**
+
+  Dominant cause-of-loss (mean across seeds):
+  | Budget | stored+retr | stored/not | decay | budget_evict | dedupe | super_ok | super_bad | corr_recall |
+  | 64 | 43.4 | 5.2 | 31.4 | 0.0 | 4.0 | 2.0 | 0.0 | 0.5 |
+  | 128 | 54.6 | 5.0 | 20.4 | 0.0 | 4.0 | 2.0 | 0.0 | 0.7 |
+  | 256 | 64.4 | 5.0 | 10.6 | 0.0 | 4.0 | 2.0 | 0.0 | 1.0 |
+  | 512 | 73.8 | 6.0 | 0.2 | 0.0 | 4.0 | 2.0 | 0.0 | 1.0 |
+
+  Ablation: no_decay → 0.0 decay removals at all budgets; store_recall = 0.917;
+  corr_recall = 1.0 at all budgets (including 64, vs 0.5 with decay).
+  Ablation: no_prune_threshold → 0.0 decay removals (decays but never deleted);
+  store_recall = 0.917 at all budgets; ctx_recall at 64 drops to 0.862 vs 0.893
+  (decayed importance scores lower retrieval scores but no facts deleted).
+
+  Write-time salience vs query-time similarity:
+  - mean write_time_salience ≈ 0.98 for all retrieved/missed (near-ceiling, no discrimination)
+  - mean retrieval_sim ≈ 0.48 for all; spearman ≈ -0.08 (near-zero/negative)
+
+  **31.7 Observed Facts vs Inferences:**
+
+  OBSERVED:
+  1. Decay + pruning threshold is the dominant loss mechanism (31.4/86 facts at 64 budget)
+  2. Store-budget eviction = 0 (store 4096+ never binds with 86 facts)
+  3. Dedupe removes 4 template facts consistently (4.6%), non-preventable given workload design
+  4. Supersession always correct (0 incorrectly retained)
+  5. Correction recall degrades at low budget (0.5 at 64) because correction facts also decay
+  6. Write-time salience is near-ceiling (~0.98) and does NOT predict which facts are retrieved
+
+  INFERRED:
+  7. Retrieval reinforcement creates a stable attractor: facts repeatedly selected never decay
+     (once importance > 0.6 + sim < 0.35, they cycle through admission/bump)
+  8. Budget constraint matters only indirectly: lower budget → fewer facts admitted → less
+     reinforcement → faster decay; the budget itself does not evict
+  9. Dedupe losses are fixed regardless of budget (template collision by design, not a bug)
+
+  UNRESOLVED:
+  10. Interaction of decay with write-time salience: all facts written with high relevance
+      to their turn, so write-time salience provides no discrimination
+  11. The 5 PRESENT_BUT_NOT_RETRIEVED facts per budget (~6%) are consistently missed;
+      root cause (insufficient sim for admission vs insufficient budget for injection)
+      not isolated
+
+  **Status:** Diagnosis complete. No memory-policy changes made in this phase.
+
 ---
 
 ## 8. Open questions for the human (blocking decisions)
