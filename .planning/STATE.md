@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 10 (E14 retention diagnosis complete)
+**Current phase:** Phase 11 (E15 retention-policy separation: activation vs survival) complete
 
 ## Completed Phases
 
@@ -18,7 +18,8 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 7** — E12 coding-context benchmark (negative result) · commit `60de0c5`
 - **Phase 8** — E12 architectural fixes (store/active separation, query-first retrieval) · commit `4f429d0`
 - **Phase 9** — E13 generalization + causal ablations (store capacity + retrieval policy) · commit `f6da170`
-- **Phase 10** — E14 retention diagnosis (causal analysis of store losses) · in progress
+- **Phase 10** — E14 retention diagnosis (causal analysis of store losses) · commit `7a026b9`
+- **Phase 11** — E15 retention-policy separation (activation vs survival) · commit `TBD`
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -118,10 +119,42 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Tests:** 54 passing (+14 new: lifecycle tracking, classifier, store-pressure eviction, production-defaults guard)
 
+## E15 Retention-Policy Separation (D32) — Phase 11
+
+**Objective:** separate dynamic **activation** (`current_importance`: decays, drives retrieval ranking) from long-term **survival** (`retention_priority`: stable evidence score, drives store eviction). Apply the OBSERVED-based decision rule and advance the winning candidate to the production default.
+
+**Implementation:**
+- `config.yaml` `retention: {mode, eviction_priority}` (default advanced to `dual_score` / `retention_priority`); `load_settings()` returns it and honors programmatic overrides
+- `decay.py`: `calculate_retention_priority()` = `min(1.0, base_score*(1+access_gain*(access_count-1)))` (deterministic, NO temporal decay); `step_decay_and_prune(..., retention_mode)` — `hard_threshold` (legacy prune), `soft_decay`/`dual_score` (never threshold-prune; flag `retained_below_threshold`); unknown mode → `ValueError`
+- `budget.py`: `token_budget_evict(..., priority_key)` — `dual_score → retention_priority`; tie-break unchanged (oldest first)
+- `experiments/e15_retention_policy.py`: primary grid (4 policies × 4 budgets × 5 seeds) + stress grid (3 policies × 3 store budgets × 3 active budgets × 3 seeds, scale 27, 1200 turns, natural store ~8272 tok) + lifecycle registry (activation + retention transcripts) + report + auto-classifier (`classify_result`)
+- Retrieval path untouched (frozen: ranking uses `current_importance` only) — causal isolation test included
+
+**Primary results (mean context recall / store recall, 5 seeds × 400 turns):**
+- hard_threshold (legacy): ctx 0.576/0.705/0.800/0.917; store 0.672/0.774/0.852/0.917; decay removals 31.4/20.4/10.6/0.2
+- soft_decay: ctx 0.862/0.883/0.888/0.917; store 0.917 flat; decay removals 0; obsolete 0; correction_recall 1.0 at ALL budgets (vs 0.5/0.7 legacy)
+- dual_score: identical to soft_decay in primary (no store-pressure evictions); adds retention-priority eviction under stress
+- no_decay: ctx 0.893/0.893/0.893/0.917, store 0.917 (upper-bound diagnostic, shows remaining leakage is retrieval-side)
+- Revived facts (would-be-pruned, later retrieved): 30.0/20.4/9.6/0.2 at 64/128/256/512 — proves recovery is real, not mere data preservation
+
+**Stress results (scale 27, ~8272 natural store tokens, 1200 turns):**
+- At tightest store budget 1024: dual_score ctx 0.368/0.434/0.503 vs soft 0.322/0.405/0.484; correction_recall 0.94 vs 0.28; dual evicts 430 vs soft 518 (more stable store); archival store_recall −1 pt tradeoff (dual evicts never-retrieved low-retention facts)
+- At 2048/4096 store: dual store 0.805/0.897 vs soft 0.775/0.877; hard_threshold loses up to ~409 facts to decay-pruning even before eviction
+- obsolete_retention = 0 under EVERY policy/every budget (no stale resurrection; supersession intact)
+
+**Decision rule verdict (auto-classified, reviewer-confirmable):**
+- SEPARATING ACTIVATION FROM SURVIVAL IS SUPPORTED → **SUPPORTED** (store +0.113, ctx +0.138, active-context unchanged, safety preserved, store growth bounded)
+- RETENTION PRIORITY FOR STORE EVICTION IS SUPPORTED → **SUPPORTED** (under tightest store pressure: context +0.031, correction +0.667; archival store_recall −0.009 tradeoff)
+- SOFT RETENTION ... CREATES A STALENESS TRADEOFF → **NOT SUPPORTED** (obsolete 0, correction improved, no stale accumulation)
+
+**Advanced default:** `retention.mode: dual_score`, `retention.eviction_priority: retention_priority` (decay no longer deletes; store eviction prefers low retention). Pipeline fallback for settings lacking the key stays `hard_threshold` (backward-compatible). E14 suite pinned to legacy mode explicitly in its test helper.
+
+**Tests:** 80 passing (+26 new in `tests/test_e15_retention_policy.py`: retention defaults/modes/priority math/eviction priority parity, retrieval isolation, revival hard-vs-soft, supersession safety under soft, E15 cell shape)
+
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -147,8 +180,9 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 7. D29: Phase 8 validation complete — E12 POST-FIX metrics confirm fix
 8. D30: Phase 9 complete — Phase 8 generalized; query-first retrieval is primary causal driver
 9. D31: Phase 10 complete — decay→prune is the dominant store-loss mechanism; no policy change made
+10. D32: Phase 11 complete — separation of activation/survival supported; advanced default dual_score + retention-priority eviction
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-17 after Phase 10 E14 retention diagnosis
+Last updated: 2026-09-17 after Phase 11 E15 retention-policy separation

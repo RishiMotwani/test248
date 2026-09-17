@@ -618,6 +618,7 @@ def load_settings(overrides: Optional[Dict] = None) -> Dict:
         "decay_lambdas": cfg["decay_lambdas"],
         "scoring_weights": cfg["scoring_weights"],
         "compression": cfg["compression"],
+        "retention": cfg.get("retention", {}),
         "injection_token_limit": int(cfg["system"].get("injection_token_limit", 0)),
         "memory_store_token_budget": int(cfg["system"].get("memory_store_token_budget", 0)),
     }
@@ -632,6 +633,12 @@ def load_settings(overrides: Optional[Dict] = None) -> Dict:
             s["memory_store_token_budget"] = int(overrides["memory_store_token_budget"])
         if overrides.get("injection_token_limit") is not None:
             s["injection_token_limit"] = int(overrides["injection_token_limit"])
+        # Retention policy overrides (D32 / Phase 11): allow experiments to select
+        # the survival policy programmatically without editing config.yaml.
+        if overrides.get("retention_mode") is not None:
+            s["retention"]["mode"] = overrides["retention_mode"]
+        if overrides.get("eviction_priority") is not None:
+            s["retention"]["eviction_priority"] = overrides["eviction_priority"]
     return s
 
 

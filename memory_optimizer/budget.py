@@ -35,13 +35,20 @@ def token_budget_evict(
     memories: List[Dict],
     budget: int,
     fact_tokens: FactTokens = None,
-    importance_key: str = "current_importance",
+    priority_key: str = "current_importance",
 ) -> Tuple[List[Dict], List[Dict], int]:
-    """Evict lowest-importance memories until the active store fits `budget`.
+    """Evict lowest-priority memories until the active store fits `budget`.
 
-    Returns (kept, evicted, used_tokens). Eviction keys on the memory's current
-    importance, breaking ties toward the oldest source turn so recent,
-    reinforced memories survive the squeeze.
+    Returns (kept, evicted, used_tokens). Eviction keys on the memory's
+    `priority_key` (default: current importance — dynamic activation), breaking
+    ties toward the oldest source turn so recent, reinforced memories survive
+    the squeeze.
+
+    Phase 11/D32: under ``retention.mode = dual_score`` the caller passes
+    ``priority_key="retention_priority"`` (stable, evidence-based long-term
+    survival score), so store-budget eviction no longer deletes an old-but-
+    valuable fact just because its activation faded. The tie-break is unchanged
+    (oldest source_turn_id) for both keys.
     """
     kept = [m for m in memories]
     used = _sum_tokens(kept, fact_tokens)
@@ -49,19 +56,19 @@ def token_budget_evict(
     while used > budget and kept:
         kept.sort(
             key=lambda m: (
-                m.get(importance_key, m.get("base_score", 0)),
+                m.get(priority_key, m.get("base_score", 0)),
                 m.get("source_turn_id", 0),
             )
         )
         victim = kept.pop(0)
-        importance = victim.get(importance_key, victim.get("base_score", 0))
+        priority = victim.get(priority_key, victim.get("base_score", 0))
         victim["eviction_reason"] = {
             "reason": "budget_squeeze",
             "detail": (f"store {used}/{budget} tokens exceeds the {budget}-token budget; "
-                       f"evicted lowest {importance_key}={importance:.3f}"),
+                       f"evicted lowest {priority_key}={priority:.3f}"),
             "used_tokens": used,
             "budget": budget,
-            "importance_key": importance_key,
+            "priority_key": priority_key,
         }
         evicted.append(victim)
         used -= _tokens(victim, fact_tokens)

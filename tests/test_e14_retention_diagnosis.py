@@ -62,6 +62,13 @@ def _gt_and_queries():
 
 def _replay(decay_lambdas, pruning_threshold, store_budget=0, budget=8):
     settings = load_settings({"max_context_tokens": budget})
+    # These lifecycle tests target the LEGACY hard-threshold semantics
+    # (E14/Phase-10). Pin the retention mode explicitly so the new default
+    # (D32/Phase 11: dual_score) does not change their meaning.
+    settings["retention"] = {
+        "mode": "hard_threshold",
+        "eviction_priority": "current_importance",
+    }
     stream = _stream_with_fact()
     gt, queries = _gt_and_queries()
     return _instrumented_replay(

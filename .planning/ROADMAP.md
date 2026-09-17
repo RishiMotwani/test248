@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 10
+**Phases:** 11
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure

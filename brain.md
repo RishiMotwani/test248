@@ -964,6 +964,98 @@ facts and compressed the score distribution.
 
 ---
 
+### D32 ★ Phase 11 Retention-Policy Separation — Activation vs Survival
+  **Motivation:** D31 showed decay→prune is the dominant store-loss mechanism.
+  The fix must separate **activation** (how "hot" a memory is right now —
+  ranking for retrieval) from **survival** (how much a memory should be kept —
+  eviction). Decay should lower retrieval ranking, NOT delete the only surviving
+  representation. Deletion should be reserved for genuine store-capacity
+  pressure, decided by a retention-oriented priority. (Terminology: "activation-
+  aware retrieval vs retention-aware survival", NOT "task-aware memory".)
+
+  **32.1 New Scores:**
+  - `current_importance` — unchanged dynamic activation (category decay lambdas;
+    decays with time since last access; reinforced on retrieval). Ranking only.
+  - `retention_priority` — NEW stable evidence score:
+    `min(1.0, base_score * (1 + access_gain * (access_count - 1)))`.
+    Deterministic (no LLM/embedding cost), no temporal decay, grows with repeated
+    use. Eviction ONLY.
+
+  **32.2 Retention Modes (`config.yaml` `retention`, `decay.py`):**
+  - `hard_threshold` (LEGACY / Phase 10): prune when `current_importance` <
+    pruning.threshold (0.2). Preserved for backward compatibility + E14 replication.
+  - `soft_decay`: importance decays, never threshold-prunes; memory flagged
+    `retained_below_threshold=True`; store survives unless the store-token budget
+    actually evicts.
+  - `dual_score`: soft_decay + store-budget eviction uses `retention_priority`.
+  - `no_decay`: ablation diagnostic (lambdas 0, threshold 0.0) — upper bound.
+  - Unknown mode → `ValueError` (validated before the loop).
+
+  **32.3 E15 Experiment (experiments/e15_retention_policy.py):**
+  - Primary grid: 4 policies × budgets [64,128,256,512] × 5 seeds, 400 turns,
+    scale 3, store_budget 4096, nomic-embed-text.
+  - Stress grid (mandatory — dual_score only differs under real store pressure):
+    scale auto-grown until natural store ≥ 8192 tokens (measured 8272 @ scale 27);
+    store budgets [1024,2048,4096] × active [64,128,256] × seeds [42,43,44],
+    1200 turns × 27 cells. Policies: soft_decay, dual_score, hard_threshold.
+  - Lifecycle registry adds a retention transcript per fact (current_importance,
+    minimum, retention_priority, maximum, retained_below_threshold, terminal state).
+  - Retrieval path FROZEN during the grid: ranking uses `current_importance`
+    only (causal isolation — separation can only act through survival/eviction).
+
+  **32.6 Observed Results (E15 primary, 5 seeds × 400 turns):**
+
+  Comparison (mean context_recall / store_recall / decay_removals / corr_recall):
+  | Policy | 64 | 128 | 256 | 512 |
+  | hard_threshold | ctx 0.576 store 0.672 rm 31.4 | 0.705/0.774/20.4 | 0.800/0.852/10.6 | 0.917/0.917/0.2 |
+  | soft_decay | ctx 0.862 store 0.917 rm 0 | 0.883/0.917/0 | 0.888/0.917/0 | 0.917/0.917/0 |
+  | dual_score | identical to soft_decay (no store evictions in primary) |
+  | no_decay | ctx 0.893 store 0.917 rm 0 | (flat) |
+
+  - soft/dual correction_recall = 1.0 at ALL budgets (legacy 0.5/0.7 at 64/128)
+  - obsolete_retention = 0.0 everywhere; supersession always correct
+  - Revived (would-be-pruned, later retrieved): 30.0/20.4/9.6/0.2 at 64/128/256/512
+
+  **32.7 Observed Facts vs Inferences:**
+
+  OBSERVED (stress grid, 1200 turns, ~8272 natural store tokens):
+  1. soft vs hard at store 2048/4096: store_recall 0.775–0.889 vs 0.762–0.869;
+     hard loses up to ~409 facts to decay-pruning even before eviction binds
+  2. Tightest store (1024): dual ctx 0.368/0.434/0.503 vs soft 0.322/0.405/0.484;
+     dual correction_recall 0.94 vs soft 0.28; dual evicts 430 vs soft 518 facts
+     (more stable store); dual archival store_recall 0.629 vs soft 0.638 (−1 pt)
+  3. dual evicts by retention_priority: keeps once-retrieved/reinforced facts,
+     evicts never-retrieved facts → task recall improves, archival completeness dips
+  4. No stale resurrection: obsolete_retention 0 under every policy/budget
+
+  INFERRED:
+  5. Under hard_threshold, decay→prune destroys facts that store capacity could
+     have preserved; the "memory loss" is policy-caused, not capacity-caused
+  6. Retention-priority eviction is the causation-complete version of soft_decay
+     under pressure: fewer evictions, better context + correction safety
+
+  UNRESOLVED:
+  7. Archival store_recall at the tightest store (−1 pt) — never-retrieved facts
+     are evicted first; whether this matters depends on long-horizon reuse that
+     the 1200-turn grid does not exercise
+  8. `PRESENT_BUT_NOT_RETRIEVED` ≈ 6 facts persists across all policies (D31 #11)
+
+  **Decision (reviewer-confirmable auto-labels):**
+  - SEPARATING ACTIVATION FROM SURVIVAL IS SUPPORTED → SUPPORTED
+  - RETENTION PRIORITY FOR STORE EVICTION IS SUPPORTED → SUPPORTED
+  - SOFT RETENTION RECOVERS FACTS BUT CREATES A STALENESS TRADEOFF → NOT
+    SUPPORTED (obsolete 0, correction improved — no staleness cost observed)
+
+  **Advanced production default:** `retention: {mode: dual_score,
+  eviction_priority: retention_priority}`. Decay no longer deletes; store
+  eviction prefers low retention_priority. Pipeline fallback for settings
+  without the key keeps `hard_threshold` (backward-compatible; E14 tests pin
+  legacy mode explicitly). All other defaults unchanged.
+
+  **Status:** Phase 11 complete. Committed + pushed. Candidate advanced.
+
+---
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.

@@ -26,6 +26,18 @@ scoring_weights:
   w4_frequency: 0.15
 pruning:
   threshold: 0.2
+
+# Retention policy (D32): separates dynamic activation (current_importance,
+# retrieval ranking) from long-term survival (retention_priority, eviction).
+#   hard_threshold  -> legacy behavior: prune below pruning.threshold
+#   soft_decay      -> importance decays, no threshold deletion; store survives
+#                      unless the store-token budget actually evicts
+#   dual_score      -> soft_decay + store-budget eviction uses retention_priority
+# Default (Phase 11, E15): dual_score. Decay no longer deletes; store eviction
+# prefers low retention_priority facts.
+retention:
+  mode: dual_score
+  eviction_priority: retention_priority
 retrieval:
   top_k: 5
   similarity_threshold: 0.35

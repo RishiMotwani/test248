@@ -119,7 +119,11 @@ class AdaptiveMemoryPipeline:
         self._latency("compression", t0)
 
         t0 = time.perf_counter()
-        active, pruned_this_turn = self.decay.step_decay_and_prune(self.memories, turn_id)
+        retention_cfg = self.settings.get("retention", {})
+        retention_mode = retention_cfg.get("mode", "hard_threshold")
+        eviction_priority = retention_cfg.get("eviction_priority", "current_importance")
+        active, pruned_this_turn = self.decay.step_decay_and_prune(
+            self.memories, turn_id, retention_mode=retention_mode)
         self.memories = active
         self.pruned_memories.extend(pruned_this_turn)
         self._latency("decay", t0)
@@ -127,7 +131,8 @@ class AdaptiveMemoryPipeline:
         t0 = time.perf_counter()
         if store_budget > 0 and fact_tokens is not None:
             pre_store_tokens = sum(fact_tokens(m["fact"]) for m in self.memories)
-            kept, evicted_by_budget, post_store_tokens = token_budget_evict(self.memories, store_budget, fact_tokens)
+            kept, evicted_by_budget, post_store_tokens = token_budget_evict(
+                self.memories, store_budget, fact_tokens, priority_key=eviction_priority)
             self.memories = kept
             self.last_budget_evictions = [{
                 "fact": m["fact"],
