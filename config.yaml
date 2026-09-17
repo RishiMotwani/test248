@@ -3,8 +3,17 @@ system:
   ollama_endpoint: http://localhost:11434
   llm_model: llama3.1:8b
   embedding_model: nomic-embed-text
+
+  # Hard cap on the context actually supplied to the LLM.
   max_context_tokens: 4096
+
+  # 0 means: use max_context_tokens as the active injection limit.
   injection_token_limit: 0
+
+  # Independent long-term memory capacity.
+  # 0 means: no hard store-token cap; retention is governed by
+  # compression + decay. This prototype keeps memory in RAM.
+  memory_store_token_budget: 0
 decay_lambdas:
   transient: 0.15
   personal: 0.005

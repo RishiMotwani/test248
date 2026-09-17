@@ -724,7 +724,7 @@ facts and compressed the score distribution.
   context management? **Answer: no — clearly worse under a fair workload.**
   Workload (`data/coding_workload.py`): 84 semantically diverse facts (24 distinct
   predicate families — see the dedupe-fairness fix below) introduced across a
-  400-turn session, with corrections/obsolete facts, filler, and one ground-truth
+  400-turn session, with corrections/obsolete decisions, filler, and one ground-truth
   question per fact asked at the end (required token must be injected, forbidden
   obsolete token must be absent). Budget is genuinely binding (natural store 1024
   tok = 2–8× the budget). Embeddings: nomic-embed-text (production retrieval path).
@@ -763,6 +763,42 @@ facts and compressed the score distribution.
   expansion made facts near-duplicates that adaptive's dedupe (cosine ≥0.90)
   legitimately collapsed (332→189) — replaced with 24 distinct predicate families,
   now dedupe retains ~86–88%. `tests/test_coding_benchmark.py` locks both in.
+
+### D29 ★ Separate memory capacity from active context; make retrieval query-first
+  **Problem:** the E12 diagnosis revealed two structural issues:
+  1. `max_context_tokens` simultaneously capped the *long-term memory store* AND
+     the *active LLM context* — they are conceptually different resources.
+  2. Retrieval ranking `0.6·importance + 0.4·similarity` made injection
+     query-insensitive (importance span 0.47 vs similarity span 0.069).
+
+  **Fix:** three coordinated changes.
+
+  **29.1 Separate budgets (config.yaml, pipeline.py, paper.py):**
+  - `max_context_tokens` → hard cap on active LLM context (unchanged default 4096)
+  - `injection_token_limit` (default 0 = use max_context_tokens) → explicit
+    active injection cap
+  - `memory_store_token_budget` (default 0 = no hard cap) → independent
+    long-term memory capacity; retention governed by compression + decay
+  - Pipeline ingest now evicts to `memory_store_token_budget` (if > 0) instead of
+    `max_context_tokens`. Active injection uses `injection_token_limit`.
+
+  **29.2 Query-first retrieval (retrieval.py):**
+  - Default weights changed from `imp_weight=0.6, sim_weight=0.4, cat_bonus=0.1`
+    to `imp_weight=0.15, sim_weight=0.85, cat_bonus=0.02`
+  - Ranking formula: `score = sim_weight * sim + imp_weight * importance + bonus`
+    (bonus no longer multiplied by sim_weight)
+  - Conceptual separation: **historical importance = retention signal**,
+    **query similarity = retrieval signal**.
+
+  **29.3 E12 now measures retrieval loss separately:**
+  - `store_recall` = answerable from full store
+  - `context_recall` = answerable from injected context
+  - `retrieval_loss = store_recall - context_recall` (info existed but retrieval failed)
+  - `mean_context_utilization = mean_context_tokens / active_context_budget`
+  - Explicit `memory_store_token_budget: max(4096, budget*4)` in E12 settings so
+    the store is NOT the bottleneck; we measure retrieval quality.
+
+  **Status:** implementation complete; targeted validation pending (Change 8).
 
 ---
 

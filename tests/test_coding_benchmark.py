@@ -9,6 +9,11 @@ import pytest
 
 from data.coding_workload import build_coding_session
 from experiments.e12_coding_benchmark import run_cell
+from memory_optimizer.pipeline import AdaptiveMemoryPipeline
+from memory_optimizer.retrieval import MemoryRetriever
+from memory_optimizer.scoring import ImportanceScorer
+from memory_optimizer.decay import CategoryDecayEngine
+from memory_optimizer.compression import MemoryCompressor
 
 
 class TestCodingWorkload:
@@ -90,3 +95,73 @@ class TestE12Harness:
         src = [g["source_turn"] for g in gt]
         assert max(src) > 240, f"latest fact at turn {max(src)} not spread"
         assert min(src) < 40, f"earliest fact at turn {min(src)} not spread"
+
+
+class TestMemoryStoreBudgetIndependence:
+    """Architectural contract: store capacity is independent from active context."""
+
+    def test_store_budget_independent_of_active_context(self):
+        """Active-context budget=32, store budget=256: store should retain facts
+        exceeding active budget but bounded by store budget."""
+        settings = {
+            "max_context_tokens": 32,
+            "memory_store_token_budget": 256,
+            "injection_token_limit": 32,
+            "top_k": 5,
+            "similarity_threshold": 0.35,
+            "scoring_weights": {
+                "w1_relevance": 0.4,
+                "w2_utility": 0.3,
+                "w3_recency": 0.15,
+                "w4_frequency": 0.15,
+            },
+            "decay_lambdas": {
+                "transient": 0.0,
+                "personal": 0.0,
+                "technical_preference": 0.0,
+                "project_context": 0.0,
+            },
+            "pruning": {"threshold": 0.0},
+            "compression": {"enabled": False},
+        }
+
+        # Construct facts: each ~15 tokens. We need enough to exceed 32 (active)
+        # but remain below 256 (store). 10 facts * 15 = 150 tokens.
+        facts = []
+        for i in range(10):
+            facts.append({
+                "fact": f"Requirement: the service_{i} API must handle {100 + i * 10} requests per second",
+                "category": "technical_preference",
+                "confidence": 0.5,
+            })
+
+        pipe = AdaptiveMemoryPipeline.from_settings(settings)
+        # Disable decay and compression for this pure budget test
+        pipe.decay.lambdas = {k: 0.0 for k in pipe.decay.lambdas}
+        pipe.settings["enable_compression"] = False
+
+        # Ingest all facts in one turn
+        result = pipe.ingest(1, "test message", facts, fact_tokens=lambda t: len(t.split()))
+
+        # Active context injected should be bounded by 32 tokens
+        assert result["injected_tokens"] <= 32
+
+        # Store should have retained more than active context (bounded by 256)
+        store_tokens = sum(len(m["fact"].split()) for m in pipe.active_memories)
+        assert store_tokens > 32, f"Store tokens {store_tokens} should exceed active budget 32"
+        assert store_tokens <= 256, f"Store tokens {store_tokens} should not exceed store budget 256"
+
+        # Now test that store budget is enforced: add more facts exceeding 256
+        more_facts = []
+        for i in range(10, 25):  # 15 more * ~15 = 225 tokens -> total ~375 > 256
+            more_facts.append({
+                "fact": f"Constraint: the service_{i} service may use at most {64 + i * 5} megabytes of memory",
+                "category": "technical_preference",
+                "confidence": 0.5,
+            })
+
+        result = pipe.ingest(2, "more facts", more_facts, fact_tokens=lambda t: len(t.split()))
+
+        # Store should be capped at 256
+        store_tokens = sum(len(m["fact"].split()) for m in pipe.active_memories)
+        assert store_tokens <= 256, f"Store tokens {store_tokens} should not exceed store budget 256"

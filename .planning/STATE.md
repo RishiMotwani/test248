@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** All phases complete (1–6); P2 context-pressure grid running and complete
+**Current phase:** Phase 8 (E12 architectural fixes: separate store/active budgets, query-first retrieval)
 
 ## Completed Phases
 
@@ -15,6 +15,8 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 4** — Evaluation fixes + manifest versioning · commit `134d5b5`
 - **Phase 5** — Dashboard + quick gate + regression tests · commits `f011d2c`, `91fa6b4`
 - **Phase 6** — Revalidation + documentation + final audit · (this session) complete
+- **Phase 7** — E12 coding-context benchmark (negative result) · commit `60de0c5`
+- **Phase 8** — E12 architectural fixes (store/active separation, query-first retrieval) · in progress
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -30,10 +32,10 @@ See: .planning/PROJECT.md (updated 2026-09-16)
   - store recall (E2 durable): 0.76 adaptive, 1.0 baseline (blended FP ceiling)
 - E4 hard-case: dist 10 adaptive 0.75/baseline 1.0; dist 25 adaptive 0.0/baseline 1.0 (transient coffee facts intentionally forgotten + degenerate unstressed baseline)
 
-## E12 Coding-Context Usefulness Benchmark (D28) — NEGATIVE for adaptive
+## E12 Coding-Context Usefulness Benchmark (D28) — NEGATIVE for adaptive (PRE-FIX)
 
 - `data/coding_workload.py` + `experiments/e12_coding_benchmark.py`; 84 diverse facts, 400 turns, budgets {128,256,512}, 3 seeds, nomic-embed-text (production retrieval path). Budget genuinely binding (natural store 1024 tok = 2–8× budget).
-- 3-seed mean query-time injected context_recall:
+- 3-seed mean query-time injected context_recall (pre-fix: active=store budget):
   - adaptive: 0.155 / 0.167 / 0.167 (flat across budgets despite store_recall 0.19→0.35→0.53)
   - vanilla_rag: 0.905 @ ~60 injected tok; memgpt_style 0.905 @ ~121 tok; summarization_only 0.179→0.333→0.583; sliding_window 0.048
 - Root causes: (1) bounded store + decay retains only ~37% of facts at top budget; (2) importance-dominant retrieval `0.6·imp+0.4·sim` — for a query, importance spans 0.47 vs similarity span 0.069, so injection is query-insensitive. Ablation @512: production 0.167, pure-similarity 0.421, pure-importance 0.115.
@@ -41,10 +43,34 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - Fairness fixes (not tuning): facts spread across whole session (was first-half + decay-prune artifact); distinct predicate families replace near-duplicate templates (dedupe retains ~86–88%, was 332→189).
 - Tests: 33 passing (`tests/test_coding_benchmark.py` 9).
 
+## E12 Architectural Fixes (D29) — Phase 8 Target Metrics
+
+**Changes implemented:**
+1. Separate `memory_store_token_budget` (long-term) from `max_context_tokens` (active context) + `injection_token_limit` (explicit override)
+2. Retrieval defaults: `imp_weight=0.15, sim_weight=0.85, cat_bonus=0.02`; formula: `sim_weight*sim + imp_weight*imp + bonus`
+3. E12 uses `memory_store_token_budget=max(4096, budget*4)` + `injection_token_limit=budget`
+4. Retrieval diagnostics: `store_recall`, `retrieval_loss`, `mean_context_utilization`
+
+**Targeted validation pending:** Run E12 with new architecture and compare BEFORE vs AFTER:
+- store_recall (should rise with independent store budget)
+- context_recall (should rise with query-first retrieval)
+- retrieval_loss = store_recall - context_recall (should decrease)
+- correction_recall (should not regress)
+- obsolete_retention (should not regress)
+- mean_context_tokens (should respect active budget)
+
+**Acceptance criteria (Change 8):**
+1. Active-context budget actually enforced (mean_context_tokens ≤ budget)
+2. Store capacity independent from active context (store_tokens can exceed active budget)
+3. Query similarity dominates historical importance (query relevance beats importance test passes)
+4. Store recall and context recall distinguishable (retrieval_loss measured)
+5. Correction/negation behavior does not regress (tests pass)
+6. All 33+ tests pass
+
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -67,8 +93,9 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 4. Embed-path dependence changes per-seed misuse fraction (0.0 vs 0.2)
 5. Default 50-turn config does not stress 4096 budget; barebone fits entirely
 6. D27: point-of-need probe recall isolates retained content from budget effects
+7. D29: Phase 8 validation pending — E12 BEFORE/AFTER metrics needed to confirm fix
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-17 after Phase 6 P2 grid completion + P8 latency benchmark
+Last updated: 2026-09-17 after Phase 7 E12 negative result + Phase 8 implementation

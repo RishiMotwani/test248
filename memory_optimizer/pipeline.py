@@ -79,8 +79,13 @@ class AdaptiveMemoryPipeline:
 
     def ingest(self, turn_id: int, user_message: str, facts: List[Dict],
                fact_tokens=None, embed_fn=None, query_relevance: Optional[float] = None) -> Dict:
-        budget = int(self.settings["max_context_tokens"])
-        inj_limit = int(self.settings.get("injection_token_limit", 0))
+        active_context_budget = int(self.settings["max_context_tokens"])
+
+        injection_limit = int(self.settings.get("injection_token_limit", 0))
+        if injection_limit <= 0:
+            injection_limit = active_context_budget
+
+        store_budget = int(self.settings.get("memory_store_token_budget", 0))
 
         t0 = time.perf_counter()
         new_facts = []
@@ -118,8 +123,8 @@ class AdaptiveMemoryPipeline:
         self._latency("decay", t0)
 
         t0 = time.perf_counter()
-        if fact_tokens is not None:
-            kept, evicted_by_budget, _ = token_budget_evict(self.memories, budget, fact_tokens)
+        if store_budget > 0 and fact_tokens is not None:
+            kept, evicted_by_budget, _ = token_budget_evict(self.memories, store_budget, fact_tokens)
             self.memories = kept
             self.last_budget_evictions = [{
                 "fact": m["fact"],
@@ -128,12 +133,14 @@ class AdaptiveMemoryPipeline:
                 "source_turn_id": m.get("source_turn_id"),
             } for m in evicted_by_budget]
         else:
+            # No independent store cap: do not confuse active-context capacity
+            # with long-term memory capacity.
             self.last_budget_evictions = []
         self._latency("budget_evict", t0)
 
         t0 = time.perf_counter()
         injected = self.retriever.retrieve(user_message, self.memories, current_turn=turn_id,
-                                           token_limit=inj_limit, fact_tokens=fact_tokens)
+                                           token_limit=injection_limit, fact_tokens=fact_tokens)
         if getattr(self.retriever.stats, "get", None) and self.retriever.stats.get("embed_ms") \
                 and self.on_stage is not None:
             self.on_stage("embedding_ms", float(self.retriever.stats["embed_ms"]))

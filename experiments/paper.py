@@ -619,6 +619,7 @@ def load_settings(overrides: Optional[Dict] = None) -> Dict:
         "scoring_weights": cfg["scoring_weights"],
         "compression": cfg["compression"],
         "injection_token_limit": int(cfg["system"].get("injection_token_limit", 0)),
+        "memory_store_token_budget": int(cfg["system"].get("memory_store_token_budget", 0)),
     }
     if overrides:
         if overrides.get("max_context_tokens") is not None:
@@ -627,6 +628,10 @@ def load_settings(overrides: Optional[Dict] = None) -> Dict:
             s["top_k"] = int(overrides["top_k"])
         if overrides.get("similarity_threshold") is not None:
             s["similarity_threshold"] = float(overrides["similarity_threshold"])
+        if overrides.get("memory_store_token_budget") is not None:
+            s["memory_store_token_budget"] = int(overrides["memory_store_token_budget"])
+        if overrides.get("injection_token_limit") is not None:
+            s["injection_token_limit"] = int(overrides["injection_token_limit"])
     return s
 
 

@@ -54,9 +54,9 @@ class MemoryRetriever:
         sim_threshold: float = 0.35,
         embed_fn: Callable[[List[str]], list] = None,
         embedding_model: str = "nomic-embed-text",
-        imp_weight: float = 0.6,
-        sim_weight: float = 0.4,
-        cat_bonus: float = 0.1,
+        imp_weight: float = 0.15,
+        sim_weight: float = 0.85,
+        cat_bonus: float = 0.02,
     ):
         self.top_k = top_k
         self.sim_threshold = sim_threshold
@@ -128,8 +128,9 @@ class MemoryRetriever:
 
         scored.sort(
             key=lambda x: (
-                self.imp_weight * x["importance"]
-                + self.sim_weight * (x["retrieval_sim"] + x["retrieval_bonus"])
+                self.sim_weight * x["retrieval_sim"]
+                + self.imp_weight * x["importance"]
+                + x["retrieval_bonus"]
             ),
             reverse=True,
         )

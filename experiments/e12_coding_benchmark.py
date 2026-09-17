@@ -175,7 +175,14 @@ def run_cell(seed: int, budget: int, turns: int = TURNS, scale: int = SCALE,
                                                scale=scale)
     raw_tokens = sum(h.get("tokens") or 1 for h in stream)
     natural_store_tokens = sum(len(g["fact"].split()) for g in gt if not g.get("superseded_by"))
-    settings = load_settings({"max_context_tokens": budget})
+    settings = load_settings({
+        "max_context_tokens": budget,
+        "injection_token_limit": budget,
+        # Independent long-term memory capacity.
+        # Large enough that E12 measures retrieval quality rather than
+        # simply reproducing the active-context cap.
+        "memory_store_token_budget": max(4096, budget * 4),
+    })
     top_k = int(settings["top_k"])
     sim_th = float(settings.get("similarity_threshold", 0.35))
 
@@ -213,11 +220,25 @@ def run_cell(seed: int, budget: int, turns: int = TURNS, scale: int = SCALE,
         qr = MemoryRetriever(top_k=top_k, sim_threshold=sim_th, embed_fn=embed_fn,
                              embedding_model=embedding_model)
         cx, st = {}, {}
+        store_recalls = []
+        retrieval_losses = []
         for q in queries:
+            # Use token_limit=budget to enforce active-context budget at query time
             injected = qr.retrieve(q["user"], memories, current_turn=q["query_turn"],
-                                   fact_tokens=word_count)
+                                   token_limit=budget, fact_tokens=word_count)
             cx[q["qid"]] = injected
             st[q["qid"]] = memories
+
+            # Retrieval diagnostic: was the answer in the store but not retrieved?
+            store_ans = _answered(q, memories, _fact_text)
+            context_ans = _answered(q, injected, _fact_text)
+            if store_ans:
+                store_recalls.append(1)
+                retrieval_losses.append(0 if context_ans else 1)
+            else:
+                store_recalls.append(0)
+                retrieval_losses.append(0)
+
         m = _metrics(queries, cx, st)
         m["store_count"] = len(memories)
         m["store_tokens"] = sum(word_count(x["fact"]) for x in memories)
@@ -227,6 +248,13 @@ def run_cell(seed: int, budget: int, turns: int = TURNS, scale: int = SCALE,
         m["mean_session_injected_tokens"] = round(
             sum(r["injected_tokens"] for r in per_turn) / len(per_turn), 2)
         m["replay"] = "adaptive"
+        # Retrieval diagnostics
+        m["active_context_budget"] = budget
+        m["store_budget"] = int(settings.get("memory_store_token_budget", 0))
+        m["mean_context_utilization"] = round(
+            m["mean_context_tokens"] / budget, 4) if budget else None
+        m["store_recall"] = round(sum(store_recalls) / len(store_recalls), 3) if store_recalls else None
+        m["retrieval_loss"] = round(sum(retrieval_losses) / len(retrieval_losses), 3) if retrieval_losses else None
         out_methods["adaptive"] = m
 
     # ---- baselines ---------------------------------------------------------
@@ -314,6 +342,8 @@ def run_benchmark(budgets=None, seeds=None, methods=None, turns: int = TURNS,
                 "mean_session_injected_tokens": mean("mean_session_injected_tokens", 2),
                 "store_tokens_mean": mean("store_tokens"),
                 "store_count_mean": mean("store_count"),
+                "retrieval_loss_mean": mean("retrieval_loss"),
+                "mean_context_utilization": mean("mean_context_utilization", 4),
             }
         raw = [c["raw_conversation_tokens"] for c in rows]
         store = [c["natural_store_tokens"] for c in rows]
@@ -340,14 +370,16 @@ def run_benchmark(budgets=None, seeds=None, methods=None, turns: int = TURNS,
         "note": (
             "context_recall = answerable from the query-time INJECTED context "
             "(tokens the model actually receives); store_recall = answerable from the "
-            "method's full store (retention without retrieval). recall_per_1k_tokens = "
-            "1000 * context_recall / mean_context_tokens (useful task info per active "
-            "context token). obsolete_retention = share of correction/obsolete questions "
-            "where the superseded value is still injected (lower better). budget_stressed "
-            "means the natural store (all facts, no eviction) exceeds the budget — the "
-            "budget genuinely binds. embeddings route through Ollama nomic-embed-text "
-            "(local, deterministic for identical inputs); lexical mode is reported only "
-            "for the baselines."
+            "method's full store (retention without retrieval). retrieval_loss = "
+            "store_recall - context_recall (information existed but retrieval failed). "
+            "mean_context_utilization = mean_context_tokens / active_context_budget. "
+            "recall_per_1k_tokens = 1000 * context_recall / mean_context_tokens "
+            "(useful task info per active context token). obsolete_retention = share of "
+            "correction/obsolete questions where the superseded value is still injected "
+            "(lower better). budget_stressed means the natural store (all facts, no "
+            "eviction) exceeds the budget — the budget genuinely binds. embeddings route "
+            "through Ollama nomic-embed-text (local, deterministic for identical inputs); "
+            "lexical mode is reported only for the baselines."
         ),
     }
 
