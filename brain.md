@@ -718,6 +718,52 @@ facts and compressed the score distribution.
   conflict/negation density 0.1/0.1 — correction_recall 1.0, wrongly_retained
   0.2, E1 regression 7.9% vs vanilla (< 15% gate).
 
+### D28 ★ Coding-context usefulness benchmark — NEGATIVE result for adaptive (E12)
+  **Question:** at the SAME active-context token budget, does the adaptive memory
+  keep the information needed to answer coding questions better than simpler
+  context management? **Answer: no — clearly worse under a fair workload.**
+  Workload (`data/coding_workload.py`): 84 semantically diverse facts (24 distinct
+  predicate families — see the dedupe-fairness fix below) introduced across a
+  400-turn session, with corrections/obsolete facts, filler, and one ground-truth
+  question per fact asked at the end (required token must be injected, forbidden
+  obsolete token must be absent). Budget is genuinely binding (natural store 1024
+  tok = 2–8× the budget). Embeddings: nomic-embed-text (production retrieval path).
+  **3-seed means, query-time injected context (top-k=5):**
+
+  | budget | method | ctx_recall | store_recall | long_range | corr | obsc_ret | ctx_tok |
+  |---|---|---|---|---|---|---|---|
+  | 128 | adaptive | **0.155** | 0.194 | 0.153 | 0.50 | 0.0 | 58 |
+  | 128 | vanilla_rag | **0.905** | 0.905 | 0.926 | 0.00 | 1.0 | 60 |
+  | 256 | adaptive | **0.167** | 0.345 | 0.157 | 0.50 | 0.0 | 56 |
+  | 512 | adaptive | **0.167** | 0.532 | 0.157 | 0.50 | 0.0 | 56 |
+  | 512 | summarization | 0.583 | 0.583 | 0.591 | 0.00 | 0.0 | 511 |
+  | any | sliding_window | 0.048 | 0.048 | 0.037 | 0.00 | 0.0 | 125 |
+
+  **Two independent causes (both verified, neither is workload artifact):**
+  1. **Bounded store + decay** limit how much is retained: adaptive's store grows
+     with budget (10→20→31 facts) and store_recall rises 0.19→0.35→0.53, but it
+     still holds only ~37% of facts at the top budget — vanilla keeps all 86.
+  2. **Importance-dominant retrieval** wastes what *is* retained. Production
+     ranking is `0.6·importance + 0.4·similarity` (D3 marked this "calibrate").
+     For a given query across the store, importance spans 0.47 (0.6×0.21..0.99)
+     while nomic cosine similarity spans only 0.069 (0.427..0.600), so ranking is
+     ~7:1 query-independent. Read-only ablation at budget 512:
+     production **0.167**, pure-similarity **0.421**, pure-importance **0.115**.
+     Context recall is FLAT (0.155→0.167) even as store_recall nearly triples —
+     the signature of query-insensitive injection.
+  **Decision:** per the "do not optimise adaptive to beat the benchmark" directive,
+  the retrieval weights were NOT tuned. D3's "calibrate" is now a concrete,
+  evidence-backed remediation for external review (recalibrate similarity vs
+  importance, or make the blend query-conditional). Even with pure similarity
+  (0.421) adaptive would still trail vanilla_rag (0.905) at ~60 injected tokens;
+  the bounded store is the harder limit.
+  **Benchmark-fairness fixes made (not tuning):** (a) facts were packed into the
+  first half then decay-pruned before end-of-session queries — now spread across
+  the whole session (`build_coding_session`); (b) the old single-skeleton template
+  expansion made facts near-duplicates that adaptive's dedupe (cosine ≥0.90)
+  legitimately collapsed (332→189) — replaced with 24 distinct predicate families,
+  now dedupe retains ~86–88%. `tests/test_coding_benchmark.py` locks both in.
+
 ---
 
 ## 8. Open questions for the human (blocking decisions)

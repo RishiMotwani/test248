@@ -1,0 +1,229 @@
+{
+  "experiment": "e10_context_pressure",
+  "pipeline_fix_version": 2,
+  "config": {
+    "budgets": [
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "turns": 500,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "methods": [
+      "adaptive",
+      "sliding_window",
+      "memgpt_style",
+      "summarization_only",
+      "vanilla_rag"
+    ],
+    "density": 20.0,
+    "conflict_density": 0.1,
+    "negation_density": 0.1,
+    "write": "oracle",
+    "measured": false,
+    "token_mode": "word_count",
+    "embedding_model": ""
+  },
+  "probe_recall_by_method_budget": {
+    "512": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.105,
+      "vanilla_rag": 1.0
+    },
+    "1024": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.209,
+      "vanilla_rag": 1.0
+    },
+    "2048": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.423,
+      "vanilla_rag": 1.0
+    },
+    "4096": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.848,
+      "vanilla_rag": 1.0
+    }
+  },
+  "store_tokens_by_method_budget": {
+    "512": {
+      "adaptive": 340.667,
+      "sliding_window": 110.0,
+      "memgpt_style": 4875.0,
+      "summarization_only": 508.333,
+      "vanilla_rag": 4875.0
+    },
+    "1024": {
+      "adaptive": 340.667,
+      "sliding_window": 110.0,
+      "memgpt_style": 4875.0,
+      "summarization_only": 1021.333,
+      "vanilla_rag": 4875.0
+    },
+    "2048": {
+      "adaptive": 340.667,
+      "sliding_window": 110.0,
+      "memgpt_style": 4875.0,
+      "summarization_only": 2045.667,
+      "vanilla_rag": 4875.0
+    },
+    "4096": {
+      "adaptive": 340.667,
+      "sliding_window": 110.0,
+      "memgpt_style": 4875.0,
+      "summarization_only": 4094.0,
+      "vanilla_rag": 4875.0
+    }
+  },
+  "recall_vs_budget": {
+    "512": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.105,
+      "vanilla_rag": 1.0
+    },
+    "1024": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.209,
+      "vanilla_rag": 1.0
+    },
+    "2048": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.423,
+      "vanilla_rag": 1.0
+    },
+    "4096": {
+      "adaptive": 0.084,
+      "sliding_window": 0.0,
+      "memgpt_style": 1.0,
+      "summarization_only": 0.848,
+      "vanilla_rag": 1.0
+    }
+  },
+  "auc": {
+    "adaptive": 0.084,
+    "sliding_window": 0.0,
+    "memgpt_style": 1.0,
+    "summarization_only": 0.3695,
+    "vanilla_rag": 1.0
+  },
+  "e4_diagnosis": {
+    "findings": "E4 distance-25 recall 0.0 attributed to: (1) only 2 relevant gt facts at dist 25 (both transient coffee-cup facts turn 10,11), (2) coffee-10 pruned by intentional decay, (3) coffee-11 merged into coffee-10 memory via dedupe (dup=5, lexical overlap ~0.9) then pruned, (4) baseline recall 1.0 is degenerate (616 raw tokens < 4096 budget so baseline window never evicts), (5) E4 failure is metric artifact of intended forgetting + unstressed baseline, not pipeline bug"
+  },
+  "known_issues": [
+    "Default 50-turn config does not stress 4096 budget (raw 616 < 4096)",
+    "E4 distance-25 recall 0.0: metric artifact not pipeline bug",
+    "Embed-path dependence: lexical wrong=0.0 vs embed wrong=0.2 for seed 42",
+    "Stale live manifest (pre-fix) shadows post-fix results",
+    "No post-fix live-verified latency measurement"
+  ],
+  "summary": {
+    "adaptive": {
+      "probe_recall_512": 0.084,
+      "probe_recall_1024": 0.084,
+      "probe_recall_2048": 0.084,
+      "probe_recall_4096": 0.084,
+      "store_tokens_mean": 340.667,
+      "auc": 0.084,
+      "note": "flat recall across budgets: importance-priority store saturates at ~340 tokens regardless of budget"
+    },
+    "summarization_only": {
+      "probe_recall_512": 0.105,
+      "probe_recall_1024": 0.209,
+      "probe_recall_2048": 0.423,
+      "probe_recall_4096": 0.848,
+      "store_tokens_mean_512": 508.333,
+      "auc": 0.3695,
+      "note": "recall scales linearly with budget (budget-proportional)"
+    },
+    "memgpt_style": {
+      "probe_recall_all": 1.0,
+      "store_tokens_mean": 4875.0,
+      "note": "unbounded store: 4875 tokens (~12x budget) buys 100% recall"
+    },
+    "vanilla_rag": {
+      "probe_recall_all": 1.0,
+      "store_tokens_mean": 4875.0,
+      "note": "unbounded store: same as memgpt_style"
+    },
+    "sliding_window": {
+      "probe_recall_all": 0.0,
+      "store_tokens_mean": 110.0,
+      "note": "window only holds last 10 turns: cannot recover old durable facts"
+    }
+  },
+  "e12_coding_benchmark": {
+    "objective": "do adaptive memories help coding tasks at the same active-context token budget?",
+    "verdict": "NEGATIVE for adaptive",
+    "config": {
+      "workload": "data.coding_workload.build_coding_session",
+      "turns": 400,
+      "scale": 3,
+      "fact_count": 84,
+      "budgets": [128, 256, 512],
+      "seeds": [42, 43, 44],
+      "natural_store_tokens": 1024,
+      "budget_stressed": true,
+      "store_to_budget_ratio": [8.0, 4.0, 2.0],
+      "embedding_model": "nomic-embed-text",
+      "top_k": 5,
+      "matching": "exact required/forbidden answer-token presence in query-time retrieve() output"
+    },
+    "context_recall_mean": {
+      "adaptive": {"128": 0.155, "256": 0.167, "512": 0.167},
+      "sliding_window": {"128": 0.048, "256": 0.048, "512": 0.048},
+      "summarization_only": {"128": 0.179, "256": 0.333, "512": 0.583},
+      "memgpt_style": {"128": 0.905, "256": 0.905, "512": 0.905},
+      "vanilla_rag": {"128": 0.905, "256": 0.905, "512": 0.905}
+    },
+    "store_recall_mean": {
+      "adaptive": {"128": 0.194, "256": 0.345, "512": 0.532}
+    },
+    "adaptive_store_count_mean": {"128": 9.7, "256": 19.7, "512": 31.0},
+    "adaptive_store_tokens_mean": {"128": 118.7, "256": 250.0, "512": 405.0},
+    "correction_recall_mean": {
+      "adaptive": 0.5, "sliding_window": 0.0, "summarization_only": 0.0,
+      "memgpt_style": 0.0, "vanilla_rag": 0.0
+    },
+    "obsolete_retention_mean": {
+      "adaptive": 0.0, "sliding_window": 0.0, "summarization_only": 0.0,
+      "memgpt_style": 1.0, "vanilla_rag": 1.0
+    },
+    "retrieval_ablation_budget_512": {
+      "note": "read-only; same adaptive store, only the ranking changes",
+      "production_0.6imp_0.4sim": 0.167,
+      "pure_similarity": 0.421,
+      "pure_importance": 0.115
+    },
+    "root_cause": [
+      "bounded store + decay retains ~37% of facts at the top budget (vanilla keeps all 86)",
+      "importance-dominant ranking: importance spans 0.47 vs nomic similarity span 0.069 for a query, making injection ~7:1 query-independent",
+      "context_recall flat (0.155->0.167) while store_recall nearly triples (0.194->0.532)"
+    ],
+    "decision": "retrieval weights NOT tuned (directive: do not optimise adaptive to beat the benchmark); brain.md D3 'calibrate' flagged as remediation",
+    "fairness_fixes": [
+      "facts spread across the whole session instead of decay-pruned first half",
+      "24 distinct predicate families replace near-duplicate templates (dedupe retains ~86-88%, was 332->189)"
+    ],
+    "tests": {"tests/test_coding_benchmark.py": 9, "suite_total": 33, "result": "all pass"}
+  }
+}

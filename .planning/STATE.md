@@ -30,10 +30,21 @@ See: .planning/PROJECT.md (updated 2026-09-16)
   - store recall (E2 durable): 0.76 adaptive, 1.0 baseline (blended FP ceiling)
 - E4 hard-case: dist 10 adaptive 0.75/baseline 1.0; dist 25 adaptive 0.0/baseline 1.0 (transient coffee facts intentionally forgotten + degenerate unstressed baseline)
 
+## E12 Coding-Context Usefulness Benchmark (D28) — NEGATIVE for adaptive
+
+- `data/coding_workload.py` + `experiments/e12_coding_benchmark.py`; 84 diverse facts, 400 turns, budgets {128,256,512}, 3 seeds, nomic-embed-text (production retrieval path). Budget genuinely binding (natural store 1024 tok = 2–8× budget).
+- 3-seed mean query-time injected context_recall:
+  - adaptive: 0.155 / 0.167 / 0.167 (flat across budgets despite store_recall 0.19→0.35→0.53)
+  - vanilla_rag: 0.905 @ ~60 injected tok; memgpt_style 0.905 @ ~121 tok; summarization_only 0.179→0.333→0.583; sliding_window 0.048
+- Root causes: (1) bounded store + decay retains only ~37% of facts at top budget; (2) importance-dominant retrieval `0.6·imp+0.4·sim` — for a query, importance spans 0.47 vs similarity span 0.069, so injection is query-insensitive. Ablation @512: production 0.167, pure-similarity 0.421, pure-importance 0.115.
+- Retrieval weights NOT tuned (directive: do not optimise adaptive to beat the benchmark). D3 "calibrate" flagged as remediation.
+- Fairness fixes (not tuning): facts spread across whole session (was first-half + decay-prune artifact); distinct predicate families replace near-duplicate templates (dedupe retains ~86–88%, was 332→189).
+- Tests: 33 passing (`tests/test_coding_benchmark.py` 9).
+
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
