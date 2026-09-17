@@ -1,0 +1,277 @@
+{
+  "pipeline": "e7",
+  "baseline_point": {
+    "turns": 150,
+    "density": 20.0,
+    "budget": 4096,
+    "top_k": 5
+  },
+  "methods": [
+    "adaptive",
+    "vanilla_rag",
+    "sliding_window"
+  ],
+  "seeds": [
+    42,
+    43
+  ],
+  "rows": [
+    {
+      "point": {
+        "turns": 100,
+        "density": 20.0,
+        "budget": 4096,
+        "top_k": 5
+      },
+      "methods": {
+        "adaptive": {
+          "mean_E1_proposed_tokens": 22.98,
+          "mean_E2_recall": 1.0
+        },
+        "vanilla_rag": {
+          "mean_E1_proposed_tokens": 37.5,
+          "mean_E2_recall": 1.0
+        },
+        "sliding_window": {
+          "mean_E1_proposed_tokens": 117.55,
+          "mean_E2_recall": 0.0
+        }
+      }
+    },
+    {
+      "point": {
+        "turns": 200,
+        "density": 20.0,
+        "budget": 4096,
+        "top_k": 5
+      },
+      "methods": {
+        "adaptive": {
+          "mean_E1_proposed_tokens": 24.62,
+          "mean_E2_recall": 1.0
+        },
+        "vanilla_rag": {
+          "mean_E1_proposed_tokens": 41.08,
+          "mean_E2_recall": 1.0
+        },
+        "sliding_window": {
+          "mean_E1_proposed_tokens": 123.15,
+          "mean_E2_recall": 0.0
+        }
+      }
+    },
+    {
+      "point": {
+        "turns": 150,
+        "density": 10.0,
+        "budget": 4096,
+        "top_k": 5
+      },
+      "methods": {
+        "adaptive": {
+          "mean_E1_proposed_tokens": 24.23,
+          "mean_E2_recall": 1.0
+        },
+        "vanilla_rag": {
+          "mean_E1_proposed_tokens": 39.61,
+          "mean_E2_recall": 1.0
+        },
+        "sliding_window": {
+          "mean_E1_proposed_tokens": 120.66,
+          "mean_E2_recall": 0.0
+        }
+      }
+    },
+    {
+      "point": {
+        "turns": 150,
+        "density": 30.0,
+        "budget": 4096,
+        "top_k": 5
+      },
+      "methods": {
+        "adaptive": {
+          "mean_E1_proposed_tokens": 24.23,
+          "mean_E2_recall": 1.0
+        },
+        "vanilla_rag": {
+          "mean_E1_proposed_tokens": 39.61,
+          "mean_E2_recall": 1.0
+        },
+        "sliding_window": {
+          "mean_E1_proposed_tokens": 120.66,
+          "mean_E2_recall": 0.0
+        }
+      }
+    },
+    {
+      "point": {
+        "turns": 150,
+        "density": 20.0,
+        "budget": 4096,
+        "top_k": 5
+      },
+      "methods": {
+        "adaptive": {
+          "mean_E1_proposed_tokens": 24.23,
+          "mean_E2_recall": 1.0
+        },
+        "vanilla_rag": {
+          "mean_E1_proposed_tokens": 39.61,
+          "mean_E2_recall": 1.0
+        },
+        "sliding_window": {
+          "mean_E1_proposed_tokens": 120.66,
+          "mean_E2_recall": 0.0
+        }
+      }
+    },
+    {
+      "point": {
+        "turns": 150,
+        "density": 20.0,
+        "budget": 4096,
+        "top_k": 5
+      },
+      "methods": {
+        "adaptive": {
+          "mean_E1_proposed_tokens": 24.23,
+          "mean_E2_recall": 1.0
+        },
+        "vanilla_rag": {
+          "mean_E1_proposed_tokens": 39.61,
+          "mean_E2_recall": 1.0
+        },
+        "sliding_window": {
+          "mean_E1_proposed_tokens": 120.66,
+          "mean_E2_recall": 0.0
+        }
+      }
+    }
+  ],
+  "one_at_a_time": [
+    {
+      "dimension": "turns",
+      "points": [
+        {
+          "value": 100,
+          "methods": {
+            "adaptive": {
+              "mean_E1_proposed_tokens": 22.98,
+              "mean_E2_recall": 1.0
+            },
+            "vanilla_rag": {
+              "mean_E1_proposed_tokens": 37.5,
+              "mean_E2_recall": 1.0
+            },
+            "sliding_window": {
+              "mean_E1_proposed_tokens": 117.55,
+              "mean_E2_recall": 0.0
+            }
+          }
+        },
+        {
+          "value": 200,
+          "methods": {
+            "adaptive": {
+              "mean_E1_proposed_tokens": 24.62,
+              "mean_E2_recall": 1.0
+            },
+            "vanilla_rag": {
+              "mean_E1_proposed_tokens": 41.08,
+              "mean_E2_recall": 1.0
+            },
+            "sliding_window": {
+              "mean_E1_proposed_tokens": 123.15,
+              "mean_E2_recall": 0.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "density",
+      "points": [
+        {
+          "value": 10.0,
+          "methods": {
+            "adaptive": {
+              "mean_E1_proposed_tokens": 24.23,
+              "mean_E2_recall": 1.0
+            },
+            "vanilla_rag": {
+              "mean_E1_proposed_tokens": 39.61,
+              "mean_E2_recall": 1.0
+            },
+            "sliding_window": {
+              "mean_E1_proposed_tokens": 120.66,
+              "mean_E2_recall": 0.0
+            }
+          }
+        },
+        {
+          "value": 30.0,
+          "methods": {
+            "adaptive": {
+              "mean_E1_proposed_tokens": 24.23,
+              "mean_E2_recall": 1.0
+            },
+            "vanilla_rag": {
+              "mean_E1_proposed_tokens": 39.61,
+              "mean_E2_recall": 1.0
+            },
+            "sliding_window": {
+              "mean_E1_proposed_tokens": 120.66,
+              "mean_E2_recall": 0.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "budget",
+      "points": [
+        {
+          "value": 4096,
+          "methods": {
+            "adaptive": {
+              "mean_E1_proposed_tokens": 24.23,
+              "mean_E2_recall": 1.0
+            },
+            "vanilla_rag": {
+              "mean_E1_proposed_tokens": 39.61,
+              "mean_E2_recall": 1.0
+            },
+            "sliding_window": {
+              "mean_E1_proposed_tokens": 120.66,
+              "mean_E2_recall": 0.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "dimension": "top_k",
+      "points": [
+        {
+          "value": 5,
+          "methods": {
+            "adaptive": {
+              "mean_E1_proposed_tokens": 24.23,
+              "mean_E2_recall": 1.0
+            },
+            "vanilla_rag": {
+              "mean_E1_proposed_tokens": 39.61,
+              "mean_E2_recall": 1.0
+            },
+            "sliding_window": {
+              "mean_E1_proposed_tokens": 120.66,
+              "mean_E2_recall": 0.0
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "metric_source": "offline seeded oracle replay (writer held fixed), lexical retrieval; estimated(word-count) tokens"
+}

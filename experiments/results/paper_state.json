@@ -1,0 +1,95 @@
+{
+  "generated_at": 1789569874.7580595,
+  "inventory": [
+    {
+      "path": "latest_manifest.json",
+      "turns": 50,
+      "density": 20.0,
+      "seeds": [
+        42
+      ],
+      "write": "oracle",
+      "token_source": "estimated(word-count)",
+      "metric_source": "offline seeded replay; facts=oracle (oracle ground-truth, writer held fixed); E1 token series estimated(word-count); E3 latency not measured in offline mode",
+      "E1_proposed": 42.48,
+      "E2_recall": 0.76,
+      "holm_adaptive_p": 0.0,
+      "epoch": 1789569862
+    },
+    {
+      "path": "latest_manifest.json",
+      "turns": 50,
+      "density": 20.0,
+      "seeds": [
+        42
+      ],
+      "write": "oracle",
+      "token_source": "estimated(word-count)",
+      "metric_source": "offline seeded replay; facts=oracle (oracle ground-truth, writer held fixed); E1 token series estimated(word-count); E3 latency not measured in offline mode",
+      "E1_proposed": 42.48,
+      "E2_recall": 0.76,
+      "holm_adaptive_p": 0.0,
+      "epoch": 1789569862
+    }
+  ],
+  "artifact_files": {
+    "latest_manifest": "/home/goku/prototype/prototype3/experiments/results/latest_manifest.json",
+    "e0": "/home/goku/prototype/prototype3/experiments/results/e0_extraction_quality.json",
+    "e7": "/home/goku/prototype/prototype3/experiments/results/e7_sweep.json",
+    "e8": "/home/goku/prototype/prototype3/experiments/results/e8_e8-v1.json",
+    "models_summary": "/home/goku/prototype/prototype3/experiments/results/models/models_summary.json"
+  },
+  "coverage": [
+    {
+      "claim_id": "E1",
+      "claim": "adaptive uses fewer tokens per turn than raw history window",
+      "supported": true
+    },
+    {
+      "claim_id": "E2",
+      "claim": "correct facts are retained in the store",
+      "supported": true
+    },
+    {
+      "claim_id": "E3",
+      "claim": "end-to-end latency is measurable with real extraction",
+      "supported": true
+    },
+    {
+      "claim_id": "E4",
+      "claim": "long-distance needles survive (needle-in-haystack)",
+      "supported": true
+    },
+    {
+      "claim_id": "E5",
+      "claim": "each adaptive component contributes (ablations)",
+      "supported": true
+    },
+    {
+      "claim_id": "E6",
+      "claim": "study is powered to detect the token difference",
+      "supported": true
+    },
+    {
+      "claim_id": "C7",
+      "claim": "results are stable across retriever/budget geometry",
+      "supported": true
+    },
+    {
+      "claim_id": "E0",
+      "claim": "the extraction writer itself is accurate vs gold set",
+      "supported": true
+    },
+    {
+      "claim_id": "E8",
+      "claim": "external needled-QA benchmark passes",
+      "supported": true
+    },
+    {
+      "claim_id": "MM",
+      "claim": "writer variance across the model set is measured",
+      "supported": false
+    }
+  ],
+  "metric_source_sentence": "Inventory rows carry config + token_source; claim support comes only from artifacts whose metric_source is recorded."
+}

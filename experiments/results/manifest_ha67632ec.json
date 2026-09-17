@@ -1,0 +1,699 @@
+{
+  "pipeline": "paper",
+  "generated_at": 1789213148.675753,
+  "config": {
+    "turns": 80,
+    "density": 20.0,
+    "seeds": [
+      42,
+      43
+    ],
+    "methods": [
+      "adaptive",
+      "sliding_window",
+      "memgpt_style",
+      "summarization_only",
+      "vanilla_rag"
+    ],
+    "write": "oracle",
+    "measured": false,
+    "model": "llama3.1:8b",
+    "embedding_model": "nomic-embed-text",
+    "label": "",
+    "max_context_tokens": 4096,
+    "top_k": 5,
+    "injection_token_limit": 0
+  },
+  "token_source": "estimated(word-count)",
+  "metric_source": "offline seeded replay; facts=oracle (oracle ground-truth, writer held fixed); E1 token series estimated(word-count); E3 latency not measured in offline mode",
+  "results": [
+    {
+      "seed": 42,
+      "turns": 80,
+      "ground_truth_count": 50,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 32.05,
+            "baseline_mean_tokens": 494.0125,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.62,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.211,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              0.634,
+              0.731,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.295,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.62,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 4
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 1.0,
+              "token_overhead_vs_full": 1.02,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.62,
+              "token_overhead_vs_full": 1.09,
+              "pruned_count": 19
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.62,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 4
+            }
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 114.1875,
+            "baseline_mean_tokens": 494.0125,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.882,
+            "required_n_per_group": 6,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        },
+        "memgpt_style": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 69.975,
+            "baseline_mean_tokens": 494.0125,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.097,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        },
+        "summarization_only": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 251.95,
+            "baseline_mean_tokens": 494.0125,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.046,
+            "required_n_per_group": 16,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 35.025,
+            "baseline_mean_tokens": 494.0125,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.279,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "turns": 80,
+      "ground_truth_count": 50,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 32.45,
+            "baseline_mean_tokens": 486.625,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.58,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.19,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              0.61,
+              0.538,
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.279,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.58,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 4
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 1.0,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.58,
+              "token_overhead_vs_full": 1.04,
+              "pruned_count": 21
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.58,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 4
+            }
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 112.9375,
+            "baseline_mean_tokens": 486.625,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.87,
+            "required_n_per_group": 6,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        },
+        "memgpt_style": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 67.6375,
+            "baseline_mean_tokens": 486.625,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.093,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        },
+        "summarization_only": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 244.5625,
+            "baseline_mean_tokens": 486.625,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.059,
+            "required_n_per_group": 16,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 34.2125,
+            "baseline_mean_tokens": 486.625,
+            "n": 80,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25,
+              50
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.269,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 80
+          }
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "adaptive": {
+      "seeds": 2,
+      "mean_E1_proposed_tokens": 32.25,
+      "mean_E1_baseline_tokens": 490.32,
+      "mean_E2_proposed_recall": 0.6,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.201,
+      "E6": {
+        "observed_cohens_d": [
+          2.295,
+          2.279
+        ],
+        "required_n_per_group": [
+          5,
+          5
+        ]
+      }
+    },
+    "sliding_window": {
+      "seeds": 2,
+      "mean_E1_proposed_tokens": 113.56,
+      "mean_E1_baseline_tokens": 490.32,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.882,
+          1.87
+        ],
+        "required_n_per_group": [
+          6,
+          6
+        ]
+      }
+    },
+    "memgpt_style": {
+      "seeds": 2,
+      "mean_E1_proposed_tokens": 68.81,
+      "mean_E1_baseline_tokens": 490.32,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.097,
+          2.093
+        ],
+        "required_n_per_group": [
+          5,
+          5
+        ]
+      }
+    },
+    "summarization_only": {
+      "seeds": 2,
+      "mean_E1_proposed_tokens": 248.26,
+      "mean_E1_baseline_tokens": 490.32,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.046,
+          1.059
+        ],
+        "required_n_per_group": [
+          16,
+          16
+        ]
+      }
+    },
+    "vanilla_rag": {
+      "seeds": 2,
+      "mean_E1_proposed_tokens": 34.62,
+      "mean_E1_baseline_tokens": 490.32,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.279,
+          2.269
+        ],
+        "required_n_per_group": [
+          5,
+          5
+        ]
+      }
+    }
+  }
+}

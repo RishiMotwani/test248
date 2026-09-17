@@ -1,0 +1,36 @@
+{
+  "scenario": "6-turn hand-rolled correction/negation isolation",
+  "store_entries": [
+    {
+      "source_turn_id": 1,
+      "fact": "Revised requirement: Project feature flag configuration key_14 is enabled is no longer the case",
+      "superseded_prior_fact": "Project feature flag configuration key_14 is enabled",
+      "confidence": 0.7
+    },
+    {
+      "source_turn_id": 9,
+      "fact": "Correction to requirement: NOT project feature flag configuration key_22 is enabled",
+      "superseded_prior_fact": null,
+      "confidence": 0.7
+    },
+    {
+      "source_turn_id": 17,
+      "fact": "Correction to requirement: NOT project feature flag configuration key_27 is enabled",
+      "superseded_prior_fact": "Project feature flag configuration key_27 is enabled",
+      "confidence": 0.5
+    }
+  ],
+  "negations_recorded": [
+    2,
+    2
+  ],
+  "correction_recorded": [
+    1,
+    1
+  ],
+  "superseded_originals_purged": true,
+  "isolation_pass": true,
+  "stale_same_category_count": 0,
+  "run_at": 1789569537.9596093,
+  "quick": true
+}

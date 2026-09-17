@@ -1,0 +1,295 @@
+{
+  "pipeline": "paper",
+  "generated_at": 1789213057.35742,
+  "config": {
+    "turns": 30,
+    "density": 20.0,
+    "seeds": [
+      42
+    ],
+    "methods": [
+      "adaptive",
+      "sliding_window",
+      "memgpt_style",
+      "summarization_only",
+      "vanilla_rag"
+    ],
+    "write": "oracle",
+    "measured": false,
+    "model": "llama3.1:8b",
+    "embedding_model": "",
+    "label": "",
+    "max_context_tokens": 4096,
+    "top_k": 5,
+    "injection_token_limit": 0
+  },
+  "token_source": "estimated(word-count)",
+  "metric_source": "offline seeded replay; facts=oracle (oracle ground-truth, writer held fixed); E1 token series estimated(word-count); E3 latency not measured in offline mode",
+  "results": [
+    {
+      "seed": 42,
+      "turns": 30,
+      "ground_truth_count": 0,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 0.0,
+            "baseline_mean_tokens": 170.5,
+            "n": 30,
+            "pairs_equal": true,
+            "wilcoxon": {
+              "p_value": null,
+              "significant": null
+            }
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": []
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.533,
+            "required_n_per_group": 4,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 30
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 0.0,
+              "pruned_count": 0
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 0.0,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 0.0,
+              "pruned_count": 0
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 0.0,
+              "pruned_count": 0
+            }
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 93.5,
+            "baseline_mean_tokens": 170.5,
+            "n": 30,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 8.9e-05,
+              "significant": true
+            }
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": []
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.092,
+            "required_n_per_group": 15,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 30
+          }
+        },
+        "memgpt_style": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 0.0,
+            "baseline_mean_tokens": 170.5,
+            "n": 30,
+            "pairs_equal": true,
+            "wilcoxon": {
+              "p_value": null,
+              "significant": null
+            }
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": []
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.533,
+            "required_n_per_group": 4,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 30
+          }
+        },
+        "summarization_only": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 0.0,
+            "baseline_mean_tokens": 170.5,
+            "n": 30,
+            "pairs_equal": true,
+            "wilcoxon": {
+              "p_value": null,
+              "significant": null
+            }
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": []
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.533,
+            "required_n_per_group": 4,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 30
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 0.0,
+            "baseline_mean_tokens": 170.5,
+            "n": 30,
+            "pairs_equal": true,
+            "wilcoxon": {
+              "p_value": null,
+              "significant": null
+            }
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": []
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.533,
+            "required_n_per_group": 4,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 30
+          }
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "adaptive": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 0.0,
+      "mean_E1_baseline_tokens": 170.5,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.533
+        ],
+        "required_n_per_group": [
+          4
+        ]
+      }
+    },
+    "sliding_window": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 93.5,
+      "mean_E1_baseline_tokens": 170.5,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.092
+        ],
+        "required_n_per_group": [
+          15
+        ]
+      }
+    },
+    "memgpt_style": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 0.0,
+      "mean_E1_baseline_tokens": 170.5,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.533
+        ],
+        "required_n_per_group": [
+          4
+        ]
+      }
+    },
+    "summarization_only": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 0.0,
+      "mean_E1_baseline_tokens": 170.5,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.533
+        ],
+        "required_n_per_group": [
+          4
+        ]
+      }
+    },
+    "vanilla_rag": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 0.0,
+      "mean_E1_baseline_tokens": 170.5,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.533
+        ],
+        "required_n_per_group": [
+          4
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "model_under_test": "llama3.1:8b",
+  "max_context_tokens": 4096,
+  "metric_source": "live model prompt_eval_count (content tokens), same measurement method on both sides",
+  "E1_token_efficiency": {
+    "proposed_mean_tokens": 93.93877551020408,
+    "baseline_mean_tokens": 1787.2448979591836,
+    "n": 49,
+    "metric_source": "live model prompt_eval_count (content tokens, measured live)",
+    "baseline_measured_live": true,
+    "p_value": 3.552713678800501e-15,
+    "significant": true,
+    "per_turn": [
+      {
+        "turn": 2,
+        "proposed": 63,
+        "baseline": 144
+      },
+      {
+        "turn": 3,
+        "proposed": 84,
+        "baseline": 211
+      },
+      {
+        "turn": 4,
+        "proposed": 81,
+        "baseline": 278
+      },
+      {
+        "turn": 5,
+        "proposed": 81,
+        "baseline": 345
+      },
+      {
+        "turn": 6,
+        "proposed": 81,
+        "baseline": 412
+      },
+      {
+        "turn": 7,
+        "proposed": 87,
+        "baseline": 479
+      },
+      {
+        "turn": 8,
+        "proposed": 87,
+        "baseline": 546
+      },
+      {
+        "turn": 9,
+        "proposed": 87,
+        "baseline": 613
+      },
+      {
+        "turn": 10,
+        "proposed": 93,
+        "baseline": 680
+      },
+      {
+        "turn": 11,
+        "proposed": 93,
+        "baseline": 763
+      },
+      {
+        "turn": 12,
+        "proposed": 109,
+        "baseline": 830
+      },
+      {
+        "turn": 13,
+        "proposed": 93,
+        "baseline": 897
+      },
+      {
+        "turn": 14,
+        "proposed": 91,
+        "baseline": 973
+      },
+      {
+        "turn": 15,
+        "proposed": 107,
+        "baseline": 1040
+      },
+      {
+        "turn": 16,
+        "proposed": 91,
+        "baseline": 1107
+      },
+      {
+        "turn": 17,
+        "proposed": 91,
+        "baseline": 1174
+      },
+      {
+        "turn": 18,
+        "proposed": 91,
+        "baseline": 1241
+      },
+      {
+        "turn": 19,
+        "proposed": 91,
+        "baseline": 1308
+      },
+      {
+        "turn": 20,
+        "proposed": 91,
+        "baseline": 1375
+      },
+      {
+        "turn": 21,
+        "proposed": 91,
+        "baseline": 1460
+      },
+      {
+        "turn": 22,
+        "proposed": 115,
+        "baseline": 1527
+      },
+      {
+        "turn": 23,
+        "proposed": 91,
+        "baseline": 1594
+      },
+      {
+        "turn": 24,
+        "proposed": 91,
+        "baseline": 1661
+      },
+      {
+        "turn": 25,
+        "proposed": 91,
+        "baseline": 1728
+      },
+      {
+        "turn": 26,
+        "proposed": 91,
+        "baseline": 1799
+      },
+      {
+        "turn": 27,
+        "proposed": 102,
+        "baseline": 1885
+      },
+      {
+        "turn": 28,
+        "proposed": 110,
+        "baseline": 1952
+      },
+      {
+        "turn": 29,
+        "proposed": 91,
+        "baseline": 2019
+      },
+      {
+        "turn": 30,
+        "proposed": 91,
+        "baseline": 2086
+      },
+      {
+        "turn": 31,
+        "proposed": 91,
+        "baseline": 2171
+      },
+      {
+        "turn": 32,
+        "proposed": 109,
+        "baseline": 2238
+      },
+      {
+        "turn": 33,
+        "proposed": 91,
+        "baseline": 2305
+      },
+      {
+        "turn": 34,
+        "proposed": 91,
+        "baseline": 2372
+      },
+      {
+        "turn": 35,
+        "proposed": 91,
+        "baseline": 2439
+      },
+      {
+        "turn": 36,
+        "proposed": 91,
+        "baseline": 2506
+      },
+      {
+        "turn": 37,
+        "proposed": 91,
+        "baseline": 2573
+      },
+      {
+        "turn": 38,
+        "proposed": 91,
+        "baseline": 2651
+      },
+      {
+        "turn": 39,
+        "proposed": 102,
+        "baseline": 2718
+      },
+      {
+        "turn": 40,
+        "proposed": 91,
+        "baseline": 2785
+      },
+      {
+        "turn": 41,
+        "proposed": 91,
+        "baseline": 2852
+      },
+      {
+        "turn": 42,
+        "proposed": 91,
+        "baseline": 2919
+      },
+      {
+        "turn": 43,
+        "proposed": 91,
+        "baseline": 2986
+      },
+      {
+        "turn": 44,
+        "proposed": 91,
+        "baseline": 3053
+      },
+      {
+        "turn": 45,
+        "proposed": 91,
+        "baseline": 3120
+      },
+      {
+        "turn": 46,
+        "proposed": 91,
+        "baseline": 3126
+      },
+      {
+        "turn": 47,
+        "proposed": 100,
+        "baseline": 3146
+      },
+      {
+        "turn": 48,
+        "proposed": 131,
+        "baseline": 3175
+      },
+      {
+        "turn": 49,
+        "proposed": 129,
+        "baseline": 3181
+      },
+      {
+        "turn": 50,
+        "proposed": 102,
+        "baseline": 3132
+      }
+    ]
+  },
+  "E2_memory_accuracy": {
+    "proposed_positive_recall": 0.875,
+    "baseline_positive_recall": 0.75,
+    "baseline_recall_real": true,
+    "proposed_forgetting_precision": 0.0,
+    "baseline_forgetting_precision": 0.0,
+    "hard_case": {
+      "trap_recall": null,
+      "correction_recall": 0.5,
+      "negation_recall": 1.0,
+      "wrongly_retained_after_correction": {
+        "superseded_expected": 2,
+        "wrongly_retained": 2,
+        "fraction": 1.0
+      },
+      "per_category_recall": {
+        "technical_preference": {
+          "expected": 1,
+          "matched": 1,
+          "recall": 1.0
+        },
+        "project_context": {
+          "expected": 5,
+          "matched": 4,
+          "recall": 0.8
+        },
+        "personal": {
+          "expected": 2,
+          "matched": 2,
+          "recall": 1.0
+        }
+      }
+    }
+  },
+  "E3_latency": {
+    "extraction_ms": 558.01,
+    "scoring_ms": 0.05,
+    "fact_token_measurement_ms": 18.68,
+    "compression_ms": 23.17,
+    "decay_ms": 0.01,
+    "budget_evict_ms": 0.01,
+    "retrieval_ms": 9.27,
+    "embedding_ms": 8.74,
+    "window_replay_ms": 1500.82,
+    "answer_ms": 273.22
+  },
+  "E4_needle_in_haystack": {
+    "distances": [
+      10
+    ],
+    "proposed_accuracy": [
+      1.0
+    ],
+    "baseline_accuracy": [
+      1.0
+    ],
+    "baseline_real": true
+  },
+  "E5_ablations": {
+    "full_system": {
+      "ablation": "full_system",
+      "accuracy": 0.875,
+      "token_overhead_vs_full": 1.0,
+      "pruned_count": 0
+    },
+    "no_decay": {
+      "ablation": "no_decay",
+      "accuracy": 0.875,
+      "token_overhead_vs_full": 1.01,
+      "pruned_count": 0
+    },
+    "no_compression": {
+      "ablation": "no_compression",
+      "accuracy": 1.0,
+      "token_overhead_vs_full": 1.03,
+      "pruned_count": 0
+    },
+    "equal_weight_scoring": {
+      "ablation": "equal_weight_scoring",
+      "accuracy": 0.875,
+      "token_overhead_vs_full": 0.99,
+      "pruned_count": 0
+    },
+    "token_source": "measured (live model prompt_eval_count / per-fact measured tokens)"
+  },
+  "E6_power_check": {
+    "observed_cohens_d": 2.502,
+    "required_n_per_group": 4,
+    "alpha": 0.05,
+    "target_power": 0.8,
+    "n_actual": 49
+  }
+}

@@ -1,0 +1,2622 @@
+{
+  "pipeline": "paper",
+  "pipeline_fix_version": 2,
+  "generated_at": 1789625861.871074,
+  "config": {
+    "turns": 50,
+    "density": 20.0,
+    "seeds": [
+      42
+    ],
+    "methods": [
+      "adaptive",
+      "sliding_window",
+      "memgpt_style",
+      "summarization_only",
+      "vanilla_rag"
+    ],
+    "write": "oracle",
+    "measured": false,
+    "model": "llama3.1:8b",
+    "embedding_model": "",
+    "label": "",
+    "conflict_density": 0.1,
+    "negation_density": 0.1,
+    "max_context_tokens": 4096,
+    "top_k": 5,
+    "injection_token_limit": 0
+  },
+  "token_source": "estimated(word-count)",
+  "metric_source": "offline seeded replay; facts=oracle (oracle ground-truth, writer held fixed); E1 token series estimated(word-count); E3 latency not measured in offline mode",
+  "results": [
+    {
+      "seed": 42,
+      "turns": 50,
+      "ground_truth_count": 25,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 42.48,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.76,
+            "baseline_positive_recall": 1.0,
+            "proposed_durable_recall": 1.0,
+            "baseline_durable_recall": 1.0,
+            "forgetting_horizon_note": "50 turns; adaptive pruned 1/7 transient facts, sliding window dropped 0/7; unforgotten transients: adaptive 6, baseline 7",
+            "proposed_forgetting_precision": 0.143,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 0.143
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              0.75,
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            },
+            "durable_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.053,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "store": {
+            "count": 7,
+            "tokens": 96,
+            "source_turns": [
+              14,
+              17,
+              22,
+              25,
+              27,
+              28
+            ],
+            "categories": [
+              "project_context",
+              "technical_preference"
+            ]
+          },
+          "injected": [
+            {
+              "turn_id": 1,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 2,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 3,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 4,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 5,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 6,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 7,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 8,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 9,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 10,
+              "tokens": 8,
+              "count": 1
+            },
+            {
+              "turn_id": 11,
+              "tokens": 8,
+              "count": 1
+            },
+            {
+              "turn_id": 12,
+              "tokens": 8,
+              "count": 1
+            },
+            {
+              "turn_id": 13,
+              "tokens": 8,
+              "count": 1
+            },
+            {
+              "turn_id": 14,
+              "tokens": 15,
+              "count": 2
+            },
+            {
+              "turn_id": 15,
+              "tokens": 15,
+              "count": 2
+            },
+            {
+              "turn_id": 16,
+              "tokens": 15,
+              "count": 2
+            },
+            {
+              "turn_id": 17,
+              "tokens": 26,
+              "count": 3
+            },
+            {
+              "turn_id": 18,
+              "tokens": 26,
+              "count": 3
+            },
+            {
+              "turn_id": 19,
+              "tokens": 26,
+              "count": 3
+            },
+            {
+              "turn_id": 20,
+              "tokens": 26,
+              "count": 3
+            },
+            {
+              "turn_id": 21,
+              "tokens": 26,
+              "count": 3
+            },
+            {
+              "turn_id": 22,
+              "tokens": 37,
+              "count": 4
+            },
+            {
+              "turn_id": 23,
+              "tokens": 44,
+              "count": 4
+            },
+            {
+              "turn_id": 24,
+              "tokens": 44,
+              "count": 4
+            },
+            {
+              "turn_id": 25,
+              "tokens": 61,
+              "count": 5
+            },
+            {
+              "turn_id": 26,
+              "tokens": 58,
+              "count": 5
+            },
+            {
+              "turn_id": 27,
+              "tokens": 64,
+              "count": 5
+            },
+            {
+              "turn_id": 28,
+              "tokens": 64,
+              "count": 5
+            },
+            {
+              "turn_id": 29,
+              "tokens": 61,
+              "count": 5
+            },
+            {
+              "turn_id": 30,
+              "tokens": 64,
+              "count": 5
+            },
+            {
+              "turn_id": 31,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 32,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 33,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 34,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 35,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 36,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 37,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 38,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 39,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 40,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 41,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 42,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 43,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 44,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 45,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 46,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 47,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 48,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 49,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 50,
+              "tokens": 71,
+              "count": 5
+            }
+          ],
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              8,
+              8,
+              8,
+              15,
+              15,
+              15,
+              26,
+              26,
+              26,
+              26,
+              26,
+              37,
+              44,
+              44,
+              61,
+              58,
+              64,
+              64,
+              61,
+              64,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71,
+              71
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 1
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 1.0,
+              "token_overhead_vs_full": 0.94,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 0.91,
+              "pruned_count": 7
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 1
+            }
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 113.3,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_durable_recall": 0.0,
+            "baseline_durable_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 0.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 0.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 0.0
+              }
+            },
+            "trap_recall": 0.0,
+            "correction_recall": 0.0,
+            "negation_recall": 0.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              0.0,
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                0.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            },
+            "durable_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                0.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.516,
+            "required_n_per_group": 8,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "store": {
+            "count": 10,
+            "tokens": 110,
+            "source_turns": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "categories": [
+              null
+            ]
+          },
+          "injected": [
+            {
+              "turn_id": 1,
+              "tokens": 11,
+              "count": 1
+            },
+            {
+              "turn_id": 2,
+              "tokens": 22,
+              "count": 2
+            },
+            {
+              "turn_id": 3,
+              "tokens": 33,
+              "count": 3
+            },
+            {
+              "turn_id": 4,
+              "tokens": 44,
+              "count": 4
+            },
+            {
+              "turn_id": 5,
+              "tokens": 55,
+              "count": 5
+            },
+            {
+              "turn_id": 6,
+              "tokens": 66,
+              "count": 6
+            },
+            {
+              "turn_id": 7,
+              "tokens": 77,
+              "count": 7
+            },
+            {
+              "turn_id": 8,
+              "tokens": 88,
+              "count": 8
+            },
+            {
+              "turn_id": 9,
+              "tokens": 99,
+              "count": 9
+            },
+            {
+              "turn_id": 10,
+              "tokens": 111,
+              "count": 10
+            },
+            {
+              "turn_id": 11,
+              "tokens": 112,
+              "count": 10
+            },
+            {
+              "turn_id": 12,
+              "tokens": 113,
+              "count": 10
+            },
+            {
+              "turn_id": 13,
+              "tokens": 114,
+              "count": 10
+            },
+            {
+              "turn_id": 14,
+              "tokens": 114,
+              "count": 10
+            },
+            {
+              "turn_id": 15,
+              "tokens": 115,
+              "count": 10
+            },
+            {
+              "turn_id": 16,
+              "tokens": 115,
+              "count": 10
+            },
+            {
+              "turn_id": 17,
+              "tokens": 119,
+              "count": 10
+            },
+            {
+              "turn_id": 18,
+              "tokens": 123,
+              "count": 10
+            },
+            {
+              "turn_id": 19,
+              "tokens": 123,
+              "count": 10
+            },
+            {
+              "turn_id": 20,
+              "tokens": 126,
+              "count": 10
+            },
+            {
+              "turn_id": 21,
+              "tokens": 125,
+              "count": 10
+            },
+            {
+              "turn_id": 22,
+              "tokens": 128,
+              "count": 10
+            },
+            {
+              "turn_id": 23,
+              "tokens": 134,
+              "count": 10
+            },
+            {
+              "turn_id": 24,
+              "tokens": 138,
+              "count": 10
+            },
+            {
+              "turn_id": 25,
+              "tokens": 144,
+              "count": 10
+            },
+            {
+              "turn_id": 26,
+              "tokens": 148,
+              "count": 10
+            },
+            {
+              "turn_id": 27,
+              "tokens": 148,
+              "count": 10
+            },
+            {
+              "turn_id": 28,
+              "tokens": 144,
+              "count": 10
+            },
+            {
+              "turn_id": 29,
+              "tokens": 145,
+              "count": 10
+            },
+            {
+              "turn_id": 30,
+              "tokens": 141,
+              "count": 10
+            },
+            {
+              "turn_id": 31,
+              "tokens": 152,
+              "count": 10
+            },
+            {
+              "turn_id": 32,
+              "tokens": 148,
+              "count": 10
+            },
+            {
+              "turn_id": 33,
+              "tokens": 141,
+              "count": 10
+            },
+            {
+              "turn_id": 34,
+              "tokens": 137,
+              "count": 10
+            },
+            {
+              "turn_id": 35,
+              "tokens": 137,
+              "count": 10
+            },
+            {
+              "turn_id": 36,
+              "tokens": 133,
+              "count": 10
+            },
+            {
+              "turn_id": 37,
+              "tokens": 129,
+              "count": 10
+            },
+            {
+              "turn_id": 38,
+              "tokens": 129,
+              "count": 10
+            },
+            {
+              "turn_id": 39,
+              "tokens": 128,
+              "count": 10
+            },
+            {
+              "turn_id": 40,
+              "tokens": 128,
+              "count": 10
+            },
+            {
+              "turn_id": 41,
+              "tokens": 117,
+              "count": 10
+            },
+            {
+              "turn_id": 42,
+              "tokens": 117,
+              "count": 10
+            },
+            {
+              "turn_id": 43,
+              "tokens": 117,
+              "count": 10
+            },
+            {
+              "turn_id": 44,
+              "tokens": 117,
+              "count": 10
+            },
+            {
+              "turn_id": 45,
+              "tokens": 110,
+              "count": 10
+            },
+            {
+              "turn_id": 46,
+              "tokens": 110,
+              "count": 10
+            },
+            {
+              "turn_id": 47,
+              "tokens": 110,
+              "count": 10
+            },
+            {
+              "turn_id": 48,
+              "tokens": 110,
+              "count": 10
+            },
+            {
+              "turn_id": 49,
+              "tokens": 110,
+              "count": 10
+            },
+            {
+              "turn_id": 50,
+              "tokens": 110,
+              "count": 10
+            }
+          ],
+          "stats": {
+            "proposed_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              112,
+              113,
+              114,
+              114,
+              115,
+              115,
+              119,
+              123,
+              123,
+              126,
+              125,
+              128,
+              134,
+              138,
+              144,
+              148,
+              148,
+              144,
+              145,
+              141,
+              152,
+              148,
+              141,
+              137,
+              137,
+              133,
+              129,
+              129,
+              128,
+              128,
+              117,
+              117,
+              117,
+              117,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        },
+        "memgpt_style": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 70.4,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_durable_recall": 1.0,
+            "baseline_durable_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            },
+            "durable_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.821,
+            "required_n_per_group": 6,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "store": {
+            "count": 25,
+            "tokens": 249,
+            "source_turns": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              31,
+              35
+            ],
+            "categories": [
+              "project_context",
+              "technical_preference",
+              "transient"
+            ]
+          },
+          "injected": [
+            {
+              "turn_id": 1,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 2,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 3,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 4,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 5,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 6,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 7,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 8,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 9,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 10,
+              "tokens": 8,
+              "count": 1
+            },
+            {
+              "turn_id": 11,
+              "tokens": 16,
+              "count": 2
+            },
+            {
+              "turn_id": 12,
+              "tokens": 24,
+              "count": 3
+            },
+            {
+              "turn_id": 13,
+              "tokens": 32,
+              "count": 4
+            },
+            {
+              "turn_id": 14,
+              "tokens": 39,
+              "count": 5
+            },
+            {
+              "turn_id": 15,
+              "tokens": 47,
+              "count": 6
+            },
+            {
+              "turn_id": 16,
+              "tokens": 54,
+              "count": 7
+            },
+            {
+              "turn_id": 17,
+              "tokens": 65,
+              "count": 8
+            },
+            {
+              "turn_id": 18,
+              "tokens": 76,
+              "count": 9
+            },
+            {
+              "turn_id": 19,
+              "tokens": 83,
+              "count": 10
+            },
+            {
+              "turn_id": 20,
+              "tokens": 86,
+              "count": 10
+            },
+            {
+              "turn_id": 21,
+              "tokens": 85,
+              "count": 10
+            },
+            {
+              "turn_id": 22,
+              "tokens": 85,
+              "count": 10
+            },
+            {
+              "turn_id": 23,
+              "tokens": 87,
+              "count": 10
+            },
+            {
+              "turn_id": 24,
+              "tokens": 99,
+              "count": 10
+            },
+            {
+              "turn_id": 25,
+              "tokens": 100,
+              "count": 10
+            },
+            {
+              "turn_id": 26,
+              "tokens": 107,
+              "count": 10
+            },
+            {
+              "turn_id": 27,
+              "tokens": 104,
+              "count": 10
+            },
+            {
+              "turn_id": 28,
+              "tokens": 96,
+              "count": 10
+            },
+            {
+              "turn_id": 29,
+              "tokens": 91,
+              "count": 10
+            },
+            {
+              "turn_id": 30,
+              "tokens": 94,
+              "count": 10
+            },
+            {
+              "turn_id": 31,
+              "tokens": 115,
+              "count": 10
+            },
+            {
+              "turn_id": 32,
+              "tokens": 98,
+              "count": 10
+            },
+            {
+              "turn_id": 33,
+              "tokens": 98,
+              "count": 10
+            },
+            {
+              "turn_id": 34,
+              "tokens": 98,
+              "count": 10
+            },
+            {
+              "turn_id": 35,
+              "tokens": 118,
+              "count": 10
+            },
+            {
+              "turn_id": 36,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 37,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 38,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 39,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 40,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 41,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 42,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 43,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 44,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 45,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 46,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 47,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 48,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 49,
+              "tokens": 101,
+              "count": 10
+            },
+            {
+              "turn_id": 50,
+              "tokens": 101,
+              "count": 10
+            }
+          ],
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              16,
+              24,
+              32,
+              39,
+              47,
+              54,
+              65,
+              76,
+              83,
+              86,
+              85,
+              85,
+              87,
+              99,
+              100,
+              107,
+              104,
+              96,
+              91,
+              94,
+              115,
+              98,
+              98,
+              98,
+              118,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101,
+              101
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        },
+        "summarization_only": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 143.36,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_durable_recall": 1.0,
+            "baseline_durable_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            },
+            "durable_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.146,
+            "required_n_per_group": 13,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "store": {
+            "count": 25,
+            "tokens": 249,
+            "source_turns": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              31,
+              35
+            ],
+            "categories": [
+              "project_context",
+              "technical_preference",
+              "transient"
+            ]
+          },
+          "injected": [
+            {
+              "turn_id": 1,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 2,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 3,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 4,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 5,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 6,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 7,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 8,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 9,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 10,
+              "tokens": 8,
+              "count": 1
+            },
+            {
+              "turn_id": 11,
+              "tokens": 16,
+              "count": 2
+            },
+            {
+              "turn_id": 12,
+              "tokens": 24,
+              "count": 3
+            },
+            {
+              "turn_id": 13,
+              "tokens": 32,
+              "count": 4
+            },
+            {
+              "turn_id": 14,
+              "tokens": 39,
+              "count": 5
+            },
+            {
+              "turn_id": 15,
+              "tokens": 47,
+              "count": 6
+            },
+            {
+              "turn_id": 16,
+              "tokens": 54,
+              "count": 7
+            },
+            {
+              "turn_id": 17,
+              "tokens": 65,
+              "count": 8
+            },
+            {
+              "turn_id": 18,
+              "tokens": 76,
+              "count": 9
+            },
+            {
+              "turn_id": 19,
+              "tokens": 83,
+              "count": 10
+            },
+            {
+              "turn_id": 20,
+              "tokens": 94,
+              "count": 11
+            },
+            {
+              "turn_id": 21,
+              "tokens": 101,
+              "count": 12
+            },
+            {
+              "turn_id": 22,
+              "tokens": 112,
+              "count": 13
+            },
+            {
+              "turn_id": 23,
+              "tokens": 133,
+              "count": 15
+            },
+            {
+              "turn_id": 24,
+              "tokens": 144,
+              "count": 16
+            },
+            {
+              "turn_id": 25,
+              "tokens": 180,
+              "count": 19
+            },
+            {
+              "turn_id": 26,
+              "tokens": 191,
+              "count": 20
+            },
+            {
+              "turn_id": 27,
+              "tokens": 202,
+              "count": 21
+            },
+            {
+              "turn_id": 28,
+              "tokens": 209,
+              "count": 22
+            },
+            {
+              "turn_id": 29,
+              "tokens": 217,
+              "count": 23
+            },
+            {
+              "turn_id": 30,
+              "tokens": 217,
+              "count": 23
+            },
+            {
+              "turn_id": 31,
+              "tokens": 235,
+              "count": 24
+            },
+            {
+              "turn_id": 32,
+              "tokens": 235,
+              "count": 24
+            },
+            {
+              "turn_id": 33,
+              "tokens": 235,
+              "count": 24
+            },
+            {
+              "turn_id": 34,
+              "tokens": 235,
+              "count": 24
+            },
+            {
+              "turn_id": 35,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 36,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 37,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 38,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 39,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 40,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 41,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 42,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 43,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 44,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 45,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 46,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 47,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 48,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 49,
+              "tokens": 249,
+              "count": 25
+            },
+            {
+              "turn_id": 50,
+              "tokens": 249,
+              "count": 25
+            }
+          ],
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              16,
+              24,
+              32,
+              39,
+              47,
+              54,
+              65,
+              76,
+              83,
+              94,
+              101,
+              112,
+              133,
+              144,
+              180,
+              191,
+              202,
+              209,
+              217,
+              217,
+              235,
+              235,
+              235,
+              235,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 39.96,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "proposed_durable_recall": 1.0,
+            "baseline_durable_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            },
+            "durable_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.083,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "store": {
+            "count": 25,
+            "tokens": 249,
+            "source_turns": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              31,
+              35
+            ],
+            "categories": [
+              "project_context",
+              "technical_preference",
+              "transient"
+            ]
+          },
+          "injected": [
+            {
+              "turn_id": 1,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 2,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 3,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 4,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 5,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 6,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 7,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 8,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 9,
+              "tokens": 0,
+              "count": 0
+            },
+            {
+              "turn_id": 10,
+              "tokens": 8,
+              "count": 1
+            },
+            {
+              "turn_id": 11,
+              "tokens": 16,
+              "count": 2
+            },
+            {
+              "turn_id": 12,
+              "tokens": 24,
+              "count": 3
+            },
+            {
+              "turn_id": 13,
+              "tokens": 32,
+              "count": 4
+            },
+            {
+              "turn_id": 14,
+              "tokens": 39,
+              "count": 5
+            },
+            {
+              "turn_id": 15,
+              "tokens": 40,
+              "count": 5
+            },
+            {
+              "turn_id": 16,
+              "tokens": 38,
+              "count": 5
+            },
+            {
+              "turn_id": 17,
+              "tokens": 43,
+              "count": 5
+            },
+            {
+              "turn_id": 18,
+              "tokens": 46,
+              "count": 5
+            },
+            {
+              "turn_id": 19,
+              "tokens": 37,
+              "count": 5
+            },
+            {
+              "turn_id": 20,
+              "tokens": 49,
+              "count": 5
+            },
+            {
+              "turn_id": 21,
+              "tokens": 36,
+              "count": 5
+            },
+            {
+              "turn_id": 22,
+              "tokens": 39,
+              "count": 5
+            },
+            {
+              "turn_id": 23,
+              "tokens": 46,
+              "count": 5
+            },
+            {
+              "turn_id": 24,
+              "tokens": 52,
+              "count": 5
+            },
+            {
+              "turn_id": 25,
+              "tokens": 60,
+              "count": 5
+            },
+            {
+              "turn_id": 26,
+              "tokens": 55,
+              "count": 5
+            },
+            {
+              "turn_id": 27,
+              "tokens": 64,
+              "count": 5
+            },
+            {
+              "turn_id": 28,
+              "tokens": 35,
+              "count": 5
+            },
+            {
+              "turn_id": 29,
+              "tokens": 40,
+              "count": 5
+            },
+            {
+              "turn_id": 30,
+              "tokens": 46,
+              "count": 5
+            },
+            {
+              "turn_id": 31,
+              "tokens": 71,
+              "count": 5
+            },
+            {
+              "turn_id": 32,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 33,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 34,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 35,
+              "tokens": 74,
+              "count": 5
+            },
+            {
+              "turn_id": 36,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 37,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 38,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 39,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 40,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 41,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 42,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 43,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 44,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 45,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 46,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 47,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 48,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 49,
+              "tokens": 56,
+              "count": 5
+            },
+            {
+              "turn_id": 50,
+              "tokens": 56,
+              "count": 5
+            }
+          ],
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              16,
+              24,
+              32,
+              39,
+              40,
+              38,
+              43,
+              46,
+              37,
+              49,
+              36,
+              39,
+              46,
+              52,
+              60,
+              55,
+              64,
+              35,
+              40,
+              46,
+              71,
+              56,
+              56,
+              56,
+              74,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56,
+              56
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "adaptive": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 42.48,
+      "mean_E1_baseline_tokens": 315.26,
+      "E1_proposed_pooled_ci95": [
+        33.779,
+        49.786
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -316.822,
+        -233.584
+      ],
+      "cohens_d_paired_vs_baseline": -1.711,
+      "mean_E2_proposed_recall": 0.76,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.143,
+      "E6": {
+        "observed_cohens_d": [
+          2.053
+        ],
+        "required_n_per_group": [
+          5
+        ]
+      }
+    },
+    "sliding_window": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 113.3,
+      "mean_E1_baseline_tokens": 315.26,
+      "E1_proposed_pooled_ci95": [
+        103.478,
+        121.204
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -250.601,
+        -159.578
+      ],
+      "cohens_d_paired_vs_baseline": -1.181,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.516
+        ],
+        "required_n_per_group": [
+          8
+        ]
+      }
+    },
+    "memgpt_style": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 70.4,
+      "mean_E1_baseline_tokens": 315.26,
+      "E1_proposed_pooled_ci95": [
+        57.957,
+        81.0
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -288.065,
+        -207.054
+      ],
+      "cohens_d_paired_vs_baseline": -1.607,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.821
+        ],
+        "required_n_per_group": [
+          6
+        ]
+      }
+    },
+    "summarization_only": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 143.36,
+      "mean_E1_baseline_tokens": 315.26,
+      "E1_proposed_pooled_ci95": [
+        113.177,
+        169.483
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -196.74,
+        -149.299
+      ],
+      "cohens_d_paired_vs_baseline": -1.879,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.146
+        ],
+        "required_n_per_group": [
+          13
+        ]
+      }
+    },
+    "vanilla_rag": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 39.96,
+      "mean_E1_baseline_tokens": 315.26,
+      "E1_proposed_pooled_ci95": [
+        33.38,
+        45.682
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -322.94,
+        -233.414
+      ],
+      "cohens_d_paired_vs_baseline": -1.63,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.083
+        ],
+        "required_n_per_group": [
+          5
+        ]
+      }
+    },
+    "multiple_comparisons": {
+      "paired_wilcoxon_vs_baseline": {
+        "adaptive": 0.0,
+        "sliding_window": 0.0,
+        "memgpt_style": 0.0,
+        "summarization_only": 0.0,
+        "vanilla_rag": 0.0
+      },
+      "holms_adjusted": {
+        "adaptive": 0.0,
+        "sliding_window": 0.0,
+        "memgpt_style": 0.0,
+        "summarization_only": 0.0,
+        "vanilla_rag": 0.0
+      },
+      "bonferroni_adjusted": {
+        "adaptive": 0.0,
+        "sliding_window": 0.0,
+        "memgpt_style": 0.0,
+        "summarization_only": 0.0,
+        "vanilla_rag": 0.0
+      },
+      "comparisons": 5,
+      "note": "E1 per-turn proposed-vs-baseline token series, paired Wilcoxon over pooled seeded traces; family-wise corrected over methods. Repeated turns within a seed are not independent."
+    }
+  }
+}

@@ -1,0 +1,3111 @@
+{
+  "pipeline": "paper",
+  "pipeline_fix_version": 2,
+  "generated_at": 1789569613.671253,
+  "config": {
+    "turns": 50,
+    "density": 20.0,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "methods": [
+      "adaptive",
+      "sliding_window",
+      "memgpt_style",
+      "summarization_only",
+      "vanilla_rag"
+    ],
+    "write": "oracle",
+    "measured": false,
+    "model": "llama3.1:8b",
+    "embedding_model": "nomic-embed-text",
+    "label": "",
+    "conflict_density": 0.1,
+    "negation_density": 0.1,
+    "max_context_tokens": 4096,
+    "top_k": 5,
+    "injection_token_limit": 0
+  },
+  "token_source": "estimated(word-count)",
+  "metric_source": "offline seeded replay; facts=oracle (oracle ground-truth, writer held fixed); E1 token series estimated(word-count); E3 latency not measured in offline mode",
+  "results": [
+    {
+      "seed": 42,
+      "turns": 50,
+      "ground_truth_count": 25,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 41.54,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.76,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "50 turns; adaptive pruned 3/7 transient facts, sliding window dropped 0/7; unforgotten transients: adaptive 4, baseline 7",
+            "proposed_forgetting_precision": 0.429,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 0.143
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 1,
+              "fraction": 0.2
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              0.75,
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.065,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              8,
+              8,
+              8,
+              15,
+              23,
+              23,
+              34,
+              34,
+              34,
+              34,
+              41,
+              44,
+              51,
+              51,
+              64,
+              64,
+              64,
+              64,
+              61,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64,
+              64
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 3
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 1.0,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 0.76,
+              "pruned_count": 7
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 3
+            }
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 113.3,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 0.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 0.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 0.0
+              }
+            },
+            "trap_recall": 0.0,
+            "correction_recall": 0.0,
+            "negation_recall": 0.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              0.0,
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                0.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.516,
+            "required_n_per_group": 8,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              112,
+              113,
+              114,
+              114,
+              115,
+              115,
+              119,
+              123,
+              123,
+              126,
+              125,
+              128,
+              134,
+              138,
+              144,
+              148,
+              148,
+              144,
+              145,
+              141,
+              152,
+              148,
+              141,
+              137,
+              137,
+              133,
+              129,
+              129,
+              128,
+              128,
+              117,
+              117,
+              117,
+              117,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        },
+        "memgpt_style": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 73.14,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.797,
+            "required_n_per_group": 6,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              16,
+              24,
+              32,
+              39,
+              47,
+              54,
+              65,
+              76,
+              83,
+              86,
+              85,
+              88,
+              93,
+              97,
+              100,
+              116,
+              104,
+              99,
+              91,
+              93,
+              115,
+              104,
+              104,
+              104,
+              118,
+              107,
+              107,
+              107,
+              107,
+              107,
+              114,
+              107,
+              107,
+              107,
+              107,
+              107,
+              107,
+              107,
+              107,
+              111
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        },
+        "summarization_only": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 143.36,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.146,
+            "required_n_per_group": 13,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              16,
+              24,
+              32,
+              39,
+              47,
+              54,
+              65,
+              76,
+              83,
+              94,
+              101,
+              112,
+              133,
+              144,
+              180,
+              191,
+              202,
+              209,
+              217,
+              217,
+              235,
+              235,
+              235,
+              235,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249,
+              249
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 37.94,
+            "baseline_mean_tokens": 315.26,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 13,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 7,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10,
+              25
+            ],
+            "proposed_accuracy": [
+              1.0,
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0,
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.099,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              8,
+              16,
+              24,
+              32,
+              39,
+              40,
+              38,
+              41,
+              44,
+              43,
+              47,
+              39,
+              39,
+              46,
+              55,
+              60,
+              55,
+              64,
+              35,
+              40,
+              49,
+              68,
+              42,
+              53,
+              49,
+              74,
+              42,
+              49,
+              60,
+              49,
+              49,
+              56,
+              49,
+              49,
+              56,
+              49,
+              49,
+              42,
+              49,
+              49,
+              60
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              111,
+              123,
+              135,
+              147,
+              158,
+              170,
+              181,
+              196,
+              211,
+              222,
+              237,
+              248,
+              263,
+              281,
+              296,
+              314,
+              329,
+              344,
+              355,
+              367,
+              378,
+              400,
+              411,
+              422,
+              433,
+              451,
+              462,
+              473,
+              484,
+              495,
+              506,
+              517,
+              528,
+              539,
+              550,
+              561,
+              572,
+              583,
+              594,
+              605,
+              616
+            ],
+            "pairs": 50
+          }
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "turns": 50,
+      "ground_truth_count": 25,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 46.44,
+            "baseline_mean_tokens": 325.2,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.76,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "50 turns; adaptive pruned 2/6 transient facts, sliding window dropped 0/6; unforgotten transients: adaptive 4, baseline 6",
+            "proposed_forgetting_precision": 0.333,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 11,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 8,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 6,
+                "recall": 0.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              0.857
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.093,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              15,
+              15,
+              22,
+              22,
+              22,
+              29,
+              37,
+              44,
+              61,
+              58,
+              61,
+              61,
+              53,
+              60,
+              61,
+              55,
+              49,
+              67,
+              55,
+              68,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67,
+              67
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              118,
+              133,
+              144,
+              159,
+              170,
+              181,
+              193,
+              211,
+              229,
+              241,
+              259,
+              274,
+              285,
+              303,
+              318,
+              330,
+              342,
+              360,
+              372,
+              391,
+              402,
+              413,
+              424,
+              435,
+              446,
+              457,
+              468,
+              479,
+              490,
+              501,
+              512,
+              523,
+              534,
+              545,
+              556,
+              567,
+              578,
+              589,
+              600,
+              611,
+              622
+            ],
+            "pairs": 50
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 2
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 1.0,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.8,
+              "token_overhead_vs_full": 0.85,
+              "pruned_count": 6
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.76,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 2
+            }
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 114.5,
+            "baseline_mean_tokens": 325.2,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 11,
+                "recall": 0.0
+              },
+              "technical_preference": {
+                "expected": 8,
+                "recall": 0.0
+              },
+              "transient": {
+                "expected": 6,
+                "recall": 0.0
+              }
+            },
+            "trap_recall": 0.0,
+            "correction_recall": 0.0,
+            "negation_recall": 0.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                0.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.573,
+            "required_n_per_group": 8,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              118,
+              122,
+              122,
+              126,
+              126,
+              126,
+              127,
+              134,
+              141,
+              142,
+              141,
+              141,
+              141,
+              144,
+              148,
+              149,
+              149,
+              149,
+              143,
+              150,
+              143,
+              139,
+              139,
+              132,
+              128,
+              127,
+              126,
+              119,
+              118,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              118,
+              133,
+              144,
+              159,
+              170,
+              181,
+              193,
+              211,
+              229,
+              241,
+              259,
+              274,
+              285,
+              303,
+              318,
+              330,
+              342,
+              360,
+              372,
+              391,
+              402,
+              413,
+              424,
+              435,
+              446,
+              457,
+              468,
+              479,
+              490,
+              501,
+              512,
+              523,
+              534,
+              545,
+              556,
+              567,
+              578,
+              589,
+              600,
+              611,
+              622
+            ],
+            "pairs": 50
+          }
+        },
+        "memgpt_style": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 77.22,
+            "baseline_mean_tokens": 325.2,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 11,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 8,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 6,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.832,
+            "required_n_per_group": 6,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              15,
+              26,
+              33,
+              44,
+              51,
+              58,
+              66,
+              87,
+              101,
+              98,
+              100,
+              120,
+              93,
+              110,
+              113,
+              100,
+              101,
+              112,
+              95,
+              112,
+              109,
+              109,
+              102,
+              109,
+              109,
+              109,
+              102,
+              102,
+              102,
+              109,
+              102,
+              102,
+              109,
+              102,
+              102,
+              109,
+              102,
+              102,
+              109,
+              116,
+              109
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              118,
+              133,
+              144,
+              159,
+              170,
+              181,
+              193,
+              211,
+              229,
+              241,
+              259,
+              274,
+              285,
+              303,
+              318,
+              330,
+              342,
+              360,
+              372,
+              391,
+              402,
+              413,
+              424,
+              435,
+              446,
+              457,
+              468,
+              479,
+              490,
+              501,
+              512,
+              523,
+              534,
+              545,
+              556,
+              567,
+              578,
+              589,
+              600,
+              611,
+              622
+            ],
+            "pairs": 50
+          }
+        },
+        "summarization_only": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 161.74,
+            "baseline_mean_tokens": 325.2,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 11,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 8,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 6,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.073,
+            "required_n_per_group": 15,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              15,
+              26,
+              33,
+              44,
+              51,
+              58,
+              66,
+              87,
+              112,
+              120,
+              145,
+              156,
+              163,
+              188,
+              199,
+              207,
+              215,
+              237,
+              245,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260,
+              260
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              118,
+              133,
+              144,
+              159,
+              170,
+              181,
+              193,
+              211,
+              229,
+              241,
+              259,
+              274,
+              285,
+              303,
+              318,
+              330,
+              342,
+              360,
+              372,
+              391,
+              402,
+              413,
+              424,
+              435,
+              446,
+              457,
+              468,
+              479,
+              490,
+              501,
+              512,
+              523,
+              534,
+              545,
+              556,
+              567,
+              578,
+              589,
+              600,
+              611,
+              622
+            ],
+            "pairs": 50
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 41.66,
+            "baseline_mean_tokens": 325.2,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 11,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 8,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 6,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.136,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              15,
+              26,
+              33,
+              44,
+              51,
+              47,
+              44,
+              42,
+              53,
+              49,
+              60,
+              59,
+              42,
+              63,
+              55,
+              46,
+              47,
+              70,
+              40,
+              63,
+              56,
+              56,
+              49,
+              56,
+              56,
+              56,
+              49,
+              49,
+              56,
+              56,
+              49,
+              56,
+              56,
+              49,
+              56,
+              56,
+              49,
+              49,
+              56,
+              63,
+              56
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              118,
+              133,
+              144,
+              159,
+              170,
+              181,
+              193,
+              211,
+              229,
+              241,
+              259,
+              274,
+              285,
+              303,
+              318,
+              330,
+              342,
+              360,
+              372,
+              391,
+              402,
+              413,
+              424,
+              435,
+              446,
+              457,
+              468,
+              479,
+              490,
+              501,
+              512,
+              523,
+              534,
+              545,
+              556,
+              567,
+              578,
+              589,
+              600,
+              611,
+              622
+            ],
+            "pairs": 50
+          }
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "turns": 50,
+      "ground_truth_count": 25,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 43.94,
+            "baseline_mean_tokens": 328.64,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.68,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "50 turns; adaptive pruned 3/8 transient facts, sliding window dropped 0/8; unforgotten transients: adaptive 5, baseline 8",
+            "proposed_forgetting_precision": 0.375,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 12,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 8,
+                "recall": 0.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              0.833
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.095,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              11,
+              18,
+              29,
+              37,
+              37,
+              44,
+              51,
+              51,
+              51,
+              50,
+              50,
+              47,
+              57,
+              57,
+              57,
+              60,
+              61,
+              61,
+              60,
+              48,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              114,
+              125,
+              140,
+              152,
+              167,
+              178,
+              196,
+              211,
+              226,
+              237,
+              252,
+              264,
+              286,
+              301,
+              323,
+              341,
+              353,
+              365,
+              387,
+              399,
+              410,
+              421,
+              432,
+              443,
+              454,
+              465,
+              476,
+              487,
+              498,
+              509,
+              520,
+              531,
+              542,
+              553,
+              564,
+              575,
+              586,
+              597,
+              608,
+              619,
+              630
+            ],
+            "pairs": 50
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.68,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 3
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 1.0,
+              "token_overhead_vs_full": 1.04,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.8,
+              "token_overhead_vs_full": 0.89,
+              "pruned_count": 8
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.68,
+              "token_overhead_vs_full": 1.04,
+              "pruned_count": 3
+            }
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 116.1,
+            "baseline_mean_tokens": 328.64,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 12,
+                "recall": 0.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 0.0
+              },
+              "transient": {
+                "expected": 8,
+                "recall": 0.0
+              }
+            },
+            "trap_recall": 0.0,
+            "correction_recall": 0.0,
+            "negation_recall": 0.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              0.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                0.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.549,
+            "required_n_per_group": 8,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              114,
+              114,
+              118,
+              119,
+              123,
+              123,
+              130,
+              134,
+              138,
+              138,
+              138,
+              139,
+              146,
+              149,
+              156,
+              163,
+              157,
+              154,
+              161,
+              162,
+              158,
+              157,
+              146,
+              142,
+              131,
+              124,
+              123,
+              122,
+              111,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              114,
+              125,
+              140,
+              152,
+              167,
+              178,
+              196,
+              211,
+              226,
+              237,
+              252,
+              264,
+              286,
+              301,
+              323,
+              341,
+              353,
+              365,
+              387,
+              399,
+              410,
+              421,
+              432,
+              443,
+              454,
+              465,
+              476,
+              487,
+              498,
+              509,
+              520,
+              531,
+              542,
+              553,
+              564,
+              575,
+              586,
+              597,
+              608,
+              619,
+              630
+            ],
+            "pairs": 50
+          }
+        },
+        "memgpt_style": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 75.64,
+            "baseline_mean_tokens": 328.64,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 12,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 8,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.83,
+            "required_n_per_group": 6,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              11,
+              18,
+              29,
+              37,
+              48,
+              55,
+              77,
+              88,
+              99,
+              98,
+              101,
+              100,
+              109,
+              117,
+              120,
+              119,
+              101,
+              98,
+              128,
+              93,
+              110,
+              99,
+              103,
+              110,
+              103,
+              103,
+              103,
+              110,
+              110,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              92,
+              103,
+              99,
+              99
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              114,
+              125,
+              140,
+              152,
+              167,
+              178,
+              196,
+              211,
+              226,
+              237,
+              252,
+              264,
+              286,
+              301,
+              323,
+              341,
+              353,
+              365,
+              387,
+              399,
+              410,
+              421,
+              432,
+              443,
+              454,
+              465,
+              476,
+              487,
+              498,
+              509,
+              520,
+              531,
+              542,
+              553,
+              564,
+              575,
+              586,
+              597,
+              608,
+              619,
+              630
+            ],
+            "pairs": 50
+          }
+        },
+        "summarization_only": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 159.96,
+            "baseline_mean_tokens": 328.64,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 12,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 8,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.084,
+            "required_n_per_group": 15,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              11,
+              18,
+              29,
+              37,
+              48,
+              55,
+              77,
+              88,
+              99,
+              106,
+              117,
+              125,
+              154,
+              165,
+              191,
+              212,
+              220,
+              228,
+              254,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262,
+              262
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              114,
+              125,
+              140,
+              152,
+              167,
+              178,
+              196,
+              211,
+              226,
+              237,
+              252,
+              264,
+              286,
+              301,
+              323,
+              341,
+              353,
+              365,
+              387,
+              399,
+              410,
+              421,
+              432,
+              443,
+              454,
+              465,
+              476,
+              487,
+              498,
+              509,
+              520,
+              531,
+              542,
+              553,
+              564,
+              575,
+              586,
+              597,
+              608,
+              619,
+              630
+            ],
+            "pairs": 50
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 42.62,
+            "baseline_mean_tokens": 328.64,
+            "n": 50,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.0,
+              "significant": true
+            },
+            "p_value": 0.0,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 1.0,
+            "baseline_positive_recall": 1.0,
+            "forgetting_horizon_note": "short horizon/cold store: no transient evictions detected in 50 turns; forgetting precision is not discriminating",
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {
+              "project_context": {
+                "expected": 12,
+                "recall": 1.0
+              },
+              "technical_preference": {
+                "expected": 5,
+                "recall": 1.0
+              },
+              "transient": {
+                "expected": 8,
+                "recall": 1.0
+              }
+            },
+            "trap_recall": 1.0,
+            "correction_recall": 1.0,
+            "negation_recall": 1.0,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 5,
+              "wrongly_retained": 0,
+              "fraction": 0.0
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": null,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [
+              10
+            ],
+            "proposed_accuracy": [
+              1.0
+            ],
+            "baseline_accuracy": [
+              1.0
+            ],
+            "hard_case_accuracy_by_distance": {
+              "distances": [
+                10
+              ],
+              "proposed_accuracy": [
+                1.0
+              ],
+              "baseline_accuracy": [
+                1.0
+              ]
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 2.105,
+            "required_n_per_group": 5,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 50
+          },
+          "stats": {
+            "proposed_series": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              11,
+              18,
+              29,
+              37,
+              48,
+              47,
+              50,
+              50,
+              54,
+              46,
+              58,
+              42,
+              65,
+              55,
+              72,
+              71,
+              40,
+              40,
+              76,
+              40,
+              60,
+              60,
+              53,
+              64,
+              53,
+              53,
+              53,
+              64,
+              71,
+              60,
+              49,
+              60,
+              49,
+              49,
+              49,
+              60,
+              60,
+              53,
+              53,
+              60,
+              49
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              114,
+              125,
+              140,
+              152,
+              167,
+              178,
+              196,
+              211,
+              226,
+              237,
+              252,
+              264,
+              286,
+              301,
+              323,
+              341,
+              353,
+              365,
+              387,
+              399,
+              410,
+              421,
+              432,
+              443,
+              454,
+              465,
+              476,
+              487,
+              498,
+              509,
+              520,
+              531,
+              542,
+              553,
+              564,
+              575,
+              586,
+              597,
+              608,
+              619,
+              630
+            ],
+            "pairs": 50
+          }
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "adaptive": {
+      "seeds": 3,
+      "mean_E1_proposed_tokens": 43.97,
+      "mean_E1_baseline_tokens": 323.03,
+      "E1_proposed_pooled_ci95": [
+        39.892,
+        47.861
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -306.026,
+        -253.095
+      ],
+      "cohens_d_paired_vs_baseline": -1.68,
+      "mean_E2_proposed_recall": 0.733,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.379,
+      "E6": {
+        "observed_cohens_d": [
+          2.065,
+          2.093,
+          2.095
+        ],
+        "required_n_per_group": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "sliding_window": {
+      "seeds": 3,
+      "mean_E1_proposed_tokens": 114.63,
+      "mean_E1_baseline_tokens": 323.03,
+      "E1_proposed_pooled_ci95": [
+        109.173,
+        119.668
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -236.211,
+        -181.669
+      ],
+      "cohens_d_paired_vs_baseline": -1.194,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.516,
+          1.573,
+          1.549
+        ],
+        "required_n_per_group": [
+          8,
+          8,
+          8
+        ]
+      }
+    },
+    "memgpt_style": {
+      "seeds": 3,
+      "mean_E1_proposed_tokens": 75.33,
+      "mean_E1_baseline_tokens": 323.03,
+      "E1_proposed_pooled_ci95": [
+        68.184,
+        81.72
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -272.319,
+        -223.505
+      ],
+      "cohens_d_paired_vs_baseline": -1.615,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.797,
+          1.832,
+          1.83
+        ],
+        "required_n_per_group": [
+          6,
+          6,
+          6
+        ]
+      }
+    },
+    "summarization_only": {
+      "seeds": 3,
+      "mean_E1_proposed_tokens": 155.02,
+      "mean_E1_baseline_tokens": 323.03,
+      "E1_proposed_pooled_ci95": [
+        137.855,
+        170.165
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -182.535,
+        -154.095
+      ],
+      "cohens_d_paired_vs_baseline": -1.838,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.146,
+          1.073,
+          1.084
+        ],
+        "required_n_per_group": [
+          13,
+          15,
+          15
+        ]
+      }
+    },
+    "vanilla_rag": {
+      "seeds": 3,
+      "mean_E1_proposed_tokens": 40.74,
+      "mean_E1_baseline_tokens": 323.03,
+      "E1_proposed_pooled_ci95": [
+        37.017,
+        44.067
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -310.141,
+        -255.713
+      ],
+      "cohens_d_paired_vs_baseline": -1.642,
+      "mean_E2_proposed_recall": 1.0,
+      "mean_E2_baseline_recall": 1.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          2.099,
+          2.136,
+          2.105
+        ],
+        "required_n_per_group": [
+          5,
+          5,
+          5
+        ]
+      }
+    },
+    "multiple_comparisons": {
+      "paired_wilcoxon_vs_baseline": {
+        "adaptive": 0.0,
+        "sliding_window": 0.0,
+        "memgpt_style": 0.0,
+        "summarization_only": 0.0,
+        "vanilla_rag": 0.0
+      },
+      "holms_adjusted": {
+        "adaptive": 0.0,
+        "sliding_window": 0.0,
+        "memgpt_style": 0.0,
+        "summarization_only": 0.0,
+        "vanilla_rag": 0.0
+      },
+      "bonferroni_adjusted": {
+        "adaptive": 0.0,
+        "sliding_window": 0.0,
+        "memgpt_style": 0.0,
+        "summarization_only": 0.0,
+        "vanilla_rag": 0.0
+      },
+      "comparisons": 5,
+      "note": "E1 per-turn proposed-vs-baseline token series, paired Wilcoxon over pooled seeded traces; family-wise corrected over methods. Repeated turns within a seed are not independent."
+    }
+  }
+}

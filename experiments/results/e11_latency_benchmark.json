@@ -1,0 +1,268 @@
+{
+  "experiment": "e11_latency_benchmark",
+  "model": "llama3.1:8b",
+  "turns_per_round": 10,
+  "repeats": 5,
+  "measured_token_repeats": 2,
+  "config": {
+    "max_context_tokens": 4096,
+    "top_k": 5,
+    "similarity_threshold": 0.35
+  },
+  "results": {
+    "lexical_word_count": [
+      {
+        "extraction": 342.34,
+        "adaptive_write_path": {
+          "scoring": 0.04798799636773765,
+          "fact_token_measurement": 0.0015289988368749619,
+          "compression": 0.013094002497382462,
+          "decay": 0.007572001777589321,
+          "budget_evict": 0.005351997970137745,
+          "retrieval": 0.0417280025430955
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.33
+      },
+      {
+        "extraction": 375.13,
+        "adaptive_write_path": {
+          "scoring": 0.05124200106365606,
+          "fact_token_measurement": 0.0015639961929991841,
+          "compression": 0.012598000466823578,
+          "decay": 0.00707200524630025,
+          "budget_evict": 0.00498400186188519,
+          "retrieval": 0.029536000511143357
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.71
+      },
+      {
+        "extraction": 359.49,
+        "adaptive_write_path": {
+          "scoring": 0.05299799522617832,
+          "fact_token_measurement": 0.0016080011846497655,
+          "compression": 0.01119099761126563,
+          "decay": 0.007394999556709081,
+          "budget_evict": 0.005109002813696861,
+          "retrieval": 0.03669099532999098
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.08
+      },
+      {
+        "extraction": 341.62,
+        "adaptive_write_path": {
+          "scoring": 0.051645001803990453,
+          "fact_token_measurement": 0.0015600016922689974,
+          "compression": 0.010559000656940043,
+          "decay": 0.007397000445052981,
+          "budget_evict": 0.005198999133426696,
+          "retrieval": 0.036622994230128825
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.34
+      },
+      {
+        "extraction": 365.89,
+        "adaptive_write_path": {
+          "scoring": 0.05322899960447103,
+          "fact_token_measurement": 0.001591004547663033,
+          "compression": 0.010896001185756177,
+          "decay": 0.00811999780125916,
+          "budget_evict": 0.005649002559948713,
+          "retrieval": 0.030733004678040743
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.4
+      }
+    ],
+    "lexical_measured": [
+      {
+        "extraction": 349.56,
+        "adaptive_write_path": {
+          "scoring": 0.05257199518382549,
+          "fact_token_measurement": 23.83825500146486,
+          "compression": 0.011887001164723188,
+          "decay": 0.00784199801273644,
+          "budget_evict": 0.006834001396782696,
+          "retrieval": 0.04009399708593264
+        },
+        "token_mode": "measured",
+        "round_seconds": 0.35
+      },
+      {
+        "extraction": 343.88,
+        "adaptive_write_path": {
+          "scoring": 0.05136300023877993,
+          "fact_token_measurement": 0.005374000465963036,
+          "compression": 0.011301999620627612,
+          "decay": 0.008351998985745013,
+          "budget_evict": 0.007596005161758512,
+          "retrieval": 0.040857004933059216
+        },
+        "token_mode": "measured",
+        "round_seconds": 0.32
+      }
+    ],
+    "embedding_word_count": [
+      {
+        "extraction": 370.45,
+        "adaptive_write_path": {
+          "scoring": 23.36332100094296,
+          "fact_token_measurement": 0.0018520004232414067,
+          "compression": 0.030963004974182695,
+          "decay": 0.0060919992392882705,
+          "budget_evict": 0.004506997356656939,
+          "embedding_ms": 0.0018510036170482635,
+          "retrieval": 0.06780799594707787
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.36
+      },
+      {
+        "extraction": 337.38,
+        "adaptive_write_path": {
+          "scoring": 0.11701399489538744,
+          "fact_token_measurement": 0.0018990031094290316,
+          "compression": 0.035801000194624066,
+          "decay": 0.006998001481406391,
+          "budget_evict": 0.0050439994083717465,
+          "embedding_ms": 0.0021859959815628827,
+          "retrieval": 0.08390699804294854
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.33
+      },
+      {
+        "extraction": 340.34,
+        "adaptive_write_path": {
+          "scoring": 0.11280900071142241,
+          "fact_token_measurement": 0.0017860002117231488,
+          "compression": 0.035568999010138214,
+          "decay": 0.005841000529471785,
+          "budget_evict": 0.004474000888876617,
+          "embedding_ms": 0.0021649975678883493,
+          "retrieval": 0.05278499884298071
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.08
+      },
+      {
+        "extraction": 347.81,
+        "adaptive_write_path": {
+          "scoring": 0.11783000081777573,
+          "fact_token_measurement": 0.001839005562942475,
+          "compression": 0.03771599585888907,
+          "decay": 0.005946996679995209,
+          "budget_evict": 0.004902001819573343,
+          "embedding_ms": 0.002191998646594584,
+          "retrieval": 0.06213099550222978
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.36
+      },
+      {
+        "extraction": 379.35,
+        "adaptive_write_path": {
+          "scoring": 0.15139400056796148,
+          "fact_token_measurement": 0.0021880041458643973,
+          "compression": 0.04005299706477672,
+          "decay": 0.0068540030042640865,
+          "budget_evict": 0.005768997652921826,
+          "embedding_ms": 0.0022559979697689414,
+          "retrieval": 0.0932059992919676
+        },
+        "token_mode": "word_count",
+        "round_seconds": 0.37
+      }
+    ],
+    "embedding_measured": [
+      {
+        "extraction": 332.23,
+        "adaptive_write_path": {
+          "scoring": 0.11360600183252245,
+          "fact_token_measurement": 0.004007000825367868,
+          "compression": 0.03563900099834427,
+          "decay": 0.006628994015045464,
+          "budget_evict": 0.005784000677522272,
+          "embedding_ms": 0.002540000423323363,
+          "retrieval": 0.059213001804891974
+        },
+        "token_mode": "measured",
+        "round_seconds": 0.34
+      },
+      {
+        "extraction": 345.38,
+        "adaptive_write_path": {
+          "scoring": 0.15813200297998264,
+          "fact_token_measurement": 23.41313199576689,
+          "compression": 0.06251699960557744,
+          "decay": 0.007484995876438916,
+          "budget_evict": 0.006100002792663872,
+          "embedding_ms": 0.002234002749901265,
+          "retrieval": 0.11361000360921025
+        },
+        "token_mode": "measured",
+        "round_seconds": 0.34
+      }
+    ]
+  },
+  "summary": {
+    "lexical_word_count": {
+      "extraction_ms_median": 359.49,
+      "round_seconds_median": 0.34,
+      "adaptive_write_path_ms_median": {
+        "budget_evict": 0.005,
+        "compression": 0.011,
+        "decay": 0.007,
+        "fact_token_measurement": 0.002,
+        "retrieval": 0.037,
+        "scoring": 0.052
+      },
+      "n": 5
+    },
+    "lexical_measured": {
+      "extraction_ms_median": 346.72,
+      "round_seconds_median": 0.33,
+      "adaptive_write_path_ms_median": {
+        "budget_evict": 0.007,
+        "compression": 0.012,
+        "decay": 0.008,
+        "fact_token_measurement": 11.922,
+        "retrieval": 0.04,
+        "scoring": 0.052
+      },
+      "n": 2
+    },
+    "embedding_word_count": {
+      "extraction_ms_median": 347.81,
+      "round_seconds_median": 0.36,
+      "adaptive_write_path_ms_median": {
+        "budget_evict": 0.005,
+        "compression": 0.036,
+        "decay": 0.006,
+        "embedding_ms": 0.002,
+        "fact_token_measurement": 0.002,
+        "retrieval": 0.068,
+        "scoring": 0.118
+      },
+      "n": 5
+    },
+    "embedding_measured": {
+      "extraction_ms_median": 338.81,
+      "round_seconds_median": 0.34,
+      "adaptive_write_path_ms_median": {
+        "budget_evict": 0.006,
+        "compression": 0.049,
+        "decay": 0.007,
+        "embedding_ms": 0.002,
+        "fact_token_measurement": 11.709,
+        "retrieval": 0.086,
+        "scoring": 0.136
+      },
+      "n": 2
+    }
+  },
+  "note": "Per-stage medians over repeated end-to-end rounds of a 10-turn conversation using the real Ollama model for extraction. extraction = shared writer cost (method-independent, brain.md D9); adaptive_write_path = the marginal per-turn cost scored->measure->dedupe->decay->evict->retrieve the adaptive policy adds. word_count modes measure that path with in-process token estimation (no LLM inside the write path); measured modes additionally pay a real LLM token-measurement call per fact (the fact_token_measurement stage). Latency optimization is out of scope for this phase; the benchmark exists to verify E3 attribution and give reproducible numbers."
+}

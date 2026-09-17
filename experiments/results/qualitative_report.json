@@ -1,0 +1,70 @@
+{
+  "seed": 42,
+  "config": {
+    "turns": 50,
+    "density": 20.0,
+    "conflict_density": 0.1,
+    "negation_density": 0.1,
+    "budget": 4096,
+    "top_k": 5
+  },
+  "narrative": "Over the 50-turn seeded trace, adaptive injected a mean of 19.22 tokens per turn against the raw-history window's mean of 315.26; the window sat at/over its budget on 0.0 of turns. Injection spikes up to 26 tokens occur exactly when a durable fact surfaces",
+  "phase_contrast": [
+    {
+      "phase": "under",
+      "n_turns": 50,
+      "mean_injected_tokens": 19.22,
+      "max_injected_tokens": 26,
+      "mean_raw_window_tokens": 315.26,
+      "dominant_retrieved_categories": {
+        "transient": 41,
+        "project_context": 37,
+        "technical_preference": 34
+      }
+    }
+  ],
+  "edge_passages": {
+    "spike_turns": [
+      {
+        "turn_id": 17,
+        "injected_tokens": 26,
+        "user_turn_quoted": "Please note this down: User core database requirement: primary DB must be PostgreSQL port 5449.",
+        "retrieved_facts": [
+          "User core database requirement: primary DB must be PostgreSQL port 5449",
+          "Project feature flag configuration key_14 is enabled",
+          "User is currently drinking coffee cup number 10"
+        ]
+      },
+      {
+        "turn_id": 18,
+        "injected_tokens": 26,
+        "user_turn_quoted": "Please note this down: User core database requirement: primary DB must be PostgreSQL port 5450.",
+        "retrieved_facts": [
+          "User core database requirement: primary DB must be PostgreSQL port 5449",
+          "Project feature flag configuration key_14 is enabled",
+          "User is currently drinking coffee cup number 10"
+        ]
+      },
+      {
+        "turn_id": 19,
+        "injected_tokens": 26,
+        "user_turn_quoted": "Please note this down: Project feature flag configuration key_19 is enabled.",
+        "retrieved_facts": [
+          "Project feature flag configuration key_14 is enabled",
+          "User core database requirement: primary DB must be PostgreSQL port 5449",
+          "User is currently drinking coffee cup number 10"
+        ]
+      }
+    ],
+    "prune_events": []
+  },
+  "final_store": {
+    "count": 3,
+    "by_category": {
+      "transient": 1,
+      "project_context": 1,
+      "technical_preference": 1
+    }
+  },
+  "metric_source": "offline seeded oracle replay, lexical retrieval, estimated(word-count) tokens"
+}

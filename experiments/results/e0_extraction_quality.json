@@ -1,0 +1,54 @@
+{
+  "turns_scored": 200,
+  "expected_facts": 220,
+  "predicted_facts": 220,
+  "matched": 220,
+  "exact_or_paraphrase": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "plus_category_agreement": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "per_category": {
+    "personal": {
+      "recall": 1.0,
+      "expected": 40,
+      "matched": 40
+    },
+    "project_context": {
+      "recall": 1.0,
+      "expected": 81,
+      "matched": 81
+    },
+    "technical_preference": {
+      "recall": 1.0,
+      "expected": 66,
+      "matched": 66
+    },
+    "transient": {
+      "recall": 1.0,
+      "expected": 33,
+      "matched": 33
+    }
+  },
+  "per_property": {
+    "trap": {
+      "recall": 1.0,
+      "expected": 33,
+      "matched": 33
+    },
+    "correction": {
+      "recall": 1.0,
+      "expected": 33,
+      "matched": 33
+    }
+  },
+  "missed_examples": [],
+  "write_mode": "oracle(sanity)",
+  "model": null,
+  "match_level": "exact+rougeL"
+}

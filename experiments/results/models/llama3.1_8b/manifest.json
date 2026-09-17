@@ -1,0 +1,465 @@
+{
+  "pipeline": "paper",
+  "generated_at": 1789219178.08264,
+  "config": {
+    "turns": 20,
+    "density": 20.0,
+    "seeds": [
+      42
+    ],
+    "methods": [
+      "adaptive",
+      "vanilla_rag",
+      "sliding_window"
+    ],
+    "write": "extract",
+    "measured": true,
+    "model": "llama3.1:8b",
+    "embedding_model": "",
+    "label": "",
+    "conflict_density": 0.1,
+    "negation_density": 0.1,
+    "max_context_tokens": 4096,
+    "top_k": 5,
+    "injection_token_limit": 0
+  },
+  "token_source": "measured",
+  "metric_source": "offline seeded replay; facts=extract (LLM extracted); E1 token series measured; E3 latency not measured in offline mode",
+  "results": [
+    {
+      "seed": 42,
+      "turns": 20,
+      "ground_truth_count": 0,
+      "methods": {
+        "adaptive": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 66.9,
+            "baseline_mean_tokens": 115.5,
+            "n": 20,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.000418,
+              "significant": true
+            },
+            "p_value": 0.000418,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {},
+            "trap_recall": null,
+            "correction_recall": null,
+            "negation_recall": null,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 0,
+              "wrongly_retained": 0,
+              "fraction": null
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": 392.93,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [
+              "extraction"
+            ],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": [],
+            "hard_case_accuracy_by_distance": {
+              "distances": [],
+              "proposed_accuracy": [],
+              "baseline_accuracy": []
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 1.029,
+            "required_n_per_group": 16,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 20
+          },
+          "stats": {
+            "proposed_series": [
+              26,
+              40,
+              40,
+              40,
+              40,
+              40,
+              55,
+              69,
+              69,
+              69,
+              85,
+              85,
+              85,
+              85,
+              85,
+              85,
+              85,
+              85,
+              85,
+              85
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              110,
+              121,
+              132,
+              143,
+              154,
+              165,
+              176,
+              187,
+              198,
+              209,
+              220
+            ],
+            "pairs": 20
+          },
+          "E5_ablations": {
+            "full_system": {
+              "ablation": "full_system",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 0
+            },
+            "no_decay": {
+              "ablation": "no_decay",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 0
+            },
+            "no_compression": {
+              "ablation": "no_compression",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 1.15,
+              "pruned_count": 0
+            },
+            "equal_weight_scoring": {
+              "ablation": "equal_weight_scoring",
+              "accuracy": 0.0,
+              "token_overhead_vs_full": 1.0,
+              "pruned_count": 0
+            }
+          }
+        },
+        "vanilla_rag": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 76.7,
+            "baseline_mean_tokens": 115.5,
+            "n": 20,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.018644,
+              "significant": true
+            },
+            "p_value": 0.018644,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {},
+            "trap_recall": null,
+            "correction_recall": null,
+            "negation_recall": null,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 0,
+              "wrongly_retained": 0,
+              "fraction": null
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": 392.93,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [
+              "extraction"
+            ],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": [],
+            "hard_case_accuracy_by_distance": {
+              "distances": [],
+              "proposed_accuracy": [],
+              "baseline_accuracy": []
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 0.838,
+            "required_n_per_group": 24,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 20
+          },
+          "stats": {
+            "proposed_series": [
+              26,
+              40,
+              54,
+              70,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84,
+              84
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              110,
+              121,
+              132,
+              143,
+              154,
+              165,
+              176,
+              187,
+              198,
+              209,
+              220
+            ],
+            "pairs": 20
+          }
+        },
+        "sliding_window": {
+          "E1_token_efficiency": {
+            "proposed_mean_tokens": 85.25,
+            "baseline_mean_tokens": 115.5,
+            "n": 20,
+            "pairs_equal": false,
+            "wilcoxon": {
+              "p_value": 0.005062,
+              "significant": true
+            },
+            "p_value": 0.005062,
+            "significant": true
+          },
+          "E2_memory_accuracy": {
+            "proposed_positive_recall": 0.0,
+            "baseline_positive_recall": 0.0,
+            "proposed_forgetting_precision": 0.0,
+            "baseline_forgetting_precision": 0.0,
+            "per_category_recall": {},
+            "trap_recall": null,
+            "correction_recall": null,
+            "negation_recall": null,
+            "wrongly_retained_after_correction": {
+              "superseded_expected": 0,
+              "wrongly_retained": 0,
+              "fraction": null
+            }
+          },
+          "E3_latency": {
+            "extraction_ms": 392.93,
+            "window_replay_ms": null,
+            "answer_ms": null,
+            "measured_stages": [
+              "extraction"
+            ],
+            "note": "latency measurable only when real LLM extraction runs (--write extract)"
+          },
+          "E4_needle_in_haystack": {
+            "distances": [],
+            "proposed_accuracy": [],
+            "baseline_accuracy": [],
+            "hard_case_accuracy_by_distance": {
+              "distances": [],
+              "proposed_accuracy": [],
+              "baseline_accuracy": []
+            }
+          },
+          "E6_power_check": {
+            "observed_cohens_d": 0.597,
+            "required_n_per_group": 46,
+            "alpha": 0.05,
+            "target_power": 0.8,
+            "n_actual": 20
+          },
+          "stats": {
+            "proposed_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110,
+              110
+            ],
+            "baseline_series": [
+              11,
+              22,
+              33,
+              44,
+              55,
+              66,
+              77,
+              88,
+              99,
+              110,
+              121,
+              132,
+              143,
+              154,
+              165,
+              176,
+              187,
+              198,
+              209,
+              220
+            ],
+            "pairs": 20
+          }
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "adaptive": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 66.9,
+      "mean_E1_baseline_tokens": 115.5,
+      "E1_proposed_pooled_ci95": [
+        57.799,
+        75.901
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -67.454,
+        -30.199
+      ],
+      "cohens_d_paired_vs_baseline": -1.049,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          1.029
+        ],
+        "required_n_per_group": [
+          16
+        ]
+      }
+    },
+    "vanilla_rag": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 76.7,
+      "mean_E1_baseline_tokens": 115.5,
+      "E1_proposed_pooled_ci95": [
+        68.698,
+        82.6
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -61.204,
+        -16.0
+      ],
+      "cohens_d_paired_vs_baseline": -0.699,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          0.838
+        ],
+        "required_n_per_group": [
+          24
+        ]
+      }
+    },
+    "sliding_window": {
+      "seeds": 1,
+      "mean_E1_proposed_tokens": 85.25,
+      "mean_E1_baseline_tokens": 115.5,
+      "E1_proposed_pooled_ci95": [
+        69.85,
+        99.0
+      ],
+      "E1_diff_vs_baseline_ci95": [
+        -46.2,
+        -15.4
+      ],
+      "cohens_d_paired_vs_baseline": -0.784,
+      "mean_E2_proposed_recall": 0.0,
+      "mean_E2_baseline_recall": 0.0,
+      "mean_E2_proposed_forgetting_precision": 0.0,
+      "E6": {
+        "observed_cohens_d": [
+          0.597
+        ],
+        "required_n_per_group": [
+          46
+        ]
+      }
+    },
+    "multiple_comparisons": {
+      "paired_wilcoxon_vs_baseline": {
+        "adaptive": 0.000418,
+        "vanilla_rag": 0.018644,
+        "sliding_window": 0.005062
+      },
+      "holms_adjusted": {
+        "adaptive": 0.0013,
+        "vanilla_rag": 0.0186,
+        "sliding_window": 0.0101
+      },
+      "bonferroni_adjusted": {
+        "adaptive": 0.0013,
+        "vanilla_rag": 0.0559,
+        "sliding_window": 0.0152
+      },
+      "comparisons": 3,
+      "note": "E1 per-turn proposed-vs-baseline token series, paired wilcoxon across all seeds, family-wise corrected over the compared methods"
+    }
+  }
+}

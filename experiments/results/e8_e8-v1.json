@@ -1,0 +1,387 @@
+{
+  "suite_version": "e8-v1",
+  "run_at": 1789569882.1539185,
+  "items": 6,
+  "idle_turns": 2,
+  "embedding_model": "lexical",
+  "tag": "synthetic (local needled-QA; NOT the real LongMemEval dataset)",
+  "per_item": {
+    "adaptive": [
+      {
+        "recalled": true,
+        "injected_tokens": 7,
+        "retrieved_n": 1,
+        "id": "who_am_i-01",
+        "category": "who_am_i"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 9,
+        "retrieved_n": 1,
+        "id": "project_knowledge-02",
+        "category": "project_knowledge"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 10,
+        "retrieved_n": 1,
+        "id": "statement_on_question-03",
+        "category": "statement_on_question"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 8,
+        "retrieved_n": 1,
+        "id": "question_on_statement-04",
+        "category": "question_on_statement"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 8,
+        "retrieved_n": 1,
+        "id": "correction-05",
+        "category": "correction"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 6,
+        "retrieved_n": 1,
+        "id": "trap_remains-06",
+        "category": "trap_remains"
+      }
+    ],
+    "sliding_window": [
+      {
+        "recalled": true,
+        "injected_tokens": 45,
+        "retrieved_n": 4,
+        "id": "who_am_i-01",
+        "category": "who_am_i"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 46,
+        "retrieved_n": 4,
+        "id": "project_knowledge-02",
+        "category": "project_knowledge"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 50,
+        "retrieved_n": 4,
+        "id": "statement_on_question-03",
+        "category": "statement_on_question"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 43,
+        "retrieved_n": 4,
+        "id": "question_on_statement-04",
+        "category": "question_on_statement"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 54,
+        "retrieved_n": 5,
+        "id": "correction-05",
+        "category": "correction"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 45,
+        "retrieved_n": 4,
+        "id": "trap_remains-06",
+        "category": "trap_remains"
+      }
+    ],
+    "memgpt_style": [
+      {
+        "recalled": true,
+        "injected_tokens": 7,
+        "retrieved_n": 1,
+        "id": "who_am_i-01",
+        "category": "who_am_i"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 9,
+        "retrieved_n": 1,
+        "id": "project_knowledge-02",
+        "category": "project_knowledge"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 10,
+        "retrieved_n": 1,
+        "id": "statement_on_question-03",
+        "category": "statement_on_question"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 8,
+        "retrieved_n": 1,
+        "id": "question_on_statement-04",
+        "category": "question_on_statement"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 11,
+        "retrieved_n": 2,
+        "id": "correction-05",
+        "category": "correction"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 6,
+        "retrieved_n": 1,
+        "id": "trap_remains-06",
+        "category": "trap_remains"
+      }
+    ],
+    "summarization_only": [
+      {
+        "recalled": true,
+        "injected_tokens": 7,
+        "retrieved_n": 1,
+        "id": "who_am_i-01",
+        "category": "who_am_i"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 9,
+        "retrieved_n": 1,
+        "id": "project_knowledge-02",
+        "category": "project_knowledge"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 10,
+        "retrieved_n": 1,
+        "id": "statement_on_question-03",
+        "category": "statement_on_question"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 8,
+        "retrieved_n": 1,
+        "id": "question_on_statement-04",
+        "category": "question_on_statement"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 11,
+        "retrieved_n": 2,
+        "id": "correction-05",
+        "category": "correction"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 6,
+        "retrieved_n": 1,
+        "id": "trap_remains-06",
+        "category": "trap_remains"
+      }
+    ],
+    "vanilla_rag": [
+      {
+        "recalled": true,
+        "injected_tokens": 7,
+        "retrieved_n": 1,
+        "id": "who_am_i-01",
+        "category": "who_am_i"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 9,
+        "retrieved_n": 1,
+        "id": "project_knowledge-02",
+        "category": "project_knowledge"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 10,
+        "retrieved_n": 1,
+        "id": "statement_on_question-03",
+        "category": "statement_on_question"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 8,
+        "retrieved_n": 1,
+        "id": "question_on_statement-04",
+        "category": "question_on_statement"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 11,
+        "retrieved_n": 2,
+        "id": "correction-05",
+        "category": "correction"
+      },
+      {
+        "recalled": true,
+        "injected_tokens": 6,
+        "retrieved_n": 1,
+        "id": "trap_remains-06",
+        "category": "trap_remains"
+      }
+    ]
+  },
+  "summary": {
+    "adaptive": {
+      "overall_recall": 1.0,
+      "mean_injected_tokens": 8.0,
+      "by_category": {
+        "who_am_i": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "project_knowledge": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "statement_on_question": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "question_on_statement": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "correction": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "trap_remains": {
+          "n": 1,
+          "recall": 1.0
+        }
+      },
+      "n_items": 6
+    },
+    "sliding_window": {
+      "overall_recall": 1.0,
+      "mean_injected_tokens": 47.17,
+      "by_category": {
+        "who_am_i": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "project_knowledge": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "statement_on_question": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "question_on_statement": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "correction": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "trap_remains": {
+          "n": 1,
+          "recall": 1.0
+        }
+      },
+      "n_items": 6
+    },
+    "memgpt_style": {
+      "overall_recall": 1.0,
+      "mean_injected_tokens": 8.5,
+      "by_category": {
+        "who_am_i": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "project_knowledge": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "statement_on_question": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "question_on_statement": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "correction": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "trap_remains": {
+          "n": 1,
+          "recall": 1.0
+        }
+      },
+      "n_items": 6
+    },
+    "summarization_only": {
+      "overall_recall": 1.0,
+      "mean_injected_tokens": 8.5,
+      "by_category": {
+        "who_am_i": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "project_knowledge": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "statement_on_question": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "question_on_statement": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "correction": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "trap_remains": {
+          "n": 1,
+          "recall": 1.0
+        }
+      },
+      "n_items": 6
+    },
+    "vanilla_rag": {
+      "overall_recall": 1.0,
+      "mean_injected_tokens": 8.5,
+      "by_category": {
+        "who_am_i": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "project_knowledge": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "statement_on_question": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "question_on_statement": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "correction": {
+          "n": 1,
+          "recall": 1.0
+        },
+        "trap_remains": {
+          "n": 1,
+          "recall": 1.0
+        }
+      },
+      "n_items": 6
+    }
+  }
+}
