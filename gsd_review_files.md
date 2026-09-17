@@ -38,17 +38,18 @@ result manifests, and generated artifacts. Use this as a starting point for revi
 - `data/seed_utils.py` — Seed utilities.
 
 ### Evaluation
-- `experiments/results/` — Result manifests:
+- `experiments/results/` — Result manifests (all committed to the repo so the reviewer can read the full data; the directory is normally gitignored, these files were force-added):
   - `manifest_h3795b2da.json` — 3-seed post-fix paper validation (E1/E2/E4)
   - `manifest_h892fac01.json` — Quick gate validation (correction_recall≥0.5, wrongly_retained≤0.5)
   - `e10_context_pressure.json` — Full 48-cell context-pressure grid
   - `e11_latency_benchmark.json` — Latency benchmark results
+  - `e12_coding_benchmark.json` — **E12 full coding-context grid (Phase 8)**
   - `e0_extraction_quality.json` — E0 results
   - `e7_sweep.json` — E7 sweep results
   - `e8_e8-v1.json` — E8 results
   - `e9_correction_isolation.json` — E9 isolation results
-- `experiments/results/manifest_latest.json` — Latest (post-fix) live manifest
-- `experiments/results/manifest_live.json` — Live (pre-fix, stale) manifest
+- `experiments/results/latest_manifest.json` — Latest (post-fix) live manifest
+- `experiments/results/live_manifest.json` — Live (pre-fix, stale) manifest
 
 ### Configuration & Planning
 - `.planning/PROJECT.md` — Project reference
@@ -64,7 +65,7 @@ result manifests, and generated artifacts. Use this as a starting point for revi
 - `tests/test_scoring_salience.py` — 8 tests for write-time salience, embedding cosine, pipeline ingest
 
 ### Key Output Artifacts
-- `experiments/results/e12_coding_benchmark.json` — E12 grid (3 budgets × 3 seeds × 5 methods) with per-method metrics + retrieval ablation context (gitignored)
+- `experiments/results/e12_coding_benchmark.json` — **E12 full grid** (config + 9 cells with per-turn `injected` arrays + per-budget aggregate + retrieval-ablation context), 332K
 - `experiments/results/e10_context_pressure.json` — 48-cell context-pressure grid (primary new experiment)
 - `experiments/results/e11_latency_benchmark.json` — Latency benchmark results
 - `experiments/results/manifest_h3795b2da.json` — 3-seed post-fix paper validation
@@ -93,6 +94,7 @@ result manifests, and generated artifacts. Use this as a starting point for revi
 
 ## Generated Artifacts (run via venv/bin/python)
 
+- `experiments/results/e12_coding_benchmark.json` — E12 full grid output (committed)
 - `experiments/results/e10_context_pressure.json` — 48-cell grid output
 - `experiments/results/e11_latency_benchmark.json` — Latency benchmark output
 - `experiments/results/manifest_h3795b2da.json` — 3-seed validation
@@ -101,7 +103,8 @@ result manifests, and generated artifacts. Use this as a starting point for revi
 ## Git
 
 - Current branch: master
-- Recent commits (Phase 7 → Phase 1):
+- Recent commits (Phase 8 → Phase 1):
+  - 60de0c5 research: validate coding-context usefulness (E12, negative result)
   - ba56924 Phase 7: context-pressure experiment + latency benchmark + revalidation
   - bf581ba Phase 6: revalidation, docs, and final audit
   - 91fa6b4 test: stage E9 isolation experiment and retrieval ranking regression tests
@@ -110,7 +113,30 @@ result manifests, and generated artifacts. Use this as a starting point for revi
   - 70866c3 feat: write-time salience replaces hardcoded query_relevance=0.8
   - be75897 feat: correction supersession detection and correctly-hardened retention metrics
   - 0880f1b refactor: remove dead compression methods and deprecated e1-e6 stubs; add pytest scaffolding
-- Clean working tree (no uncommitted changes) except the new files added in this phase
+- Working tree clean at 60de0c5
+
+## How to reproduce the E12 result (for the reviewing LLM)
+
+```bash
+# 1. install deps (venv already in repo)
+python -m venv venv && venv/bin/pip install -r requirements.txt
+
+# 2. Ollama must be running with the embedding model used by the production path
+ollama pull nomic-embed-text        # default endpoint http://localhost:11434
+
+# 3. workload self-test (no pipeline, no LLM)
+venv/bin/python -m data.coding_workload
+
+# 4. full E12 grid -> experiments/results/e12_coding_benchmark.json (~25s)
+venv/bin/python -m experiments.e12_coding_benchmark
+
+# 5. test suite (33 tests; E12 tests run lexical so Ollama is not required)
+venv/bin/python -m pytest tests/ -q
+```
+
+The retrieval ablation (production 0.167 / pure-similarity 0.421 / pure-importance 0.115)
+is a read-only diagnostic: replay the adaptive pipeline at budget 512, then rank the
+same store with three different scoring functions. No pipeline code is modified.
 
 ## Review Checklist
 

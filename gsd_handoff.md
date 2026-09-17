@@ -72,7 +72,8 @@ is robust.
 - Both are locked by `tests/test_coding_benchmark.py` (9 tests; 33 total pass).
 
 **Artifacts:** `data/coding_workload.py`, `experiments/e12_coding_benchmark.py`,
-`experiments/results/e12_coding_benchmark.json` (gitignored), `tests/test_coding_benchmark.py`, brain.md D28.
+`experiments/results/e12_coding_benchmark.json` (full per-cell + per-turn grid, committed),
+`tests/test_coding_benchmark.py`, brain.md D28.
 
 ---
 
