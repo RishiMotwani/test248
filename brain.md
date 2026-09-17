@@ -1056,6 +1056,117 @@ facts and compressed the score distribution.
 
 ---
 
+### D33 ★ Phase 12 Retention Selectivity — task_affinity does NOT beat dual_score (E16)
+  **Motivation:** E15 (D32) showed `retention_priority` eviction is the
+  causation-complete survival policy, but left two gaps: (a) E15's evaluation was
+  *token-based*, and tokens (`memcache`, `redis`) legitimately occur in unrelated
+  facts, so `obsolete_retention > 0` misread correct supersession as staleness;
+  (b) `retention_priority` is fed by `access_count`, which increments on every
+  retrieval — a fact that is retrieved survives, so "retention-priority survival"
+  may trivially equal "retrieval-driven survival" (a feedback echo), leaving no
+  un-contaminated evidence that survival tracks task relevance.
+
+  **33.1 Identity-safe evaluation (data/coding_workload.py):**
+  - Every gt fact gets a deterministic `fact_id =
+    category:qtype:source_turn:SHA256(precise_fact)[:16]` (SHA-256, NOT Python
+    `hash()`); queries carry `target_fact_ids` / `forbidden_fact_ids`; corrections
+    assert the new fact's id present and the old fact's id absent
+    (`superseded_prior_fact_id`).
+  - Metrics: `fact_identity_context/store_recall`,
+    `fact_identity_correction_recall`, `fact_identity_obsolete_retention` —
+    immune to token collisions. Legacy token metrics kept for comparability.
+
+  **33.2 Access separation (retrieval.py, compression.py):**
+  - `retrieval_access_count` increments ONLY on retriever selection (`_bump`);
+    `ingest_reinforcement_count` increments ONLY on compressor merge/supersession;
+    legacy `access_count` unchanged (backward compat). The feedback loop can now
+    be diagnosed into retrieval- vs ingest-fed components
+    (`diagnostics.spearman_vs_future_use` per cell).
+
+  **33.3 Task-state signal + causal baselines (task_state.py, budget.py, pipeline.py):**
+  - `TaskStateTracker(window=32):` FIFO of fact-carrying turn embeddings;
+    `task_affinity = mean(top-4 cosine(fact, tracker))`, clamped [0,1]; observed
+    ONLY at the current turn's ingest (causal, future-blind).
+  - Eviction policies (all `retention.mode=dual_score`, retrieval FROZEN):
+    `dual_score` (retention_priority), `base_score_only` (no access/importance/
+    recency signals), `task_affinity` (lexicographic `(task_affinity,
+    retention_priority)`), `random` (seeded lower bound), `oracle_future_use`
+    (OFFLINE-only future-peeking upper bound; future labels reach only oracle +
+    metric code; no-future-leakage assertions in `replay_session`).
+  - `protect_corrections=True` in E16: a current correction is never evicted
+    while its superseded predecessor exists; `protected_capacity_conflict`
+    records when the store budget is too tight to honour it.
+
+  **33.4 E16 Grid (experiments/e16_retention_selectivity.py):**
+  - 5 policies × STORE[256,512,1024,2048] × active[64,128,256] × seeds[42..46] =
+    300 cells, 1200 turns, scale 27 (662 gt facts, natural store far above
+    budget = genuine pressure), nomic-embed-text. No-pressure diagnostic
+    (store_budget=0) = fingerprints identical across policies (True); window
+    ablation 16/32/64 (sensitivity only).
+
+  **33.5 Observed Results (E16):**
+
+  - E15 raw-JSON reconciliation (81 stress cells): token-based
+    `obsolete_retention > 0` in 27 cells, `correction_recall < 1` in 44, both in
+    11, clean 21; `SUPERSEDED_INCORRECTLY = 0` in ALL cells — the store never
+    resurrects a corrected fact; the real loss is the NEW corrected fact missing
+    from the final store (dual 0/0/0, hard_threshold 18/14/13, soft_decay
+    18/13/9 at store 1024/2048/4096). Token census confirms collisions (scale 27:
+    "memcache" in 3 authoritative facts, "redis" in 8, "100"/"250" only in the
+    superseded/revised constraint).
+
+  - identity_store_recall (mean over active/seeds): dual_score 0.057/0.103/
+    0.129/0.253 vs task_affinity 0.049/0.093/0.126/0.252 vs base_score_only
+    0.045/0.088/0.120/0.241 vs random 0.048/0.095/0.126/0.250 vs oracle
+    0.057/0.103/0.129/0.253 at store 256/512/1024/2048. All policies ~equal at
+    every budget; oracle ≈ dual at the grid's store range (future-use facts are
+    a small faction of retained facts, so eviction precision cannot separate).
+
+  - 8-criterion decision: **task_affinity does NOT advance (0/8 passes)** —
+    c1 FAIL (future-use retention recall 0.0709 vs dual 0.0802 at low store,
+    < +0.03 margin), c6 FAIL (0/5 seeds at tightest store), c7 FAIL (0.0709 vs
+    base_score_only 0.0662, < +0.03), c8 FAIL (oracle store gap task +0.009 vs
+    dual −0.0003). c2–c5 PASS (precision 1.0 both; correction recall 1.0;
+    obsolete retention 0; context unchanged).
+
+  INFERRED:
+  - The retrieval-feedback hypothesis is NOT falsified, but `task_affinity`
+    (future-blind task similarity) is no better than random at predicting future
+    use in this workload — the future-relevant signal is the fact's *own* text
+    similarity to future queries, which naive cosine-to-recent-turns does not
+    capture, and which `dual_score`'s retrieval-feedback already approximates.
+  - Identity-safe metrics close the E15 token-collision gap: fact-level obsolete
+    retention is 0 everywhere; the residual E15 signal was a metric artifact,
+    but the correction-content loss (new fact evicted) was real and is now
+    guarded by correction protection.
+
+  UNRESOLVED:
+  - Whether any future-blind survival signal can beat retrieval-feedback driven
+    survival in this workload remains open; `task_affinity` is not it.
+  - At the low store range (256–512) oracle ≈ causal policies: eviction picks
+    among many never-retrieved facts and future-use is a tiny fraction, so the
+    policy cannot express much separation; a workload where future use is more
+    concentrated (fewer distinct target facts, denser repeats) may discriminate
+    better.
+
+  **Decision (reviewer-confirmable auto-labels):**
+  - TASK_AFFINITY FOR RETENTION IS SUPPORTED → **NOT SUPPORTED** (fails c1/c6/
+    c7/c8; 0/5 seeds; not even oracle-superior)
+  - RETRIEVAL-FEEDBACK DOMINATES SURVIVAL → **NOT OBSERVED** (inconclusive: all
+    causal policies ≈ oracle at low store; the workload's future-use density
+    cannot discriminate)
+  - IDENTITY-SAFE EVAL + CORRECTION PROTECTION → **SUPPORTED** (obsolete 0, corr
+    recall 1.0, SUPERSEDED_INCORRECTLY 0 across all 300 cells)
+
+  **Production default unchanged:** `retention: {mode: dual_score,
+  eviction_priority: retention_priority}`. No silent flip; `task_affinity`
+  remains available (opt-in) for workloads with concentrated future use.
+
+  **Status:** Phase 12 complete. Committed + pushed. Candidate rejected
+  (dual_score retained). STOP — no Phase 13.
+
+---
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.

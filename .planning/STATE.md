@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 11 (E15 retention-policy separation: activation vs survival) complete
+**Current phase:** Phase 12 (E16 retention selectivity under hard pressure) complete — task_affinity rejected, dual_score retained
 
 ## Completed Phases
 
@@ -19,7 +19,8 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 8** — E12 architectural fixes (store/active separation, query-first retrieval) · commit `4f429d0`
 - **Phase 9** — E13 generalization + causal ablations (store capacity + retrieval policy) · commit `f6da170`
 - **Phase 10** — E14 retention diagnosis (causal analysis of store losses) · commit `7a026b9`
-- **Phase 11** — E15 retention-policy separation (activation vs survival) · commit `TBD`
+- **Phase 11** — E15 retention-policy separation (activation vs survival) · commit `4889f2b`
+- **Phase 12** — E16 retention selectivity under hard pressure (task_affinity rejected) · commit `TBD`
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -151,10 +152,37 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Tests:** 80 passing (+26 new in `tests/test_e15_retention_policy.py`: retention defaults/modes/priority math/eviction priority parity, retrieval isolation, revival hard-vs-soft, supersession safety under soft, E15 cell shape)
 
+## E16 Retention Selectivity (D33) — Phase 12
+
+**Objective:** (bounded) Determine whether the system can selectively retain task-relevant facts under genuine store pressure; harden Phase-11 evaluation; diagnose the retrieval-feedback loop on `retention_priority`; test future-blind `task_affinity` against `random`/`base_score_only` and an offline `oracle_future_use` ceiling. **No post-result tuning; config changes only if task_affinity passes ALL 8 criteria.**
+
+**Implementation:**
+- Identity-safe metrics (`data/coding_workload.py`): deterministic `fact_id = category:qtype:source_turn:SHA256(text)[:16]` (SHA-256, not Python hash); queries carry `target_fact_ids`/`forbidden_fact_ids`; identity context/store/correction recall + obsolete_retention (immune to token collisions like `memcache`/`redis`/`100`/`250`)
+- Access separation (`retrieval.py`/`compression.py`): `retrieval_access_count` (retriever `_bump` only) vs `ingest_reinforcement_count` (compressor only), isolating feedback loops circling `access_count`
+- `memory_optimizer/task_state.py`: `TaskStateTracker(window=32)` FIFO of fact-carrying turn embeddings; `task_affinity = mean(top-4 cosine)`, clamped [0,1], observed at current-turn ingest (causal/future-blind)
+- Eviction policies (all `retention.mode=dual_score`, retrieval FROZEN): dual_score (retention_priority), base_score_only, task_affinity (lexicographic `(task_affinity, retention_priority)`), random (seeded lower bound), oracle_future_use (OFFLINE future-peeking upper bound, leak-guard asserted)
+- `pipeline.py` `protect_corrections=True` in E16: current correction never evicted while its superseded predecessor exists
+- `experiments/e16_retention_selectivity.py`: 300-cell grid (5 policies × STORE[256,512,1024,2048] × active[64,128,256] × seeds[42..46], 1200 turns, scale 27, 662 gt facts — genuine pressure) + no-pressure diagnostic (store_budget=0, fingerprints identical across policies) + window sensitivity 16/32/64 + 18-section auto report + E15 raw-JSON audit reconciliation
+
+**Results (see brain.md D33 for full tables):**
+- E15 reconciliation (81 stress cells): token-based obsolete_retention > 0 in 27 cells, correction_recall < 1 in 44, both 11, clean 21; `SUPERSEDED_INCORRECTLY = 0` in ALL cells; real loss = NEW corrected fact missing (dual 0/0/0, hard_threshold 18/14/13, soft 18/13/9 at 1024/2048/4096)
+- identity_store_recall (mean): dual 0.057/0.103/0.129/0.253 ≈ task_affinity 0.049/0.093/0.126/0.252 ≈ random 0.048/0.095/0.126/0.250; oracle 0.057/0.103/0.129/0.253 ≈ dual (ceiling reached at grid's store range)
+- precision_of_retention = 1.000 for ALL policies; dual identity correction recall 1.0 (0.867 at 1024 — verified real marginal-eviction effect near natural store size ~1043 tok)
+- window w16/w64: rr 0.0636/0.0667, precision 1.0 — insensitive
+
+**Decision rule verdict (auto-classified, reviewer-confirmable):**
+- TASK_AFFINITY FOR RETENTION → **NOT SUPPORTED** (0/8: c1 FAIL future-use rr 0.0709 vs dual 0.0802; c6 FAIL 0/5 seeds; c7 FAIL vs base_score_only; c8 FAIL oracle store gap task +0.009 vs dual −0.0003)
+- RETRIEVAL-FEEDBACK DOMINATES SURVIVAL → **NOT OBSERVED** (inconclusive — oracle ≈ causal at low store; workload cannot discriminate)
+- IDENTITY-SAFE EVAL + CORRECTION PROTECTION → **SUPPORTED** (obsolete 0, corr recall 1.0, SUPERSEDED_INCORRECTLY 0 across all 300 cells)
+
+**Production default UNCHANGED:** `retention.mode: dual_score`, `retention.eviction_priority: retention_priority`. No silent flip. `task_affinity` remains opt-in for workloads with concentrated future use. Retrieval stays frozen (0.85 sim + 0.15 imp + 0.02 cat_bonus, top_k 5, sim_threshold 0.35).
+
+**Tests:** 117 passing (+37 new in `tests/test_e16_retention_selectivity.py`: identity-safe API, tracker causality/windowing, access-separation cell fields, evicted-population stamps, oracle isolation/ceiling, SUPERSEDED_INCORRECTLY==0 across cells, correction gate, no-leak flags, hard-budget enforcement, fingerprints, `_cell_key`, workload self-test)
+
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -181,8 +209,11 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 8. D30: Phase 9 complete — Phase 8 generalized; query-first retrieval is primary causal driver
 9. D31: Phase 10 complete — decay→prune is the dominant store-loss mechanism; no policy change made
 10. D32: Phase 11 complete — separation of activation/survival supported; advanced default dual_score + retention-priority eviction
+11. D33: Phase 12 complete — E16 task_affinity rejected at 8-criteria gate (c1/c6/c7/c8 FAIL, 0/5 seed wins; oracle ≈ causal at low store, workload cannot discriminate); dual_score retained, config unchanged
+12. E16 full grid verified via identity-safe metrics; E15 token-based obsolete_retention reclassifies as metric artifact (real residual loss = new corrected fact evicted, now guarded by correction protection)
+13. `/tmp` 100% full during E16 runs — all logs/artifacts written under `experiments/results/` (repo), not /tmp
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-17 after Phase 11 E15 retention-policy separation
+Last updated: 2026-09-17 after Phase 12 E16 retention selectivity — task_affinity rejected, dual_score retained

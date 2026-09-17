@@ -23,6 +23,7 @@ about the API.
 
 from __future__ import annotations
 
+import random
 import time
 from typing import Callable, Dict, List, Optional
 
@@ -31,12 +32,29 @@ from memory_optimizer.compression import MemoryCompressor
 from memory_optimizer.decay import CategoryDecayEngine
 from memory_optimizer.retrieval import MemoryRetriever
 from memory_optimizer.scoring import ImportanceScorer, _write_time_salience
+from memory_optimizer.task_state import TaskStateTracker
 
 PercentCallback = Optional[Callable[[str, float], None]]
 
 
 def _word_tokens(text: str) -> int:
     return max(1, len(str(text).split()))
+
+
+# eviction_priority -> list of budget.py priority keys (lexicographic).
+_EVICTION_KEYS = {
+    "current_importance": ["current_importance"],
+    "retention_priority": ["retention_priority"],
+    "base_score": ["base_score"],
+    "base_score_only": ["base_score"],
+    "task_affinity": ["task_affinity", "retention_priority"],
+    "oracle_future_use": ["oracle_future_use", "retention_priority"],
+    "random": ["_evict_random"],
+}
+
+
+def _priority_keys(eviction_priority: str) -> List[str]:
+    return list(_EVICTION_KEYS.get(eviction_priority, [eviction_priority]))
 
 
 class AdaptiveMemoryPipeline:
@@ -53,7 +71,13 @@ class AdaptiveMemoryPipeline:
         self.pruned_memories = pruned if pruned is not None else []
         self.last_budget_evictions: List[Dict] = []
         self.last_store_pressure: Dict = {}
+        self.last_protected_capacity_conflict: bool = False
         self.on_stage = on_stage
+        retention_cfg = settings.get("retention", {}) if settings else {}
+        self.protect_corrections = bool(retention_cfg.get("protect_corrections", False))
+        task_window = int(retention_cfg.get("task_context_window", 32))
+        self._task_state = TaskStateTracker(task_window)
+        self._evict_rng = random.Random(int(retention_cfg.get("random_seed", 0)))
 
     @classmethod
     def from_settings(cls, settings: Dict, embed_fn=None, embedding_model: str = "",
@@ -77,6 +101,75 @@ class AdaptiveMemoryPipeline:
             if v is not None:
                 return int(v)
         return _word_tokens(text)
+
+    def _ez_embed(self, text: str, embed_fn):
+        if embed_fn is None:
+            return None
+        try:
+            v = embed_fn([text])
+            return v[0] if isinstance(v, (list, tuple)) and len(v) == 1 else v
+        except Exception:
+            return None
+
+    def _stamp_random_keys(self) -> None:
+        """Stamp deterministic per-memory random eviction keys (policy `random`).
+
+        Stamped once per memory so repeated sorts within an eviction pass stay
+        stable; the RNG is seeded from ``retention.random_seed`` so a cell is
+        reproducible.
+        """
+        for m in self.memories:
+            if "_evict_random" not in m:
+                m["_evict_random"] = self._evict_rng.random()
+
+    def _stamp_oracle_keys(self) -> None:
+        """Stamp offline future-use labels for the `oracle_future_use` policy.
+
+        The labels come from ``retention.oracle_future_use`` (a fact_id -> 1
+        mapping), an OFFLINE-ONLY quantity: the oracle is a theoretical upper
+        bound that is allowed to peek at the future. It is evaluated at eviction
+        time so a fact that was identity-replaced by a correction receives the
+        correcting fact's label.
+        """
+        fut = self.settings.get("retention", {}).get("oracle_future_use") or {}
+        for m in self.memories:
+            m["oracle_future_use"] = 1 if m.get("fact_id") in fut else 0
+
+    def _compute_task_affinities(self, embed_fn) -> None:
+        """Vectorized task_affinity for every store memory (policy task_affinity).
+
+        Embeddings are computed once (and cached on the memory for later reuse
+        by the retriever); affinity uses the tracker's top-k message window, so
+        it is a pure function of turns seen so far.
+        """
+        for m in self.memories:
+            if m.get("fact_embedding") is None:
+                m["fact_embedding"] = self._ez_embed(m["fact"], embed_fn)
+        vals = self._task_state.batch_affinity(
+            [m.get("fact_embedding") for m in self.memories])
+        for m, v in zip(self.memories, vals):
+            m["task_affinity"] = float(v)
+
+    def _eviction_record(self, m: Dict) -> Dict:
+        return {
+            "fact": m["fact"],
+            "fact_id": m.get("fact_id"),
+            "category": m.get("category", ""),
+            "base_score": round(float(m.get("base_score", 0)), 3),
+            "current_importance": round(m.get("current_importance", 0), 3),
+            "retention_priority": round(m.get("retention_priority", 0), 3),
+            "task_affinity": round(float(m.get("task_affinity", 0)), 3),
+            "retrieval_access_count": int(m.get("retrieval_access_count", 0)),
+            "ingest_reinforcement_count": int(m.get("ingest_reinforcement_count", 0)),
+            "access_count": int(m.get("access_count", 1)),
+            "duplicates": int(m.get("duplicates", 1)),
+            "source_turn_id": m.get("source_turn_id"),
+            "last_access_turn": m.get("last_access_turn"),
+            "is_current_correction": bool(m.get("is_current_correction", False)),
+            "superseded_prior_fact_id": m.get("superseded_prior_fact_id"),
+            "measured_tokens": m.get("measured_tokens"),
+            "eviction_reason": m.get("eviction_reason"),
+        }
 
     def ingest(self, turn_id: int, user_message: str, facts: List[Dict],
                fact_tokens=None, embed_fn=None, query_relevance: Optional[float] = None) -> Dict:
@@ -130,17 +223,31 @@ class AdaptiveMemoryPipeline:
 
         t0 = time.perf_counter()
         if store_budget > 0 and fact_tokens is not None:
+            if eviction_priority == "task_affinity":
+                self._task_state.observe(turn_id, user_message, facts, embed_fn)
+                self._compute_task_affinities(embed_fn)
+            elif eviction_priority == "random":
+                self._stamp_random_keys()
+            elif eviction_priority == "oracle_future_use":
+                self._stamp_oracle_keys()
+            keys = _priority_keys(eviction_priority)
             pre_store_tokens = sum(fact_tokens(m["fact"]) for m in self.memories)
-            kept, evicted_by_budget, post_store_tokens = token_budget_evict(
-                self.memories, store_budget, fact_tokens, priority_key=eviction_priority)
+            if self.protect_corrections:
+                protected = [m for m in self.memories
+                             if m.get("is_current_correction")
+                             or m.get("superseded_prior_fact_id") is not None]
+                protected_ids = {id(m) for m in protected}
+                evictable = [m for m in self.memories if id(m) not in protected_ids]
+            else:
+                protected, evictable = [], list(self.memories)
+            kept_e, evicted_by_budget, _post_evictable = token_budget_evict(
+                evictable, store_budget, fact_tokens, priority_key=keys)
+            kept = kept_e + protected
             self.memories = kept
-            self.last_budget_evictions = [{
-                "fact": m["fact"],
-                "category": m.get("category", ""),
-                "current_importance": round(m.get("current_importance", 0), 3),
-                "source_turn_id": m.get("source_turn_id"),
-                "eviction_reason": m.get("eviction_reason"),
-            } for m in evicted_by_budget]
+            self.last_budget_evictions = [self._eviction_record(m)
+                                          for m in evicted_by_budget]
+            post_store_tokens = sum(fact_tokens(m["fact"]) for m in kept)
+            self.last_protected_capacity_conflict = post_store_tokens > store_budget
             # Store-pressure instrumentation
             self.last_store_pressure = {
                 "pre_store_tokens": pre_store_tokens,
@@ -149,11 +256,14 @@ class AdaptiveMemoryPipeline:
                 "evicted_count": len(evicted_by_budget),
                 "post_store_tokens": post_store_tokens,
                 "eviction_occurred": len(evicted_by_budget) > 0,
+                "protected_count": len(protected),
+                "protected_capacity_conflict": self.last_protected_capacity_conflict,
             }
         else:
             # No independent store cap: do not confuse active-context capacity
             # with long-term memory capacity.
             self.last_budget_evictions = []
+            self.last_protected_capacity_conflict = False
             self.last_store_pressure = {
                 "pre_store_tokens": sum(fact_tokens(m["fact"]) for m in self.memories) if fact_tokens else 0,
                 "store_budget": store_budget,
@@ -161,6 +271,8 @@ class AdaptiveMemoryPipeline:
                 "evicted_count": 0,
                 "post_store_tokens": sum(fact_tokens(m["fact"]) for m in self.memories) if fact_tokens else 0,
                 "eviction_occurred": False,
+                "protected_count": 0,
+                "protected_capacity_conflict": False,
             }
         self._latency("budget_evict", t0)
 

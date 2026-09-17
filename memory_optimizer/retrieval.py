@@ -89,6 +89,7 @@ class MemoryRetriever:
         if current_turn is None:
             return
         mem["access_count"] = int(mem.get("access_count", 1)) + 1
+        mem["retrieval_access_count"] = int(mem.get("retrieval_access_count", 0)) + 1
         mem["last_access_turn"] = current_turn
 
     def _score_all(self, query: str, memories: List[Dict]) -> List[Dict]:

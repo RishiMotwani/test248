@@ -31,11 +31,17 @@ def _sum_tokens(memories: List[Dict], fact_tokens: FactTokens) -> int:
     return sum(_tokens(m, fact_tokens) for m in memories)
 
 
+def _priority_value(mem: Dict, key: str):
+    if key in ("current_importance", "retention_priority"):
+        return mem.get(key, mem.get("base_score", 0))
+    return mem.get(key, 0.0)
+
+
 def token_budget_evict(
     memories: List[Dict],
     budget: int,
     fact_tokens: FactTokens = None,
-    priority_key: str = "current_importance",
+    priority_key="current_importance",
 ) -> Tuple[List[Dict], List[Dict], int]:
     """Evict lowest-priority memories until the active store fits `budget`.
 
@@ -44,31 +50,35 @@ def token_budget_evict(
     ties toward the oldest source turn so recent, reinforced memories survive
     the squeeze.
 
+    `priority_key` may be a single field name or a list of field names. A list
+    sorts lexicographically over those fields (Phase 12: task_affinity keeps
+    ``["task_affinity", "retention_priority"]``), so a memory is only compared
+    on the next key when the earlier ones collide.
+
     Phase 11/D32: under ``retention.mode = dual_score`` the caller passes
     ``priority_key="retention_priority"`` (stable, evidence-based long-term
     survival score), so store-budget eviction no longer deletes an old-but-
     valuable fact just because its activation faded. The tie-break is unchanged
     (oldest source_turn_id) for both keys.
     """
+    keys = [priority_key] if isinstance(priority_key, str) else list(priority_key)
     kept = [m for m in memories]
     used = _sum_tokens(kept, fact_tokens)
     evicted: List[Dict] = []
     while used > budget and kept:
         kept.sort(
-            key=lambda m: (
-                m.get(priority_key, m.get("base_score", 0)),
-                m.get("source_turn_id", 0),
-            )
+            key=lambda m: tuple(_priority_value(m, k) for k in keys)
+            + (m.get("source_turn_id", 0),)
         )
         victim = kept.pop(0)
-        priority = victim.get(priority_key, victim.get("base_score", 0))
+        priority = _priority_value(victim, keys[0])
         victim["eviction_reason"] = {
             "reason": "budget_squeeze",
             "detail": (f"store {used}/{budget} tokens exceeds the {budget}-token budget; "
-                       f"evicted lowest {priority_key}={priority:.3f}"),
+                       f"evicted lowest {keys[0]}={priority:.3f}"),
             "used_tokens": used,
             "budget": budget,
-            "priority_key": priority_key,
+            "priority_key": keys[0],
         }
         evicted.append(victim)
         used -= _tokens(victim, fact_tokens)

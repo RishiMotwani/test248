@@ -1,85 +1,104 @@
-# GSD Handoff — Phase 11 of 11 COMPLETE
+# GSD Handoff — Phase 12 of 12 COMPLETE
 
-Generated: 2026-09-17 after committing `research: separate memory activation from retention (E15)`
+Generated: 2026-09-17 after committing `research: test retention selectivity under hard memory pressure (E16)`
 
 Note: `gsd_metrics.json`/`gsd_review_files.md` are not present in `.planning/` at
 handoff time; the docs kept are ROADMAP.md, STATE.md, REQUIREMENTS.md, config.json,
 codebase/. Any reviewer tooling that expected them should treat them as absent (not
-deleted) — nothing this phase removed them.
+deleted) — consistent with the Phase 11 handoff.
 
 ## Current commit
 
-- **Commit:** `4889f2b` (pushed to `origin/master`, RishiMotwani/test248)
-- Previous: `7a026b9` (Phase 10 — E14 retention diagnosis)
+- **Commit:** `(this commit)` (pushed to `origin/master`, RishiMotwani/test248)
+- Previous: `9ec8f03` (Phase 11 docs handoff); actual Phase 11 research commit `4889f2b`
 - Working tree: clean after commit.
-- `experiments/results/e15_retention_policy.json` is ~85 MB (81 stress cells with
-  per-fact activation+retention transcripts). Pushed with a GitHub GH001 large-file
-  warning (best-effort, matches the repo's "commit raw evidence" convention).
+- `experiments/results/e16_retention_selectivity.json` (300 grid + 15 no-pressure +
+  10 window cells + e15_audit + verdict) and `..._report.md` are gitignored →
+  force-added per the repo's "commit raw evidence" convention.
 
-## What changed this phase (D32, E15)
+## What changed this phase (D33, E16)
 
-1. **Config default advanced** to `retention: {mode: dual_score, eviction_priority:
-   retention_priority}` in `config.yaml`. Legacy mode (`hard_threshold` /
-   `current_importance`) is preserved and remains the pipeline's fallback when a
-   settings dict omits the `retention` key (backward compatible).
-2. **decay.py**: `calculate_retention_priority()` (stable, no temporal decay) +
-   `step_decay_and_prune(memories, turn, retention_mode)` — hard_threshold (legacy
-   prune), soft_decay/dual_score (never threshold-prune, flag `retained_below_threshold`),
-   ValueError on unknown mode (validated before the update loop).
-3. **budget.py**: `token_budget_evict(..., priority_key)` — dual_score uses
-   `retention_priority`; tie-break unchanged (oldest source_turn first).
-4. **pipeline.py**: reads `retention` cfg, threads mode + eviction priority into
-   decay/eviction; store-pressure instrumentation intact.
-5. **experiments/e15_retention_policy.py**: primary grid (4 policies × 4 budgets ×
-   5 seeds) + mandatory stress grid (scale 27, ~8272 natural store tokens, 3 store
-   budgets × 3 active budgets × 3 seeds, 1200 turns) + report + auto-classifier.
-   `--quick`, `--no-stress`, `--stress-only`, `--report-only` modes.
-6. **Tests**: 80 passing total; +26 in `tests/test_e15_retention_policy.py`.
-   E14 test helper now pins legacy `hard_threshold` explicitly (its lifecycle tests
-   target the legacy semantics; the new default is dual_score).
+1. **Identity-safe evaluation** (`data/coding_workload.py`): deterministic `fact_id =
+   category:qtype:source_turn:SHA256(text)[:16]` (SHA-256, NOT Python `hash()`);
+   queries carry `target_fact_ids`/`forbidden_fact_ids`; corrections assert new id
+   present / old id absent. New metrics `fact_identity_{context,store,correction}_recall`
+   + `fact_identity_obsolete_retention` — immune to token collisions.
+2. **Access separation** (`retrieval.py`, `compression.py`): `retrieval_access_count`
+   increments only via retriever `_bump`; `ingest_reinforcement_count` only via
+   compressor merge/supersession. Legacy `access_count` unchanged (backward compat).
+   Feedback loops diagnosable per cell (`diagnostics.spearman_vs_future_use`).
+3. **`memory_optimizer/task_state.py`**: `TaskStateTracker(window=32)` FIFO of
+   fact-carrying turn embeddings; `task_affinity = mean(top-4 cosine)`, clamped [0,1],
+   observed at current-turn ingest (causal, future-blind). Guardrails assert oracle
+   future labels never reach policy/decay code.
+4. **Eviction policies** (all `retention.mode=dual_score`, retrieval FROZEN):
+   `dual_score` (retention_priority), `base_score_only`, `task_affinity` (lexicographic
+   `(task_affinity, retention_priority)`), `random` (seeded lower bound),
+   `oracle_future_use` (offline future-peeking ceiling).
+5. **`pipeline.py`**: `protect_corrections=True` in E16 (a current correction is never
+   evicted while its superseded predecessor exists); `protected_capacity_conflict`
+   records when the budget is too tight to honour it.
+6. **experiments/e16_retention_selectivity.py**: 300-cell grid (5 policies ×
+   STORE[256,512,1024,2048] × active[64,128,256] × seeds[42..46], 1200 turns,
+   scale 27 = 662 gt facts, genuine pressure) + no-pressure fingerprints (store_budget=0;
+   identical across policies — True) + window ablation 16/32/64 + 18-section auto
+   report + E15 raw-JSON audit. Flags: `--quick`, `--report-only`, `--force`,
+   `--no-window`, `--no-nopressure`.
+7. **Tests**: 117 passing total; +37 in `tests/test_e16_retention_selectivity.py`.
 
-## Evidence (E15; details in experiments/results/e15_retention_policy_report.md)
+## Evidence (E16; details in experiments/results/e16_retention_selectivity_report.md)
 
-- hard_threshold (legacy): ctx_recall 0.576/0.705/0.800/0.917, store 0.672/0.774/
-  0.852/0.917 at 64/128/256/512; decay removals 31.4/20.4/10.6/0.2; corr_recall
-  0.50/0.70/1.0/1.0.
-- soft_decay: ctx 0.862/0.883/0.888/0.917, store 0.917 flat, decay removals 0,
-  obsolete 0, corr_recall 1.0 at ALL budgets; revived facts 30.0/20.4/9.6/0.2.
-- dual_score: identical to soft_decay in primary (no store evictions); under the
-  tightest stress store (1024) ctx 0.368/0.434/0.503 vs soft 0.322/0.405/0.484,
-  corr_recall 0.94 vs 0.28, fewer evictions (430 vs 518), archival store_recall
-  −1 pt tradeoff.
-- Stress store 2048/4096: dual store 0.805/0.897 vs soft 0.775/0.877; hard loses up
-  to ~409 facts to decay-pruning before eviction binds.
-- obsolete_retention = 0 under EVERY policy/budget. Supersession always correct.
+- identity_store_recall (mean over active/seeds; stores 256/512/1024/2048):
+  dual_score 0.057/0.103/0.129/0.253; task_affinity 0.049/0.093/0.126/0.252;
+  base_score_only 0.045/0.088/0.120/0.241; random 0.048/0.095/0.126/0.250;
+  oracle_future_use 0.057/0.103/0.129/0.253 (≈ dual at grid store range).
+- precision_of_retention = 1.000 for ALL policies; correction recall 1.0;
+  fact-level obsolete retention 0; SUPERSEDED_INCORRECTLY = 0 across all 300 cells.
+- E15 reconciliation (81 stress cells, from raw JSON): token-based
+  obsolete_retention > 0 in 27 cells, correction_recall < 1 in 44 (11 both, 21 clean) —
+  token-collision artifact (`memcache` 3, `redis` 8 facts; `100`/`250` only legacy).
+  Real residual loss = NEW corrected fact evicted (dual 0/0/0, hard_threshold 18/14/13,
+  soft_decay 18/13/9 at 1024/2048/4096) — now guarded by correction protection.
+- Window sensitivity (task_affinity, store 512, active 128): w16 rr 0.0636/prec 1.0;
+  w64 rr 0.0667/prec 1.0 — insensitive.
+- dual_score identity correction recall dips to 0.867 at store 1024 (vs 1.0 at
+  256/512) — verified real marginal-eviction behavior near natural store size
+  (~1043 tokens), NOT a metric or code bug.
 
 ## Decision (auto-classified, reviewer-confirmable)
 
-1. SEPARATING ACTIVATION FROM SURVIVAL IS SUPPORTED → **SUPPORTED** (store +0.113,
-   ctx +0.138; active context unchanged; safety preserved; store growth bounded).
-2. RETENTION PRIORITY FOR STORE EVICTION IS SUPPORTED → **SUPPORTED** (tightest
-   store: ctx +0.031, corr +0.667; archival store_recall −0.009 tradeoff).
-3. SOFT RETENTION ... CREATES A STALENESS TRADEOFF → **NOT SUPPORTED** (obsolete 0,
-   correction recall improved).
+8-criteria gate, task_affinity vs dual_score:
+1. `task_affinity` future-use retention recall (low store 256/512): 0.0709 vs
+   dual 0.0802 → **FAIL** (c1)
+2. Same at tightest low store 256: 0.060 vs 0.070; precision both 1.0 → **FAIL** (c6:
+   0/5 seed wins)
+3. vs random (0.0709 vs 0.0706) → **FAIL** (c7); oracle store gap task +0.009 vs
+   dual −0.0003 → **FAIL** (c8)
+4. PASS: precision parity (c2), correction recall 1.0 (c3), obsolete 0 (c4), active
+   context unchanged (c5) — but hard-fail criteria dominate.
 
-Candidate advanced to default per rule: `dual_score` + `retention_priority`.
+**Verdict: TASK_AFFINITY_IS_SUPPORTED → NOT SUPPORTED (0/8). RETENTION STAYS
+`dual_score`. Config UNCHANGED.** No silent flip; `task_affinity` remains opt-in for
+workloads with concentrated future use. Retrieval stays frozen (sim 0.85 + imp 0.15 +
+cat_bonus 0.02, top_k 5, sim_threshold 0.35).
 
 ## Verification status
 
-- `python -m pytest tests/` → **80 passed** (venv python at
+- `python -m pytest tests/` → **117 passed** (venv python at
   `/home/goku/prototype/prototype3/venv/bin/python`; system `/usr/bin/python` has no pytest).
-- E15 quick smoke, full primary, and full stress grid all completed and written to
-  `experiments/results/e15_retention_policy.json` + `report.md`.
-- Only pre-run bugs were in the NEW experiment/test code (age-bucket tail overflow
-  in stress, dead `nested` block, revival-test empty-store handling, classifier
-  tolerances) — all fixed; production-path code validated by the 80-passing suite.
+- Full grid (300 cells) + no-pressure + window completed in one foreground run;
+  JSON + report written to `experiments/results/`; report regenerated with 0 "N/A"
+  via `--report-only`.
+- `/tmp` was 100% full — all logs/artifacts under the repo (`experiments/results/`).
 
 ## Next unresolved question (do NOT start a new phase)
 
-- The archival-vs-task tradeoff at the tightest store budget: retention-priority
-  eviction drops never-retrieved facts first (store_recall −1 pt at store=1024).
-  Is that acceptable for long-horizon reuse beyond the 1200-turn grid? This is a
-  design question, not a bug; it is documented under UNRESOLVED in D32.
+- Whether ANY future-blind survival signal can beat retrieval-feedback survival in
+  this workload remains open — `task_affinity` is not it. At low store budgets
+  oracle ≈ causal policies, so the grid's store range cannot discriminate policies;
+  a workload with more concentrated future use (fewer distinct target facts, denser
+  repeats) may separate them. Documented under UNRESOLVED in D33. This is a design
+  question, not a bug.
 
-External reviewers: read experiments/results/e15_retention_policy_report.md and the
-D32 brain.md entry for the complete OBSERVED/INFERRED/UNRESOLVED breakdown.
+External reviewers: read experiments/results/e16_retention_selectivity_report.md and
+the D33 brain.md entry for the complete OBSERVED/INFERRED/UNRESOLVED breakdown.

@@ -123,12 +123,16 @@ class MemoryCompressor:
                             and ex["category"] == mem["category"]):
                         ex_emb = ex.get("fact_embedding")
                         ex["access_count"] = ex.get("access_count", 1) + mem.get("access_count", 1)
+                        ex["ingest_reinforcement_count"] = ex.get("ingest_reinforcement_count", 0) + 1
                         ex["last_access_turn"] = mem.get("last_access_turn", ex.get("last_access_turn",
                                                                                       ex.get("source_turn_id")))
                         ex["duplicates"] = ex.get("duplicates", 1) + 1
                         if ex_emb is None and mem_emb is not None:
                             ex["fact_embedding"] = mem_emb
                         ex["superseded_prior_fact"] = ex["fact"]
+                        ex["superseded_prior_fact_id"] = ex.get("fact_id")
+                        ex["fact_id"] = mem.get("fact_id", ex.get("fact_id"))
+                        ex["is_current_correction"] = True
                         ex["fact"] = mem["fact"]
                         ex["confidence"] = mem.get("confidence", ex.get("confidence", 0.5))
                         merged = True
@@ -153,21 +157,24 @@ class MemoryCompressor:
                 if sim is not None and sim >= threshold:
                     if _is_supersession(ex["fact"], mem["fact"]):
                         ex["access_count"] = ex.get("access_count", 1) + mem.get("access_count", 1)
+                        ex["ingest_reinforcement_count"] = ex.get("ingest_reinforcement_count", 0) + 1
                         ex["last_access_turn"] = mem.get("last_access_turn", ex.get("last_access_turn",
                                                                                       ex.get("source_turn_id")))
                         ex["duplicates"] = ex.get("duplicates", 1) + 1
                         if ex_emb is None and mem_emb is not None:
                             ex["fact_embedding"] = mem_emb
                         ex["superseded_prior_fact"] = ex["fact"]
+                        ex["superseded_prior_fact_id"] = ex.get("fact_id")
+                        ex["fact_id"] = mem.get("fact_id", ex.get("fact_id"))
+                        ex["is_current_correction"] = True
                         ex["fact"] = mem["fact"]
                         ex["confidence"] = mem.get("confidence", ex.get("confidence", 0.5))
-                        if ex_emb is None and mem_emb is not None:
-                            ex["fact_embedding"] = mem_emb
                         merged = True
                         break
                     if not semantic and _has_supersession_marker(mem["fact"]):
                         continue
                     ex["access_count"] = ex.get("access_count", 1) + mem.get("access_count", 1)
+                    ex["ingest_reinforcement_count"] = ex.get("ingest_reinforcement_count", 0) + 1
                     ex["last_access_turn"] = mem.get("last_access_turn", ex.get("last_access_turn",
                                                                                   ex.get("source_turn_id")))
                     ex["duplicates"] = ex.get("duplicates", 1) + 1

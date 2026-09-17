@@ -47,10 +47,25 @@ Design constraints honoured:
 
 from __future__ import annotations
 
+import hashlib
 import random
 from typing import Dict, List, Tuple
 
 # (fact, category, answer_tokens, query_user, query_required, qtype)
+def stable_fact_hash(text: str) -> str:
+    """Seed-independent, deterministic content hash (SHA-256 truncated).
+
+    Identity-safe fact ids (Phase 12) use this instead of Python ``hash()``,
+    which is per-process random and would break fact identity across runs.
+    """
+    return hashlib.sha256(str(text).encode("utf-8")).hexdigest()[:16]
+
+
+def make_fact_id(category: str, qtype: str, source_turn: int, precise: str) -> str:
+    """Stable fact identity: category:qtype:source_turn:content-hash."""
+    return f"{category}:{qtype}:{source_turn}:{stable_fact_hash(precise)}"
+
+
 FACT_LIBRARY: List[Dict] =[
     {
         "fact": "Requirement: the checkout API must handle 300 requests per second",
@@ -428,6 +443,9 @@ def build_coding_session(
             "is_trap": False,
             "qtype": item["qtype"],
             "expected_needed_later": True,
+            "fact_id": make_fact_id(
+                item["category"], item["qtype"], turn_id,
+                item.get("precise_fact") or item["fact"]),
         }
         gt_by_turn.setdefault(turn_id, []).append(fact_gt)
         gt.append(fact_gt)
@@ -446,10 +464,15 @@ def build_coding_session(
                 "category": corr["old_category"],
                 "is_trap": False,
                 "is_correction_target": True,
+                "is_current_correction": True,
                 "supersedes_turn": old_turn,
                 "superseded_fact": corr["old_fact"],
                 "qtype": corr["qtype"],
                 "expected_needed_later": True,
+                "fact_id": make_fact_id(
+                    corr["old_category"], corr["qtype"], new_turn, corr["new_fact"]),
+                "superseded_prior_fact_id": (
+                    old_entries[0]["fact_id"] if old_entries else None),
             }
             gt_by_turn.setdefault(new_turn, []).append(new_gt)
             gt.append(new_gt)
@@ -495,6 +518,10 @@ def build_coding_session(
         if g.get("superseded_by") and not g.get("is_correction_target"):
             continue  # superseded original is only probed through its correction
         src = query_sources[g["fact"]]
+        forbidden_ids = []
+        if g.get("superseded_prior_fact_id"):
+            forbidden_ids = [g["superseded_prior_fact_id"]]
+            assert forbidden_ids[0] is not None
         query = {
             "qid": f"q{len(queries) + 1}",
             "user": src["query_user"],
@@ -504,6 +531,8 @@ def build_coding_session(
             "source_turn": g["source_turn"],
             "query_turn": query_turn,
             "long_range": (query_turn - g["source_turn"]) >= 20,
+            "target_fact_ids": [g["fact_id"]],
+            "forbidden_fact_ids": forbidden_ids,
         }
         queries.append(query)
 
@@ -528,10 +557,23 @@ def self_test() -> None:
                 owner = [g for g in authoritative if g["source_turn"] == q["source_turn"]]
                 assert all(tok.lower() not in g["fact"].lower().split() for g in owner), (
                     f"forbidden token {tok} wrongly in new fact for {q['qid']}")
+        # identity-safe: unique fact_ids; queries point at real, non-forbidden ids
+        ids = [g["fact_id"] for g in g1]
+        assert len(ids) == len(set(ids)), f"seed {seed} fact_id collision"
+        id_set = set(ids)
+        for q in q1:
+            assert q["target_fact_ids"], f"{q['qid']} has no target fact_id"
+            assert all(t in id_set for t in q["target_fact_ids"]), \
+                f"{q['qid']} target fact_id not in gt"
+            for f in q["forbidden_fact_ids"]:
+                assert f not in q["target_fact_ids"], \
+                    f"{q['qid']} forbidden id also target"
         # corrections present and supersession recorded
         corr = [g for g in g1 if g.get("is_correction_target")]
         assert len(corr) == len(CORRECTION_LIBRARY)
         for c in corr:
+            assert c.get("is_current_correction") is True
+            assert c.get("superseded_prior_fact_id") is not None
             old = [o for o in g1 if o["source_turn"] == c["supersedes_turn"]
                    and not o.get("is_correction_target") and o["fact"] == c["superseded_fact"]]
             assert len(old) == 1

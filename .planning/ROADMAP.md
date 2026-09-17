@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 11
+**Phases:** 12
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -120,3 +120,27 @@
 6. **Finding documented:** decay→prune is the dominant store loss (31/20/11/0 facts at 64/128/256/512); store-budget eviction = 0; budget affects loss only via retrieval-reinforcement feeding decay
 7. No production policy changed; all defaults verified unchanged (weights 0.15/0.85/0.02, threshold 0.2)
 8. All 54 tests pass (+14 new)
+
+### Phase 11: E15 Retention-Policy Separation — Activation vs Survival
+**Goal:** Separate dynamic activation (`current_importance`, retrieval ranking) from long-term survival (`retention_priority`, stable evidence score, store eviction); advance the winning policy via the OBSERVED-based decision rule
+**Mode:** mvp
+**Success Criteria:**
+1. `retention: {mode, eviction_priority}` in config; default advanced to `dual_score` / `retention_priority`; backward-compatible fallback to `hard_threshold`
+2. `calculate_retention_priority() = min(1.0, base_score*(1+access_gain*(access_count-1)))`; decay no longer deletes; unknown mode → `ValueError`
+3. Primary grid (4 policies × 4 budgets × 5 seeds) + stress grid (scale 27, 1200 turns, natural store ~8272 tok; store 1024/2048/4096): dual_score beats soft at tightest store (ctx 0.368–0.503 vs 0.322–0.484; correction 0.94 vs 0.28)
+4. Retrieval path FROZEN during grid (causal isolation returns PARITY)
+5. obsolete_retention = 0 under EVERY policy/budget; correction gate never regresses
+6. Verdict auto-classified + reviewer-confirmable: separation SUPPORTED, retention-priority eviction SUPPORTED, staleness-tradeoff NOT SUPPORTED
+7. All 80 tests pass (+26 new)
+
+### Phase 12: E16 Retention Selectivity Under Hard Pressure
+**Goal:** Determine whether the system can selectively retain task-relevant facts under genuine store pressure; harden Phase-11 evaluation (identity-safe metrics + E15 reconciliation); test future-blind `task_affinity` against `random`/`base_score_only` and offline `oracle_future_use` ceiling
+**Mode:** mvp
+**Success Criteria:**
+1. Identity-safe metrics: `fact_id = category:qtype:source_turn:SHA256(text)[:16]`; identity context/store/correction recall + obsolete_retention (token-collision immune)
+2. Access separation: `retrieval_access_count` (retriever only) vs `ingest_reinforcement_count` (compressor only); retrieval-Feedback loop diagnosable
+3. `TaskStateTracker(window=32)` — future-blind causal `task_affinity`; oracle stamped offline only with no-future-leakage assertions
+4. Grid: 5 policies × STORE[256,512,1024,2048] × active[64,128,256] × seeds[42..46] = 300 cells, 1200 turns, scale 27, genuine pressure; no-pressure + window diagnostic cells
+5. E15 reconciliation from raw JSON (81 cells): SUPERSEDED_INCORRECTLY = 0 everywhere; residual loss = new corrected fact evicted (now guarded by `protect_corrections`)
+6. 8-criteria verdict: **task_affinity REJECTED** (0/8; c1/c6/c7/c8 FAIL; oracle ≈ dual at grid store range); config UNCHANGED (dual_score + retention_priority); no post-result tuning
+7. All 117 tests pass (+37 new); results JSON + 18-section report committed to `experiments/results/`
