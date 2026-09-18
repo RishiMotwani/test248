@@ -1,0 +1,10 @@
+diff --git a/configapp/codec.py b/configapp/codec.py
+index 7feb033..1700ded 100644
+--- a/configapp/codec.py
++++ b/configapp/codec.py
+@@ -2,4 +2,4 @@ id="2jqwd0"
+ """Configuration normalization helper."""
+ def normalize(config):
+     """Normalize a parsed config according to repository contract."""
+-    raise NotImplementedError
++    return {"known": config["known"]} if "known" in config else {}

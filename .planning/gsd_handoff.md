@@ -1,100 +1,110 @@
-# GSD Handoff — Phase 15 of 15 (E19 coding-generalization pilot, HONEST)
+# GSD Handoff — Phase 16 (E20 counterfactual-history benchmark calibration, HONEST INVALID)
 
-Generated: after committing the Phase-15/E19 honest-pilot grid.
+Generated: after committing the Phase-16 / E20 calibration grid.
 
-Note: `gsd_handoff.md` was rewritten (not appended) this phase per §37 to keep
-the doc a single reviewer-readable artifact. `gsd_metrics.json`/`gsd_review_files.md`
-are not present in `.planning/` at handoff time; the docs kept are ROADMAP.md,
-STATE.md, PROJECT.md, config.json, codebase.
+This doc is the single reviewer-readable artifact for the phase. Kept docs:
+ROADMAP.md, STATE.md, PROJECT.md, config.json, codebase.
 
 ## Where we are
 
-Phase 15 (E19) complete — **pilot-only, honest verdict**. The D36/D37/D39
-adaptive-memory system generalizes the *history dependence* gates across a
-broader set of genuinely history-dependent long-horizon coding tasks, but the
-broader-set *advantage over baselines* is NOT established at the llama3.1:8b
-tier, so the full 225-cell grid was NOT run and no production change was made.
+Phase 16 (E20) complete — **honest INVALID verdict at llama3.1:8b**. The E20
+counterfactual-history calibration answers E19's open gate-C question directly:
+two of three counterfactual groups ARE genuinely history dependent
+(retry_policy dh 6/6 vs nh 3/6; serialization_policy dh 5/6 vs nh 0/6), but
+`identifier_policy` is fully solvable from the workspace alone (dh 6/6 AND
+nh 6/6, separation 0). Because the predeclared Hard Gate 2 requires ALL three
+groups to pass, `history_dependence_benchmark = INVALID` and
+`e19_full_grid_eligible = FALSE`. **The E19 full grid must NOT be run until
+identifier_policy-family fixtures (including E19's `user_ids`) are redesigned.**
 
-## Locked contract (from the E19 prompt)
+## Locked contract (from the E20 prompt)
 
-- **Config:** `config.yaml` UNTOUCHED (production defaults immutable).
-- **No tuning:** embedding fix upstream (E18) is a correctness repair only; no
-  dual_score / retention / decay / retrieval-weight / threshold changes in E19.
-- **One adaptive method:** `adaptive` = production `dual_score` +
-  `protect_corrections`. Do not add `adaptive_v2`/`adaptive_tuned`/`adaptive_plus`.
-- **Primary set:** `user_ids`, `validation_pure`, `transaction_atomicity`
-  (history-gated). `config_contract` is fixture-ONLY (calibration probe
-  0/3–1/3 oracle direct_history across four fixture designs at llama3.1:8b —
-  task nuance beyond this tier; excluded from the primary set and from gates).
-- **Negative controls:** `cache_readonly_nh`, `write_retry_neg`. Diagnostic and
-  diagnostic-only; never counted toward the adaptive-advances claim.
-- **Pilot rule (locked, honest):** verdict = adaptive_advances ONLY IF every
-  gate passes AND adaptive shows a positive paired advantage over each baseline
-  with a paired 95% CI lower bound > 0. Do not call it from a point estimate.
+- **Config:** `config.yaml` UNTOUCHED; `memory_optimizer/` and `server.py`
+  behavior UNTOUCHED. E20 is benchmark calibration, not an adaptive-memory run.
+- **No tuning:** no dual_score / retention / decay / retrieval-weight / threshold
+  / embedding-model changes.
+- **Methods (3):** `no_history` (identical prompt for A/B), `direct_history`
+  (oracle: the same variant's non-obsolete gold facts only), `full_context`
+  (raw 600-turn history; always overflows the 1024-word budget → recorded as
+  CONTEXT_OVERFLOW diagnostic).
+- **Grid:** 3 groups × 2 variants × 3 seeds × 3 methods = 54 cells @ 1024 words,
+  llama3.1:8b @ localhost:11434, temperature 0.1.
+- **Hard Gate 1:** all 6 gold patches must apply cleanly and pass hidden tests
+  (offline) BEFORE any model run → STOP if failed.
+- **Hard Gate 2 (per group, /6):** direct_history ≥ 5, no_history ≤ 3,
+  separation ≥ 2; ALL three groups must pass → else INVALID.
+- **Pair-integrity gates:** workspace+prompt byte-identical per pair; history,
+  final fact ids, hidden tests and gold patches differ per variant; no
+  leakage.
 
-## Late/surprise findings in E19 (measured, not inferred)
+## Findings (measured, not inferred)
 
-1. **Task-suite calibration (multiple restate/delete designs this phase):** the
-   first fixture drafts leaked history (tasks solvable by reading the file tree
-   alone). Final suite requires per-primary `gold.patch` verified against
-   `hidden/test_hidden.py` tests with `no_history` oracle-probes, and a
-   workspace calibration step before any grid cell runs.
-2. **Gate C (history-dependence) failed honestly on a 3-draw diagnostic**
-   (`DIAG_DRAWS=3`, llama3.1:8b): only `validation_pure` is cleanly gated
-   (no_history 0/3); `user_ids` 2/3 and `transaction_atomicity` 1/3 no-history
-   successes — both partially workspace-solvable at this tier. `rg_error` was
-   dropped/replaced with `transaction_atomicity` after probing (see report
-   section 12).
-3. **`adaptivity_advances = False`:** the adaptive-vs-baseline paired 95% CI
-   lower bounds include 0 for every arm on the pilot grid (and the paired
-   per-task advantage is flat across all five methods on `user_ids` 19/20).
-   Verdict rule honest (gate B + gate C history-dependence work; the broader-set
-   advantage is NOT established at this model tier). Full grid NOT run.
-4. Self-consistency repair during the pilot run (file-edit block application)
-   is required for the LLM path; diagnostics draw 3 times (DIAG_DRAWS=3) to
-   avoid single-draw variance masking a genuinely gated task.
+1. **Hard Gate 1 PASS:** all 6 variants' `gold.patch` files apply cleanly and
+   pass their hidden tests (offline `StaticCoder` path). Fixture quality is good.
+2. **Pair-integrity PASS** — workspace/prompt identical within each pair;
+   histories, final fact IDs, hidden tests and gold patches all differ;
+   zero prompt/history leakage across all 54 records.
+3. **Hard Gate 2 FAILS on `identifier_policy`** — no_history 6/6, direct_history
+   6/6, separation 0. The model guesses `str(value)`/`int(value)` for the
+   canonical-user-id contract without any history at llama3.1:8b. This is the
+   SAME failure class as E19 gate C's `user_ids` (2/3 no-history successes),
+   providing direct causal evidence for the E19 finding.
+4. **retry_policy PASS** — dh 6/6 vs nh 3/6 (sep 3). The "no auto-retry" arm is
+   default-guess solvable; the "retry exactly once" arm is not (nh 0/3 for B).
+5. **serialization_policy PASS** — dh 5/6 vs nh 0/6 (sep 5). Cleanest pair: no
+   history solves neither preserve-unknown-keys nor drop-unknown-keys.
+6. **full_context overflow confirmed:** 18/18 diagnostic cells overflow the
+   1024-word budget (raw ~7.2k words) — consistent with E17/E19; recorded, not
+   used for any gate.
 
-## Honest verdict (pilot; reviewer-confirmable)
+## Honest verdict (reviewer-confirmable)
 
-- `adaptive_advances`: **False** (point estimate alone never advances).
-- `gates_all_passed`: **False** — gate C (history dependence) failed.
-- `config.yaml` UNTOUCHED; E17/E18 artifacts immutable; suite fixtures
-  calibratable; report is pilot-only and reviewer-confirmable.
-- Verdict and full 24-section report:
-  `experiments/results/e19_coding_generalization.json` +
-  `experiments/results/e19_coding_generalization_report.md` (force-added).
+- `history_dependence_benchmark`: **INVALID**
+- `e19_full_grid_eligible`: **FALSE**
+- `config.yaml` UNTOUCHED; E17/E18/E19 artifacts immutable (E19 report had a
+  presentation-only heading/column fix: sections 14/15/18 now derive from
+  cfg mode/budgets — data unchanged).
+- Verdict + 7-section report: `experiments/results/e20_counterfactual_history.json` +
+  `experiments/results/e20_counterfactual_history_report.md` (force-added).
+- Tests: 174 passing (+31 in `tests/test_counterfactual_history.py`).
+
+## What must change for E19 full-grid eligibility (next phase)
+
+Redesign `identifier_policy`-family fixtures so the required behavior is NOT
+derivable from the workspace / function signature alone (e.g., make both
+variants require an external contract fact — the NUMBER or TYPE of id can no
+longer be inferred from the empty-stub repo), then re-run E20's Hard Gate 2
+on that group. Only when all three groups pass is the E19 full grid eligible.
 
 ## Cryptographic checkpoint
 
-- Checkpoint branch: `checkpoint/phase-14-e18-complete` → `07259e0`
-- Checkpoint tag: `checkpoint-phase-14-e18-07259e0` = same SHA
-- HEAD = `07259e0` (branch `master`), matches checkpoint (branch created AFTER
-  E18; tag immutable)
+- Checkpoint branch: `checkpoint/phase-16-e20-complete` → HEAD SHA (this commit)
+- Checkpoint tag: `checkpoint-phase-16-e20-<sha>` = same SHA
 
 ## Restore
 
 ```bash
-git checkout checkpoint/phase-14-e18-complete
+git checkout checkpoint/phase-16-e20-complete
 ```
 
 or
 
 ```bash
-git reset --hard checkpoint/phase-14-e18-complete
+git reset --hard checkpoint/phase-16-e20-complete
 ```
 
 ## Do-not-regress (locked)
 
 1. Do not tune `config.yaml` (dual_score, retention, decay, thresholds, top_k,
    embedding model, task affinity all frozen).
-2. Do not add selective-retention/summarization improvements to pretend the
-   broader-set advantage is established.
-3. Do not rerun the full 225-cell grid until reviewer confirms the honest
-   pilot + the per-task history-dependence optimization.
-4. E17/E18 JSON + report immutable; E19 JSON/report are pilot-only.
+2. Do not run the E19 full 225-cell grid — E20 declares it NOT eligible until
+   identifier_policy-family fixtures are redesigned and re-gated.
+3. E17/E18/E19 JSON + reports immutable (E19 report presentation-only fix
+   applied).
+4. Do not claim history dependence for any coding task without a counterfactual
+   no_history-vs-direct_history gate.
 
-## Next phase (if reviewer approves the pilot)
+## Next phase
 
-Rerun the full 225-cell grid ONLY after: (a) reviewer confirms the pilot
-verdict is honest, and (b) a fix to the history-dependence ceiling at this
-tier is proposed and gated. No full grid in Phase 15.
+Redesign the identifier_policy counterfactual (require history to choose the
+id contract), re-run E20 Hard Gate 2, and only then revisit E19.

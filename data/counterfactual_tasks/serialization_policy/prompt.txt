@@ -1,0 +1,1 @@
+Implement `normalize(config)` according to the repository's established contract. Keep the existing public name and signature. Do not modify hidden tests.

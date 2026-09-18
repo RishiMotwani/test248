@@ -96,9 +96,9 @@ The full grid has not been run yet; these are PILOT numbers and no production de
 | vanilla_rag | 0.667 | 0.667 | 0.667 |
 | adaptive | 1.000 | 1.000 | 1.000 |
 
-## 14. Full Grid: Results by Method x Budget (primary)
+## 14. Pilot: Results by Method x Budget (primary)
 
-Primary-task records only (E19 schema; see JSON).
+Primary-task records only (E19 schema; see JSON). This table aggregates the pilot grid so far (mode=pilot).
 
 | method | 256 | 512 | overall |
 | --- | --- | --- | --- |
@@ -108,8 +108,9 @@ Primary-task records only (E19 schema; see JSON).
 | vanilla_rag | 0.667 | 0.667 | 0.667 |
 | adaptive | 1.000 | 1.000 | 1.000 |
 
-## 15. Full Grid: First-Pass vs Final Success
+## 15. Pilot: First-Pass vs Final Success
 
+Over the pilot grid aggregated in section 14 (mode=pilot).
 | method | budget | first-pass | final | runs |
 | --- | --- | --- | --- | --- |
 | raw_clipped | 256 | 0.333 | 0.500 | 6 |
@@ -146,8 +147,8 @@ rationale: Pilot gates did not all pass; the grid is not a valid experiment and 
 **PILOT verdict.** The full grid is not complete; no production conclusion is declared. The pilot gates and paired numbers above are directional only.
 ## 18. Diagnostics: Recall & Obsolete Exposure (primary)
 
-| method | metric | mean (budget 256) | mean (512) | mean (1024) |
-| --- | --- | --- | --- | --- |
+| method | metric | mean (256) | mean (512) |
+| --- | --- | --- | --- |
 | raw_clipped | critical_fact_recall | 0.000 | 0.000 |
 | sliding_window | critical_fact_recall | 0.000 | 0.000 |
 | llm_summarization | critical_fact_recall | 0.722 | 0.861 |

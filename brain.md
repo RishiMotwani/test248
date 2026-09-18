@@ -1282,6 +1282,50 @@ semantics are unchanged.
 benchmark-integrity test in `tests/test_e17_coding_capability.py`. STOP — no
 Phase 15.
 
+### D38 ★ Phase 16 — Counterfactual-history benchmark calibration (E20): INVALID at llama3.1:8b
+
+**OBSERVED (E19, Phase 15 / gate C):** E19 pilot gate C failed. The coding
+tasks were not demonstrated to be genuinely history dependent: some fixtures
+were solvable from the workspace alone, so the memory system's contribution
+couldn't be disentangled from the model guessing the right implementation from
+the code structure and prompt wording.
+
+**Root cause / calibration (E20, Phase 16):** E20 builds calibrated
+counterfactual history pairs — same workspace, same prompt, different history,
+different hidden tests, different gold patches — and measures whether providing
+the correct variant's history (direct_history oracle) changes solvability while
+providing none (no_history) does not. Per-group McNemar-style gate over 3
+seeds at llama3.1:8b with budget 1024:
+
+| group | direct_history | no_history | separation | gate |
+| --- | --- | --- | --- | --- |
+| identifier_policy | 6/6 | 6/6 | 0 | FAIL |
+| retry_policy | 6/6 | 3/6 | 3 | PASS |
+| serialization_policy | 5/6 | 0/6 | 5 | PASS |
+
+identifier_policy (analogous to E19's `user_ids` primary task) is fully
+solvable from the workspace alone: the model guesses `str(value)` or `int(value)`
+without any historical context. retry_policy A (non-retry) is also default-guess
+solvable, but retry_policy B (retry-once) is not, so the *group* discriminates.
+serialization_policy shows clean discrimination: 0/6 no-history successes.
+
+**Design decision:** The E19 coding benchmark requires counterfactual-history
+validation before any production or full-grid claim. Any fixture family where
+`no_history >= 4/6` across variants+seeds at the current model tier is not
+genuinely history dependent and must be redesigned or excluded from the memory
+system's evaluation. E20's INVALID verdict on identifier_policy means E19
+full grid is NOT eligible — the benchmark is not yet fully calibrated.
+
+**Artifacts:** `experiments/e20_counterfactual_history.py`,
+`experiments/results/e20_counterfactual_history.json` + `_report.md` (7
+sections), `data/counterfactual_task_suite.py`, `data/counterfactual_tasks/`
+(3 groups x 2 variants), `tests/test_counterfactual_history.py` (31 tests,
+all pass). E19 report presentation-only fix applied (sections 14/15/18 now
+derive headings and columns from `cfg["mode"]` and `cfg["budgets"]`).
+
+**Status:** Phase 16 complete. No adaptive-memory algorithm, production
+defaults, or prior experiment artifact was modified.
+
 ---
 
 ## 8. Open questions for the human (blocking decisions)

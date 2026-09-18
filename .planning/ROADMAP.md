@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 13
+**Phases:** 16
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -184,3 +184,14 @@
 - Paired adaptive-vs-baseline 95% CI: only validation_pure adaptive 4/4 clean; broader-set advantage NOT established at this model tier → verdict **adaptive_advances = False** (gate A/B/C history-dependence honesty works, but the broader-set advantage is NOT established)
 - Full grid NOT run; report is pilot-only, reviewer-confirmable; `config.yaml` untouched; E17/E18 artifacts immutable; all 143 tests pass (+9)
 - verdict adaptive_advances: False — the pilot verdict rule is honest (gates all pass except gate C); config UNTOUCHED; report is pilot-only, reviewer-confirmable, tests 143 passing (+9)
+
+### Phase 16: E20 Counterfactual-History Benchmark Calibration (INVALID at llama3.1:8b)
+**Goal:** resolve E19 gate C's open question (is the benchmark genuinely history dependent?) with counterfactual history pairs — per group, byte-identical workspace+prompt, different history → different hidden test + gold patch — and gate each group on whether the correct variant's history (direct_history oracle) lifts solvability while no_history does not. NO adaptive-memory change; E19 full grid never auto-run.
+**Mode:** mvp
+**Success Criteria:**
+1. `data/counterfactual_task_suite.py` + `data/counterfactual_tasks/{identifier_policy,retry_policy,serialization_policy}/`: 3 groups × 2 variants, workspace+prompt byte-identical across A/B; 600-turn histories committed (decision >300 turns old, byte-reproducible); variant-specific hidden tests + gold.patch; hashes + `build_variant()` + self-test
+2. `CodingTask.gold_patch_path` added; `e19.check_gold` honors it with fallback (no behavior change elsewhere)
+3. `experiments/e20_counterfactual_history.py`: 54 cells (3×2×3×3) @ budget 1024; no_history / direct_history (oracle) / full_context (overflow diagnostic); Hard Gate 1 (offline gold-patch validity on all 6 variants) → STOP if fails; pair-integrity gates → STOP if fails; Hard Gate 2 per group (/6: dh≥5, nh≤3, sep≥2) → verdict history_dependence_benchmark VALID/INVALID + e19_full_grid_eligible; 7-section report; resumable JSON
+4. Non-trivial fixtures: gold.patch applies cleanly AND base (unmodified workspace) fails hidden tests for every variant; no history/prompt/test leakage
+5. **Outcome — HONEST INVALID:** Gate 1 PASS (all 6 gold patches valid); pair-integrity PASS; Gate 2 fails on `identifier_policy` (dh 6/6 vs nh 6/6, sep 0 — solvable from the workspace alone at llama3.1:8b); `retry_policy` PASS (6/6 vs 3/6, sep 3); `serialization_policy` PASS (5/6 vs 0/6, sep 5) → **history_dependence_benchmark = INVALID, e19_full_grid_eligible = FALSE**; identifier_policy-family fixtures (and E19's `user_ids`) must be redesigned so the required behavior is underivable from workspace alone
+6. All 174 tests pass (+31 in `tests/test_counterfactual_history.py`); E19 report presentation-only fix (sections 14/15/18 derive from cfg mode/budgets); E20 JSON + report + fixtures force-committed

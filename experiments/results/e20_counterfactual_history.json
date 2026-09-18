@@ -1,0 +1,3290 @@
+{
+  "experiment": "e20_counterfactual_history",
+  "partial": false,
+  "config": {
+    "mode": "run",
+    "groups": [
+      "identifier_policy",
+      "retry_policy",
+      "serialization_policy"
+    ],
+    "variants": {
+      "identifier_policy": [
+        "A",
+        "B"
+      ],
+      "retry_policy": [
+        "A",
+        "B"
+      ],
+      "serialization_policy": [
+        "A",
+        "B"
+      ]
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "budget": 1024,
+    "methods": [
+      "no_history",
+      "direct_history",
+      "full_context"
+    ],
+    "grid_cells": 54,
+    "model": "llama3.1:8b",
+    "endpoint": "http://localhost:11434",
+    "use_embeddings": false,
+    "max_output_tokens": 700,
+    "temperature": 0.1,
+    "tokenizer": "shared_word_count",
+    "ingestion": "oracle_pre_extracted",
+    "generated_at": 1789743609.9079134
+  },
+  "gold_checks": [
+    {
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "gold_patch_valid": true,
+      "patch_applied": true,
+      "hidden_test_pass": true
+    },
+    {
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "gold_patch_valid": true,
+      "patch_applied": true,
+      "hidden_test_pass": true
+    },
+    {
+      "group_id": "retry_policy",
+      "variant": "A",
+      "gold_patch_valid": true,
+      "patch_applied": true,
+      "hidden_test_pass": true
+    },
+    {
+      "group_id": "retry_policy",
+      "variant": "B",
+      "gold_patch_valid": true,
+      "patch_applied": true,
+      "hidden_test_pass": true
+    },
+    {
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "gold_patch_valid": true,
+      "patch_applied": true,
+      "hidden_test_pass": true
+    },
+    {
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "gold_patch_valid": true,
+      "patch_applied": true,
+      "hidden_test_pass": true
+    }
+  ],
+  "integrity_gates": {
+    "checks": {
+      "identifier_policy:workspace_identical_a_b": true,
+      "identifier_policy:prompt_identical_a_b": true,
+      "identifier_policy:histories_differ": true,
+      "identifier_policy:history_hashes_reproducible": true,
+      "identifier_policy:hidden_tests_differ": true,
+      "identifier_policy:gold_patches_differ": true,
+      "identifier_policy:final_fact_ids_differ": true,
+      "identifier_policy:no_prompt_history_leak": true,
+      "retry_policy:workspace_identical_a_b": true,
+      "retry_policy:prompt_identical_a_b": true,
+      "retry_policy:histories_differ": true,
+      "retry_policy:history_hashes_reproducible": true,
+      "retry_policy:hidden_tests_differ": true,
+      "retry_policy:gold_patches_differ": true,
+      "retry_policy:final_fact_ids_differ": true,
+      "retry_policy:no_prompt_history_leak": true,
+      "serialization_policy:workspace_identical_a_b": true,
+      "serialization_policy:prompt_identical_a_b": true,
+      "serialization_policy:histories_differ": true,
+      "serialization_policy:history_hashes_reproducible": true,
+      "serialization_policy:hidden_tests_differ": true,
+      "serialization_policy:gold_patches_differ": true,
+      "serialization_policy:final_fact_ids_differ": true,
+      "serialization_policy:no_prompt_history_leak": true,
+      "all_workspaces_mutually_distinct": true
+    },
+    "passed": true
+  },
+  "records": [
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 1,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 156,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1448.1,
+        "total": 1448.1
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 255,
+        "coding_output": 117
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 1,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 64,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 218,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "646e6968b0b87305",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1339.5,
+        "total": 1339.5
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 325,
+        "coding_output": 107
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 1,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7291,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 7445,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "06c5595c61552f38",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 2,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 156,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1261.6,
+        "total": 1261.6
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 255,
+        "coding_output": 102
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 2,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 64,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 218,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "646e6968b0b87305",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1418.7,
+        "total": 1418.7
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 325,
+        "coding_output": 114
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 2,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7291,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 7445,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "06c5595c61552f38",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 3,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 156,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1353.4,
+        "total": 1353.4
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 255,
+        "coding_output": 110
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 3,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 64,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 218,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "646e6968b0b87305",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1171.9,
+        "total": 1171.9
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 325,
+        "coding_output": 93
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_A",
+      "seed": 3,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7291,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 7445,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "06c5595c61552f38",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 1,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 156,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 4123.6,
+        "total": 4123.6
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 844,
+        "coding_output": 327
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 1,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 58,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 212,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "3a2383a4ba2f151e",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 925.0,
+        "total": 925.0
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 319,
+        "coding_output": 72
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 1,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7289,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 7443,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "568ae5f8588671cf",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 2,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 156,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 4096.4,
+        "total": 4096.4
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 844,
+        "coding_output": 325
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 2,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 58,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 212,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "3a2383a4ba2f151e",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 919.4,
+        "total": 919.4
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 319,
+        "coding_output": 72
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 2,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7289,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 7443,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "568ae5f8588671cf",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 3,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 156,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3751.5,
+        "total": 3751.5
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 992,
+        "coding_output": 292
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 3,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 58,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 212,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "3a2383a4ba2f151e",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 930.3,
+        "total": 930.3
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 319,
+        "coding_output": 72
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "identifier_policy_B",
+      "seed": 3,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7289,
+      "workspace_context_tokens": 53,
+      "task_prompt_tokens": 22,
+      "total_prompt_tokens": 7443,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "568ae5f8588671cf",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.5,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.5
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "identifier_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 1,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 192,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3288.6,
+        "total": 3288.6
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 368,
+        "coding_output": 259
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 1,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 54,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 244,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "509295d377c3988a",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1911.4,
+        "total": 1911.4
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 428,
+        "coding_output": 154
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 1,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7254,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 7444,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "26bf3398f04d7f67",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 2,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 192,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3260.9,
+        "total": 3260.9
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 368,
+        "coding_output": 264
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 2,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 54,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 244,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "509295d377c3988a",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1755.1,
+        "total": 1755.1
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 428,
+        "coding_output": 141
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 2,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7254,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 7444,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "26bf3398f04d7f67",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 3,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 192,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3309.4,
+        "total": 3309.4
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 368,
+        "coding_output": 267
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 3,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 54,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 244,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "509295d377c3988a",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1820.3,
+        "total": 1820.4
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 428,
+        "coding_output": 146
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_A",
+      "seed": 3,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7254,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 7444,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "26bf3398f04d7f67",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 1,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 192,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 7425.3,
+        "total": 7425.3
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 1234,
+        "coding_output": 588
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 1,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 44,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 234,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "c73a0a8a0b067e07",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1803.8,
+        "total": 1803.8
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 419,
+        "coding_output": 142
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 1,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7253,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 7443,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "1f2bf26896a7a424",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 2,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 192,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 8164.3,
+        "total": 8164.3
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 1232,
+        "coding_output": 645
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 2,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 44,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 234,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "c73a0a8a0b067e07",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1808.9,
+        "total": 1808.9
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 419,
+        "coding_output": 142
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 2,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7253,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 7443,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "1f2bf26896a7a424",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.1,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.1
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 3,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 192,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6107.5,
+        "total": 6107.5
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 1232,
+        "coding_output": 480
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 3,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 44,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 234,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "c73a0a8a0b067e07",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 2098.6,
+        "total": 2098.6
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 419,
+        "coding_output": 167
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "retry_policy_B",
+      "seed": 3,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7253,
+      "workspace_context_tokens": 90,
+      "task_prompt_tokens": 21,
+      "total_prompt_tokens": 7443,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "1f2bf26896a7a424",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "retry_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 1,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 149,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 7597.3,
+        "total": 7597.3
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 941,
+        "coding_output": 600
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 1,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 50,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 197,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "CODING_ERROR",
+      "context_sha": "778d3946d62a4860",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 8322.2,
+        "total": 8322.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 1110,
+        "coding_output": 656
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 1,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7268,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 7415,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "523e0aeb3452a292",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 2,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 149,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 12056.8,
+        "total": 12056.8
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 995,
+        "coding_output": 949
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 2,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 50,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 197,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "778d3946d62a4860",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3239.7,
+        "total": 3239.7
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 289,
+        "coding_output": 260
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 2,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7268,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 7415,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "523e0aeb3452a292",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 3,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 149,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 8064.3,
+        "total": 8064.3
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 948,
+        "coding_output": 638
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 3,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 50,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 197,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 1,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "778d3946d62a4860",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5981.4,
+        "total": 5981.4
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 289,
+        "coding_output": 482
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_A",
+      "seed": 3,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7268,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 7415,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "523e0aeb3452a292",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "A",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 1,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 149,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3734.8,
+        "total": 3734.8
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 795,
+        "coding_output": 293
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 1,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 42,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 189,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "751c929e37c5086d",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5044.1,
+        "total": 5044.1
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 762,
+        "coding_output": 401
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 1,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7265,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 7412,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "d51ff24807695962",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 2,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 149,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 4387.7,
+        "total": 4387.7
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 795,
+        "coding_output": 346
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 2,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 42,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 189,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "751c929e37c5086d",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 4339.6,
+        "total": 4339.6
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 762,
+        "coding_output": 345
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 2,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7265,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 7412,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "d51ff24807695962",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.1,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.1
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": true
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 3,
+      "method": "no_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 149,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 0.0,
+        "critical_fact_in_memory": 0.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 0.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3697.9,
+        "total": 3697.9
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 795,
+        "coding_output": 291
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 3,
+      "method": "direct_history",
+      "historical_budget": 1024,
+      "historical_context_tokens": 42,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 189,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 2,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "patch_valid": true,
+      "patch_applied": true,
+      "patch_method": "file_replace",
+      "failure_class": null,
+      "context_sha": "751c929e37c5086d",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 1.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 0.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 4903.0,
+        "total": 4903.0
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 762,
+        "coding_output": 390
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": false
+    },
+    {
+      "experiment": "E17",
+      "task_id": "serialization_policy_B",
+      "seed": 3,
+      "method": "full_context",
+      "historical_budget": 1024,
+      "historical_context_tokens": 7265,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 20,
+      "total_prompt_tokens": 7412,
+      "memory_build_calls": 0,
+      "summary_update_calls": 0,
+      "coding_attempts": 0,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "patch_valid": false,
+      "patch_applied": false,
+      "patch_method": null,
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "d51ff24807695962",
+      "uses_production_pipeline": false,
+      "leakage": {
+        "hidden_test_logic_lines_in_prompt": 0,
+        "hidden_test_filename_in_prompt": false,
+        "leakage_detected": false
+      },
+      "diagnostics": {
+        "critical_fact_recall": 1.0,
+        "critical_fact_in_memory": 1.0,
+        "correction_recall": 0.0,
+        "negative_constraint_recall": null,
+        "long_range_fact_recall": 1.0,
+        "obsolete_fact_exposure": 1.0
+      },
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.2,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.2
+      },
+      "tokens": {
+        "memory_build_input": 0,
+        "memory_build_output": 0,
+        "coding_input": 0,
+        "coding_output": 0
+      },
+      "cache": {},
+      "provenance": {
+        "tokenizer": "shared_word_count",
+        "model": "llama3.1:8b",
+        "ingestion": "oracle_pre_extracted"
+      },
+      "group_id": "serialization_policy",
+      "variant": "B",
+      "overflow": true
+    }
+  ],
+  "gates": {
+    "gold_patch_validity": {
+      "passed": true
+    },
+    "pair_integrity": {
+      "passed": true
+    },
+    "history_dependence": {
+      "groups": {
+        "identifier_policy": {
+          "direct_history": "6/6",
+          "no_history": "6/6",
+          "separation": 0,
+          "passed": false
+        },
+        "retry_policy": {
+          "direct_history": "6/6",
+          "no_history": "3/6",
+          "separation": 3,
+          "passed": true
+        },
+        "serialization_policy": {
+          "direct_history": "5/6",
+          "no_history": "0/6",
+          "separation": 5,
+          "passed": true
+        }
+      },
+      "passed": false
+    }
+  },
+  "verdict": {
+    "history_dependence_benchmark": "INVALID",
+    "e19_full_grid_eligible": false,
+    "rationale": "Hard Gate 2 (history dependence) failed for: identifier_policy"
+  }
+}

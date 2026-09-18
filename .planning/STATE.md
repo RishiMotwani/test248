@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 15 (E19 coding generalization pilot) complete — pilot grid run to completion, but gate C (no_history must fail for every primary) FAILED on honest 3-draw measurement (user_ids 2/3, transaction_atomicity 1/3 no-history successes at llama3.1:8b; only validation_pure 0/3 is cleanly gated); full grid NOT run; the honest pilot report records this.
+**Current phase:** Phase 16 (E20 counterfactual-history benchmark calibration) complete — 54-cell grid run to completion at llama3.1:8b; Hard Gate 1 (gold patches) PASS, pair-integrity PASS, but Hard Gate 2 FAILS on identifier_policy (no_history 6/6 — solvable from the workspace alone); history_dependence_benchmark = INVALID, e19_full_grid_eligible = FALSE; two of three counterfactual groups (retry_policy 6/6 vs 3/6, serialization_policy 5/6 vs 0/6) DO show genuine history dependence.
 
 ## Completed Phases
 
@@ -23,6 +23,8 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 12** — E16 retention selectivity under hard pressure (task_affinity rejected) · commit `c971553` (+docs `6b25a80`)
 - **Phase 13** — E17 long-horizon coding capability (no adaptive advantage) · commit `0025589`
 - **Phase 14** — E18 correction-safe memory, targeted validation (retrieval-safe supersession) · commit `4597496` (+docs)
+- **Phase 15** — E19 coding-generalization pilot (gate C FAILED, full grid NOT run, honest pilot record) · commit `2b15fe4` (+docs `5d7721f`)
+- **Phase 16** — E20 counterfactual-history benchmark calibration (INVALID: identifier_policy solvable without history) · commit (this milestone)
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -239,10 +241,29 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Tests:** 138 passing. Results: `experiments/results/e18_correction_safety.json` + `_report.md` (19 sections; force-added). Cache_readonly benchmark limitation (E17 known-issue #15) resolved by the stricter hidden test.
 
+## E20 Counterfactual-History Benchmark Calibration (D38) — Phase 16
+
+**Objective:** answer E19 gate C's open question — is the coding benchmark genuinely history dependent? Build counterfactual history pairs (same workspace, same prompt, different history → different hidden test + gold patch) and measure, per group, whether injecting the correct variant's history (direct_history oracle) lifts solvability while no_history does not. **No adaptive-memory change; E19 full grid is never auto-run.**
+
+**Implementation:**
+- `data/counterfactual_task_suite.py` + `data/counterfactual_tasks/{identifier_policy,retry_policy,serialization_policy}/`: 3 groups x 2 variants, workspace+prompt byte-identical across A/B; histories committed as `history.txt` (600-turn, decision >300 turns old, regenerable byte-for-byte); variant-specific hidden tests + `gold.patch` (unified diffs); hashes + `build_variant()` + self-test.
+- `experiments/coding_benchmark.py` unchanged except it already honored `gold_patch_path` (added `gold_patch_path` field to `CodingTask`; `e19.check_gold` uses it with fallback).
+- `experiments/e20_counterfactual_history.py`: 54-cell grid (3x2x3x3) at budget 1024, methods no_history / direct_history (oracle, same-variant facts) / full_context (diagnostic — always overflows 1024-word budget, recorded as CONTEXT_OVERFLOW); Hard Gate 1 (offline gold-patch validity), pair-integrity gates, Hard Gate 2 (per group over 6: dh≥5, nh≤3, sep≥2), 7-section report; incremental JSON resumable. Model llama3.1:8b @ localhost:11434, temperature 0.1.
+
+**Results (54 cells, llama3.1:8b):**
+- Hard Gate 1 (gold patch validity): PASS — all 6 variants apply cleanly and pass hidden tests.
+- Pair-integrity: PASS — workspace/prompt identical per pair; histories, final fact ids, hidden tests, gold patches all differ; no prompt/history leakage.
+- Hard Gate 2 (history dependence, /6): identifier_policy dh 6/6 vs nh 6/6 (sep 0) FAIL; retry_policy dh 6/6 vs nh 3/6 (sep 3) PASS; serialization_policy dh 5/6 vs nh 0/6 (sep 5) PASS.
+- **Verdict: history_dependence_benchmark = INVALID → e19_full_grid_eligible = FALSE.**
+
+**Interpretation:** the `identifier_policy` counterfactual (analogous to E19 primary task `user_ids`) is fully solvable from the workspace alone at llama3.1:8b — the model guesses `str(value)`/`int(value)` without any history. Two of three groups DO discriminate (retry-once and preserve/drop-unknown-keys are not default guesses), showing the counterfactual design works; the remaining family must be redesigned (e.g., make the required behavior underivable from the workspace/gold signature) before the E19 full grid is eligible. No production defaults touched.
+
+**Tests:** 174 passing (+31 in `tests/test_counterfactual_history.py`: fixture structure/determinism, gold-patch offline gate on all 6 variants, no-leakage, gate-2 counting, verdict logic, E19 report pilot-heading/budget-column presentation fix, E20 7-section report, artifact paths under repo).
+
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected, D34 Phase 13 long-horizon coding capability / no adaptive advantage, D35 Phase 14 correction-safe memory / retrieval-safe supersession)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected, D34 Phase 13 long-horizon coding capability / no adaptive advantage, D35 Phase 14 correction-safe memory / retrieval-safe supersession, D38 Phase 16 counterfactual-history benchmark calibration / INVALID at llama3.1:8b — E19 full grid not eligible)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -275,8 +296,10 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 14. D34: Phase 13 complete — E17 full grid (180 runs) valid, all gates pass, but adaptive shows NO advantage at fixed historical budgets (all arms 0.72–0.75, every paired CI lower bound 0); failing cells = obsolete fact injected + correction missed (both adaptive and vanilla_rag); harness fixed to complete-file edit format (model's diffs were malformed — applied partially/silently)
 15. E17 coding task `cache_readonly` hidden test only asserts `put_count==1`, which a naive `store.put` also satisfies — the CellCoordinator/CacheCoordinator constraint is not strictly enforced (documented as a suite limitation)
 16. D35: Phase 14 complete — E18 offline identity gate (36 cells, 27 correction-bearing) ALL PASS, targeted coding validation adaptive 17/18 vs vanilla_rag 9/18 (all OBSOLETE_INFORMATION_USED) / llm_summarization 9/18 / raw_clipped 8/18 (all RETRIEVAL_MISS); cache_readonly benchmark limitation (#15) RESOLVED by spy-based hidden test enforcing CacheCoordinator + `calls == [("beta","2")]`
+17. E19 pilot (Phase 15): gate C FAILED on honest 3-draw measurement (user_ids 2/3, transaction_atomicity 1/3 no-history successes at llama3.1:8b; only validation_pure 0/3 cleanly gated); full grid NOT run; report presentation fixed (sections 14/15/18 now derive from cfg mode/budgets)
+18. D38: Phase 16 complete — E20 counterfactual calibration INVALID: identifier_policy solvable without history (nh 6/6); retry_policy + serialization_policy DO discriminate (sep 3 and 5); e19_full_grid_eligible = FALSE until identifier_policy-like fixtures are redesigned
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-18 after Phase 14 E18 correction-safe memory — offline identity gate PASS, adaptive 17/18 vs vanilla 9/18 on targeted coding validation
+Last updated: 2026-09-18 after Phase 16 E20 counterfactual-history benchmark calibration — Hard Gate 2 FAILS on identifier_policy (solvable without history), benchmark INVALID, E19 full grid not eligible

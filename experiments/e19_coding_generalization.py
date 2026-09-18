@@ -233,7 +233,10 @@ class StaticCoder:
 
 def check_gold(task_id: str, seed: int = 1) -> Dict:
     task = build_task(task_id, seed=seed)
-    gold = (task.workspace_path.parent / "gold.patch").read_text()
+    gold_path = getattr(task, "gold_patch_path", None)
+    if gold_path is None:
+        gold_path = task.workspace_path.parent / "gold.patch"
+    gold = Path(gold_path).read_text()
     coder = StaticCoder(gold)
     root = WORK_ROOT / f"goldcheck_{task_id}"
     method = cb.build_method("no_history", model="static", endpoint="http://x",
@@ -613,6 +616,7 @@ def generate_report(result: Dict) -> str:
     gates = result.get("gates") or {}
     verdict = result.get("verdict") or {}
     budgets = cfg.get("budgets") or []
+    grid_label = "Pilot" if cfg.get("mode") == "pilot" else "Full Grid"
 
     L: List[str] = []
     L.append("# E19 Coding-Generalization Report (Phase 15)")
@@ -796,9 +800,11 @@ def generate_report(result: Dict) -> str:
         L.append(f"| {m} | " + " | ".join(row) + f" | {_fmt(overall)} |")
     L.append("")
 
-    L.append("## 14. Full Grid: Results by Method x Budget (primary)")
+    L.append(f"## 14. {grid_label}: Results by Method x Budget (primary)")
     L.append("")
-    L.append("Primary-task records only (E19 schema; see JSON).")
+    L.append(f"Primary-task records only (E19 schema; see JSON). "
+             f"This table aggregates the {grid_label.lower()} grid so far "
+             f"(mode={cfg.get('mode')}).")
     L.append("")
     L.append(header)
     L.append("| --- | " + " | ".join("---" for _ in pb) + " | --- |")
@@ -812,8 +818,10 @@ def generate_report(result: Dict) -> str:
         L.append(f"| {m} | " + " | ".join(row) + f" | {_fmt(overall)} |")
     L.append("")
 
-    L.append("## 15. Full Grid: First-Pass vs Final Success")
+    L.append(f"## 15. {grid_label}: First-Pass vs Final Success")
     L.append("")
+    L.append(f"Over the {grid_label.lower()} grid aggregated in section 14 "
+             f"(mode={cfg.get('mode')}).")
     L.append("| method | budget | first-pass | final | runs |")
     L.append("| --- | --- | --- | --- | --- |")
     for m in METHODS:
@@ -858,8 +866,9 @@ def generate_report(result: Dict) -> str:
 
     L.append("## 18. Diagnostics: Recall & Obsolete Exposure (primary)")
     L.append("")
-    L.append("| method | metric | mean (budget 256) | mean (512) | mean (1024) |")
-    L.append("| --- | --- | --- | --- | --- |")
+    diag_cols = " | ".join(f"mean ({b})" for b in pb)
+    L.append(f"| method | metric | {diag_cols} |")
+    L.append("| --- | --- | " + " | ".join("---" for _ in pb) + " |")
     for metric in ["critical_fact_recall", "correction_recall",
                    "negative_constraint_recall", "long_range_fact_recall",
                    "obsolete_fact_exposure"]:

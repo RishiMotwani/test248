@@ -80,6 +80,7 @@ class CodingTask:
     seed: int
     history_turns: int
     metadata: Dict = field(default_factory=dict)
+    gold_patch_path: Optional[Path] = None
 
     @property
     def gold_fact_ids(self) -> List[str]:

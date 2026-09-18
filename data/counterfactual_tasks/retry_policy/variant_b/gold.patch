@@ -1,0 +1,13 @@
+diff --git a/writeapp/writer.py b/writeapp/writer.py
+index 092ad8b..e113067 100644
+--- a/writeapp/writer.py
++++ b/writeapp/writer.py
+@@ -4,4 +4,7 @@ from writeapp.client import UpstreamError
+ 
+ def submit(client, payload):
+     """Submit one payload according to repository contract."""
+-    raise NotImplementedError
++    try:
++        return client.write(payload)
++    except UpstreamError:
++        return client.write(payload)
