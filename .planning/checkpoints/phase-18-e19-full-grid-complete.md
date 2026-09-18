@@ -1,10 +1,10 @@
 # Phase-18/E19-Full-Grid Immutable Checkpoint
 
-Checkpoint SHA: (post-commit, fill after commit)
-Checkpoint short SHA: (post-commit)
+Checkpoint SHA: 6181f01acfe5393777922a5cd8fbb4faa9dcfc4d
+Checkpoint short SHA: 6181f01
 Current branch: master
 Checkpoint branch: checkpoint/phase-18-e19-full-grid-complete
-Checkpoint tag: checkpoint-phase-18-e19-full-grid-(post-commit)
+Checkpoint tag: checkpoint-phase-18-e19-full-grid-6181f01
 
 Phase: 18
 Experiment: E19 coding generalization, aligned to the E20-validated benchmark
@@ -70,4 +70,4 @@ git checkout checkpoint/phase-18-e19-full-grid-complete
 
 or:
 
-git reset --hard (post-commit SHORT_SHA)
+git reset --hard 6181f01acfe5393777922a5cd8fbb4faa9dcfc4d
