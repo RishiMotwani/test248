@@ -1,6 +1,6 @@
-# GSD Handoff — Phase 13 of 13 COMPLETE
+# GSD Handoff — Phase 14 of 14 COMPLETE
 
-Generated: 2026-09-18 after committing `research: evaluate adaptive memory on long-horizon coding tasks (E17)`
+Generated: 2026-09-18 after committing `research: make correction supersession retrieval-safe`
 
 Note: `gsd_metrics.json`/`gsd_review_files.md` are not present in `.planning/` at
 handoff time; the docs kept are ROADMAP.md, STATE.md, REQUIREMENTS.md, config.json,
@@ -10,111 +10,104 @@ with prior handoffs.
 ## Current commit
 
 - **Commit:** `(this commit)` (pushed to `origin/master`, RishiMotwani/test248)
-- Previous: `6b25a80` (Phase 12 E16 raw results + report docs); research commit `c971553`
+- Previous: `4a9e032` (Phase 13 docs); research commit `0025589` (E17)
 - Working tree: clean after commit.
-- `experiments/results/e17_coding_capability.json` (180-run full grid + 12
-  diagnostics + gold checks + gates + paired CIs) and `_report.md` (24 sections)
+- `experiments/results/e18_correction_safety.json` (36-cell offline identity gate +
+  72-run targeted coding grid + gates + verdict) and `_report.md` (19 sections)
   are gitignored → force-added per the repo's "commit raw evidence" convention.
-  Work directory `experiments/results/e17_work/` stays gitignored.
+  Work directory `experiments/results/e18_work/` stays gitignored.
+- E17 artifacts (`e17_coding_capability.json` + `_report.md`) are IMMUTABLE — not
+  regenerated this phase.
 
-## What changed this phase (D34, E17)
+## What changed this phase (D35, E18)
 
-1. **Task suite** (`data/coding_task_suite.py` + `data/coding_tasks/*`): 4 real
-   packages (`cache_readonly`, `user_ids`, `write_retry`, `validation_pure`); each
-   has a ~600-turn transcript that buries critical facts (incl. >300-turn-old facts,
-   corrections, negative constraints) among distractors, a workspace the model
-   edits, and a deterministic hidden test the model never sees. Gold patches
-   verified (base fails / gold passes). Ingestion is oracle-pre-extracted (E17
-   measures retention + retrieval + context allocation, not extraction).
-2. **Shared harness** (`experiments/coding_benchmark.py`): one code path for every
-   arm — method `prepare(history, budget) → retrieve(prepared, task, budget)` → the
-   harness builds the prompt, calls the model, applies the edit, runs hidden tests.
-   Same model, temperature 0.1, retry (initial + repair), shared word-count
-   tokenizer (`memory_optimizer/tokenizer.py`). Failure taxonomy is deterministic;
-   recall diagnostics exclude obsolete facts from denominators.
-3. **Harness fix (required, not an experiment result):** llama3.1:8b emits
-   malformed multi-hunk unified diffs (missing `@@`) that `git apply` applied
-   *partially and silently* — even the oracle failed. Primary edit format is now
-   complete-file blocks (`### FILE:`/`### END FILE`, tolerant of missing end marker
-   and code fences) applied verbatim; a diff fallback is retained. The applied
-   change is captured as a git diff for provenance/determinism.
-4. **Methods** (the history mechanism is the only difference): `raw_clipped`,
-   `sliding_window`, `llm_summarization` (running summary from the same model every
-   50 turns), `vanilla_rag` (static cosine store, no decay/importance/eviction),
-   `adaptive` (production `dual_score` + `protect_corrections=True`, e.g.
-   `injection_token_limit=budget`, `memory_store_token_budget=max(4096, budget*4)`).
-   Diagnostics: `no_history`, `full_context` (unconstrained upper bound),
-   `direct_history` (oracle gold facts).
-5. **Driver** (`experiments/e17_coding_capability.py`): pilot (3×2×2×5=60) then
-   full grid (4×3×3×5=180), 9 gates, paired bootstrap CIs
-   (`statistics.bootstrap_ci_mean_diff`), verdict rule, 24-section report. **Runs
-   are resumable**: JSON is rewritten incrementally after every run and completed
-   `task:seed:budget:method` keys are skipped on restart; `--report-only`
-   reclassifies without reruns; `--limit`/`--force`/`--no-embed`/`--skip-model-check`
-   flags.
-6. **Tests**: +17 in `tests/test_e17_coding_capability.py` (offline; fake coder +
-   lexical embeddings): task-suite determinism, gold-patch harness correctness on
-   all 4 tasks, per-method budget enforcement, no-history vs oracle diagnostics,
-   leakage logic-vs-imports, file-edit parse/apply + path-traversal guard, failure
-   precedence, aggregation/verdict shape, 24-section report, artifact paths under repo.
+1. **Root-cause fix** (`memory_optimizer/compression.py`): E17's failing cells
+   stored the obsolete fact AND the correction as separate memories because
+   `dedupe_incremental` ran `_is_supersession` only *inside* `if sim >= 0.90` — a
+   correction restating the old fact with new wording (cosine ~0.7) was stored as
+   an additional memory and the obsolete fact was never replaced. Fix: factored
+   `_replace_with_supersession(ex, mem, mem_emb)` and invoke it for
+   `supersedes_turn` targets AND before any similarity computation in the generic
+   same-category loop. `_is_supersession()` unchanged (still requires a
+   revision/negation marker + full restatement — no weakening); duplicate-merge
+   kept its `ex["confidence"] = max(...)` gain line so existing correction-safety
+   tests pass. Docstring updated to state resolution ordering.
+2. **Regression tests** (134 → 138):
+   - `tests/test_compression_supersession.py` +2: explicit supersession precedes
+     the embedding threshold (cosine 0.7 < 0.90 still supersedes); correction with
+     new semantic wording replaces the old fact via the lexical path.
+   - `tests/test_retrieval_ranking.py` +1 (e2e): after dedupe, the compressed
+     correction is the *only* authoritative memory retrievable — the obsolete fact
+     is gone by identity.
+   - `tests/test_e17_coding_capability.py` +1: asserts the rewritten cache_readonly
+     hidden test strictly enforces the coordinator (contains `CacheCoordinator`,
+     `monkeypatch.setattr`, `calls ==`, gold uses CacheCoordinator).
+3. **Benchmark fixture hardened** (`data/coding_tasks/cache_readonly/hidden/test_hidden.py`):
+   rewritten as a *delegating spy* — `monkeypatch.setattr(CacheCoordinator, "set",
+   wrapper)` records the call AND calls the original set, asserts
+   `calls == [("beta","2")]` and `store.get("beta")=="2"`. A naive `store.put`
+   fails; the gold patch still passes. Resolves known-issue #15 from Phase 13.
+4. **E18 driver** (`experiments/e18_correction_safety.py`): (a) 36-cell offline
+   identity gate — 4 tasks × 3 seeds × 3 budgets, asserts on store *identity*
+   (current fact sole authority, obsolete fact absent by id) with lexical
+   embeddings; (b) 72-run targeted coding grid — `user_ids` + `validation_pure`
+   × 3 seeds × 3 budgets × 4 methods (adaptive / vanilla_rag / llm_summarization
+   / raw_clipped), llama3.1:8b, reusing `experiments/coding_benchmark.py`
+   unchanged; (c) verdict rule + 19-section report. All artifacts under
+   `experiments/results/` (no /tmp).
 
-## Evidence (E17 full grid; details in experiments/results/e17_coding_capability_report.md)
+## Evidence (E18; details in experiments/results/e18_correction_safety_report.md)
 
-- **All 9 gates pass** (pilot and full): budget pressure (full raw history ~7.2k
-  tokens > 1k budget; `full_context` always overflows the 8k window once the
-  workspace is attached), workspace independence, methods differ (4+ distinct
-  contexts), real summarization (144 model update calls), adaptive uses production
-  pipeline, zero leakage, history dependence (user_ids + validation_pure:
-  no-history fails, oracle succeeds), test determinism, edit determinism.
-- **Overall success** (final, ≤2 attempts): adaptive 0.75, llm_summarization 0.75,
-  raw_clipped/sliding_window/vanilla_rag 0.722. No separation between arms.
-- **Paired adaptive vs X** (36 pairs each): raw +0.028 (95% CI 0.000–0.083),
-  sliding +0.028 (CI 0.000–0.083), llm +0.000 (CI 0–0), vanilla +0.028 (CI
-  0.000–0.083). Every CI lower bound = 0.
-- **First-pass success**: adaptive 0.53 (worst) vs 0.58–0.69 others.
-- **Failing-cell mechanism**: `correction_recall=0` + `obsolete_fact_exposure=1.0`
-  — adaptive and vanilla_rag inject the same obsolete fact and miss the correction
-  (identical `context_sha`), i.e. retrieval *contamination*, not store size.
-- **History dependence is partial**: cache_readonly and write_retry are solvable
-  from the workspace alone (no-history succeeds); the archive of this project's
-  own suite limitation: cache_readonly's hidden test only asserts `put_count==1`,
-  which a naive `store.put` also satisfies (CacheCoordinator constraint not strictly
-  enforced).
+- **Offline identity gate: 36 cells run, 27 correction-bearing — ALL PASS.**
+  `correction_recall = 1.0`, `obsolete_exposure = 0.0` in every correction-bearing
+  cell. The current fact is the only authority in the store; the obsolete fact is
+  absent by identity (not merely deprioritized).
+- **Targeted coding grid (72 runs, llama3.1:8b):**
+  - adaptive: **17/18 (94.4%)**, correction_recall 1.0, obsolete_exposure 0.0
+  - vanilla_rag: 9/18 (50%), correction_recall 0.0, obsolete_exposure 1.0 — all
+    failures OBSOLETE_INFORMATION_USED (obsolete fact injected, correction missed)
+  - llm_summarization: 9/18 (50%), correction_recall 0.17–0.67, MEMORY_MISS dominant
+  - raw_clipped: 8/18 (44.4%), correction_recall 0.0, RETRIEVAL_MISS dominant
+  - Paired adaptive diffs: +0.4444 vs vanilla_rag, +0.5 vs raw_clipped.
+- **Adaptive's single failure** (validation_pure, seed 2, budget 1024): CODING_ERROR — the
+  correction WAS in the injected context; the model applied a wrong edit. Model
+  failure, not memory failure.
+- **Same-model summaries are NOT a reliable correction carrier** (llm_summarization
+  correction_recall 0.17–0.67): a correction can be carried textually, but its
+  propagation across summary updates is lossy.
 
 ## Decision (auto-classified, reviewer-confirmable)
 
-- ADAPTIVE MEMORY IMPROVES LONG-HORIZON CODING AT FIXED BUDGET → **NOT SUPPORTED**.
-  `adaptive_advances=False`: no paired 95% CI excludes zero; all arms cluster at
-  0.72–0.75. The grid is valid (all gates pass), so this negative is a finding.
-- No production change. `config.yaml` untouched; no `memory_optimizer` behavior
-  modified by E17 (harness + baselines + data only). Retrieval stays frozen
-  (sim 0.85 + imp 0.15 + cat_bonus 0.02, top_k 5, sim_threshold 0.35).
+- EXPLICIT CORRECTION SUPERSESSION IS RETRIEVAL-SAFE AFTER THE D35 FIX →
+  **SUPPORTED**. Offline identity gate all-PASS (correction_recall 1.0,
+  obsolete_exposure 0.0, 27/27 correction-bearing cells) + coding grid
+  (correction_recall 1.0, obsolete_exposure 0.0, adaptive 17/18).
+- The E17 bottleneck was retrieval *consolidation*, not retriever ranking: once the
+  obsolete memory is actually gone, retrieval of the current fact is automatic.
+- Production defaults unchanged. `config.yaml` untouched. The change is ordering of
+  the supersession check only — no weight, policy, or model change.
 
 ## Verification status
 
-- `python -m pytest tests/` → **134 passed** (venv python at
-  `/home/goku/prototype/prototype3/venv/bin/python`; system `/usr/bin/python` has no pytest).
-- Full grid (180 runs) + diagnostics completed in one foreground run (user-aborted
-  run resumed cleanly via the incremental JSON — this is the documented resume
-  path). JSON + 24-section report written to `experiments/results/`.
-- `/tmp` was 100% full — all logs/artifacts under the repo (`experiments/results/`).
+- `./venv/bin/python -m pytest tests/` → **138 passed** (system `/usr/bin/python`
+  has no pytest).
+- E18 gate + 72-run grid + report completed with artifacts under the repo
+  (`experiments/results/`), per the /tmp-full convention.
 
 ## Next unresolved questions (do NOT start a new phase)
 
-- **Retrieval contamination dominates failing cells.** In every E17 failure the
-  injected context contained the obsolete fact and missed the correction
-  (`correction_recall=0`, `obsolete_fact_exposure=1.0`) for BOTH adaptive and
-  vanilla_rag — identical contexts. The corrected fact exists in the store but is
-  outranked by its obsolete predecessor. Priorities/fusion of correction-aware
-  retrieval is a possible follow-up decision.
-- **History dependence is only 2/4 tasks** in this suite — cache_readonly and
-  write_retry are solvable from the workspace alone. A denser/cleaner suite (and a
-  strictly enforced constraint test like CacheCoordinator) would increase power.
-- The archive keeps asking the SAME upstream question E16 left open: whether ANY
-  future-blind survival signal can beat retrieval-feedback survival. E17 shows that
-  even the value of correct retrieval is not visible at fixed budgets on
-  these tasks — model-noise and patch-format were controlled, but coding-model
-  capability is now the binding constraint.
+- **Summary-based everyday correction propagation is unreliable** (llm_summarization
+  correction_recall 0.17–0.67, MEMORY_MISS dominant). Where an agent relies on a
+  running text summary rather than an authoritative store, corrections are
+  frequently lost across summary updates. A follow-up decision could gate
+  summary-only retention on correction-safety guarantees.
+- **The assignment-required adaptive-vs-baseline comparison is done at the penalty
+  of design breadth**: Phase 14 reorders when supersession runs; it does NOT add
+  selective-retention or summarization improvements, which remain open (E16
+  task_affinity rejected; E17 fixed-budget answer still stands).
+- **Model capability is the binding constraint on the remaining failures** even
+  with a correct memory: adaptive's single E18 failure had the right fact in
+  context and the model still produced a wrong edit.
 
-External reviewers: read experiments/results/e17_coding_capability_report.md and
-the D34 brain.md entry for the complete OBSERVED/INFERRED/UNRESOLVED breakdown.
+External reviewers: read experiments/results/e18_correction_safety_report.md and
+the D35 brain.md entry for the complete OBSERVED/INFERRED/UNRESOLVED breakdown.

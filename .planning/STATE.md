@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 13 (E17 long-horizon coding capability) complete — adaptive shows NO advantage at fixed historical budgets; config unchanged
+**Current phase:** Phase 14 (E18 correction-safety validation) complete — offline identity gate PASS, targeted coding validation PASS, correction authoritativeness established
 
 ## Completed Phases
 
@@ -22,6 +22,7 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 11** — E15 retention-policy separation (activation vs survival) · commit `4889f2b`
 - **Phase 12** — E16 retention selectivity under hard pressure (task_affinity rejected) · commit `c971553` (+docs `6b25a80`)
 - **Phase 13** — E17 long-horizon coding capability (no adaptive advantage) · commit `0025589`
+- **Phase 14** — E18 correction-safe memory, targeted validation (retrieval-safe supersession) · commit `TBD_AFTER_COMMIT`
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -208,10 +209,40 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Tests:** 134 passing (+17 new in `tests/test_e17_coding_capability.py`: task-suite determinism, gold-patch harness correctness on all 4 tasks, per-method budget enforcement, no-history vs oracle diagnostics, leakage logic-vs-import separation, file-edit parse/apply + path-traversal guard, failure-class precedence, aggregation/verdict shape, 24-section report, artifact paths under repo). Results: `experiments/results/e17_coding_capability.json` + `_report.md` (force-added; /tmp unavailable).
 
+## E18 Correction-Safe Memory, Targeted Validation (D35) — Phase 14
+
+**Objective:** fix the correction/supersession failure that E17 surfaced at the memory-consolidation boundary (obsolete fact injected, correction missed), add regression tests, validate with an offline identity gate + a targeted coding grid, and report honestly.
+
+**Root cause (fixed):** `dedupe_incremental` ran `_is_supersession` only *inside* `if sim >= 0.90`. A correction restating the old fact with genuinely new wording (cosine ~0.7) never reached the supersession branch → stored as an additional memory, obsolete fact never replaced → retrieval saw both facts. Config, retrieval weights, decay, embedding model unchanged.
+
+**Implementation:**
+- `memory_optimizer/compression.py`: `_replace_with_supersession(ex, mem, mem_emb)` helper; `supersedes_turn` mutation now calls it; supersession check moved BEFORE any similarity computation in the generic same-category loop; `_is_supersession()` and duplicate-merge unchanged (revision/negation marker + full restatement still required); docstring updated to reflect resolution ordering.
+- Tests (134 → 138): `test_compression_supersession.py` +2 (supersession precedes embedding threshold 0.7<0.90; correction with new semantic wording replaces old fact via lexical path), `test_retrieval_ranking.py` +1 (e2e: compressed correction is the only authoritative memory), `test_e17_coding_capability.py` +1 (cache_readonly hidden test strictness).
+- `data/coding_tasks/cache_readonly/hidden/test_hidden.py` rewritten: spy wraps original `CacheCoordinator.set` (delegates to keep gold passing), asserts `calls == [("beta","2")]` and `store.get("beta")=="2"` — rejects naive `store.put` solutions.
+- `experiments/e18_correction_safety.py`: 36-cell offline identity gate (4 tasks × 3 seeds × 3 budgets) + 72-run coding grid (`user_ids`+`validation_pure`, 4 methods, llama3.1:8b) + 19-section report, all artifacts under `experiments/results/`.
+
+**Offline identity gate:** 36 cells, 27 correction-bearing — ALL PASS (correction_recall 1.0, obsolete_exposure 0.0 in every cell). Current fact is the only authority; obsolete fact absent by identity.
+
+**Targeted coding validation (72 runs, ≤2 attempts each):**
+- adaptive: 17/18 (94.4%), correction_recall 1.0, obsolete_exposure 0.0
+- vanilla_rag: 9/18 (50%), correction_recall 0.0, obsolete_exposure 1.0, all failures OBSOLETE_INFORMATION_USED
+- llm_summarization: 9/18 (50%), correction_recall 0.17–0.67, MEMORY_MISS dominant
+- raw_clipped: 8/18 (44.4%), correction_recall 0.0, RETRIEVAL_MISS dominant
+- Paired adaptive diffs: +0.4444 vs vanilla_rag, +0.5 vs raw_clipped
+- Adaptive's single failure (validation_pure, seed 2, budget 1024): CODING_ERROR — correction was in context; model applied a wrong edit. Model failure, not memory failure.
+
+**Decision rule verdict (auto-classified, reviewer-confirmable):**
+- EXPLICIT CORRECTION SUPERSESSION IS RETRIEVAL-SAFE AFTER D35 FIX → **SUPPORTED** (offline identity gate all-PASS + coding grid: correction_recall 1.0, obsolete_exposure 0.0, adaptive 17/18)
+- Same-model textual summaries (llm_summarization) can carry a correction, but its propagation across windows is lossy (correction_recall 0.17–0.67) → **NOT** a reliable correction carrier
+
+**Production default UNCHANGED:** `config.yaml` untouched (retention dual_score / retention_priority, top_k 5, sim_threshold 0.35, compression enabled, correction protection enabled). The D35 change is ordering of the supersession check only.
+
+**Tests:** 138 passing. Results: `experiments/results/e18_correction_safety.json` + `_report.md` (19 sections; force-added). Cache_readonly benchmark limitation (E17 known-issue #15) resolved by the stricter hidden test.
+
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected, D34 Phase 13 long-horizon coding capability / no adaptive advantage)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected, D34 Phase 13 long-horizon coding capability / no adaptive advantage, D35 Phase 14 correction-safe memory / retrieval-safe supersession)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -243,8 +274,9 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 13. `/tmp` 100% full during E16 runs — all logs/artifacts written under `experiments/results/` (repo), not /tmp
 14. D34: Phase 13 complete — E17 full grid (180 runs) valid, all gates pass, but adaptive shows NO advantage at fixed historical budgets (all arms 0.72–0.75, every paired CI lower bound 0); failing cells = obsolete fact injected + correction missed (both adaptive and vanilla_rag); harness fixed to complete-file edit format (model's diffs were malformed — applied partially/silently)
 15. E17 coding task `cache_readonly` hidden test only asserts `put_count==1`, which a naive `store.put` also satisfies — the CellCoordinator/CacheCoordinator constraint is not strictly enforced (documented as a suite limitation)
+16. D35: Phase 14 complete — E18 offline identity gate (36 cells, 27 correction-bearing) ALL PASS, targeted coding validation adaptive 17/18 vs vanilla_rag 9/18 (all OBSOLETE_INFORMATION_USED) / llm_summarization 9/18 / raw_clipped 8/18 (all RETRIEVAL_MISS); cache_readonly benchmark limitation (#15) RESOLVED by spy-based hidden test enforcing CacheCoordinator + `calls == [("beta","2")]`
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-18 after Phase 13 E17 long-horizon coding capability — adaptive shows NO advantage at fixed historical budgets
+Last updated: 2026-09-18 after Phase 14 E18 correction-safe memory — offline identity gate PASS, adaptive 17/18 vs vanilla 9/18 on targeted coding validation

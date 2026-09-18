@@ -175,3 +175,77 @@ class TestDedupeSupersession:
         # The template sibling is left alone.
         sibling = next(m for m in out if m["source_turn_id"] == 35)
         assert sibling["fact"] == template_sibling
+
+
+# --------------------------------------------------------------------------- #
+# Phase 14 (D35): explicit supersession precedes the embedding threshold
+# --------------------------------------------------------------------------- #
+
+class TestSupersessionPrecedesSimilarityThreshold:
+    def test_explicit_supersession_precedes_embedding_threshold(self, compressor):
+        # The correction's embedding sits at cosine 0.70 vs the stored fact,
+        # well below the generic semantic duplicate threshold (0.90). The
+        # explicit correction/supersession relationship must still replace the
+        # stale fact (D35): a correction is a semantic relationship, not merely
+        # a high-similarity duplicate.
+        old = (
+            "User IDs are stored as integers in the users table, so callers cast "
+            "them on the way in."
+        )
+        corrected = (
+            "Correction to an earlier note: user IDs are no longer stored as "
+            "integers in the users table, so callers do not cast them on the way "
+            "in. User IDs are opaque strings; preserve the client-provided string "
+            "exactly."
+        )
+
+        def fake_embed(texts):
+            vectors = []
+            for text in texts:
+                if text == old:
+                    vectors.append([1.0, 0.0, 0.0])
+                else:
+                    vectors.append([0.70, 0.70, 0.1414213562])
+            return vectors
+
+        existing = [_mem(old, turn=80, confidence=0.6)]
+        incoming = [_mem(corrected, turn=260, confidence=0.9)]
+
+        out = compressor.dedupe_incremental(
+            existing,
+            incoming,
+            embed_fn=fake_embed,
+        )
+
+        assert len(out) == 1
+        assert out[0]["fact"] == corrected
+        assert out[0]["superseded_prior_fact"] == old
+        assert out[0]["is_current_correction"] is True
+
+    def test_correction_with_new_semantic_wording_replaces_old_fact(self, compressor):
+        # The corrected statement adds semantic content ("must never write to the
+        # store's internal data dict") so its lexical overlap with the stored
+        # fact is far below the duplicate threshold; the explicit correction
+        # must still supersede it. No embeddings supplied (lexical path).
+        old = (
+            "For initial velocity, request handlers may write directly to the "
+            "cache store while the audit path is being built."
+        )
+        corrected = (
+            "Correction to an earlier note: for initial velocity, request handlers "
+            "may no longer write directly to the cache store while the audit path "
+            "is being built. All cache mutation must go through CacheCoordinator; "
+            "a handler must never write to the store's internal data dict."
+        )
+
+        existing = [_mem(old, turn=37, confidence=0.5)]
+
+        out = compressor.dedupe_incremental(
+            existing,
+            [_mem(corrected, turn=260, confidence=0.95)],
+        )
+
+        assert len(out) == 1
+        assert out[0]["fact"] == corrected
+        assert out[0]["superseded_prior_fact"] == old
+        assert out[0]["is_current_correction"] is True

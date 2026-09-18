@@ -156,3 +156,13 @@
 5. All 9 gates pass on pilot AND full grid: budget pressure, workspace independence, methods differ, real summarization, adaptive production path, no leakage, history dependence (oracle-based), test determinism, patch determinism
 6. Full grid 180 cells (4 tasks × 3 seeds × 3 budgets × 5 methods): success rates flat across arms (0.72–0.75); every adaptive-vs-baseline paired 95% CI lower bound = 0 → **adaptive_advances NOT SUPPORTED**; honest verdict written, no production change (`config.yaml` untouched)
 7. All 134 tests pass (+17 new); `experiments/results/e17_coding_capability.json` + 24-section `_report.md` committed (force-added)
+
+### Phase 14: E18 Correction-Safe Memory, Targeted Validation
+**Goal:** Fix the correction/supersession failure E17 surfaced at the memory-consolidation boundary (correction with new semantic wording was stored as an *additional* memory because the supersession check ran only inside `sim >= 0.90`), add regression tests, validate with an offline identity gate + targeted coding grid, report honestly.
+**Mode:** mvp
+**Success Criteria:**
+1. `dedupe_incremental` resolves an explicit supersession (`_is_supersession`) BEFORE generic semantic-deduplication thresholds; `_replace_with_supersession` shared helper used by `supersedes_turn` and the generic loop; `_is_supersession()` semantics unchanged (no weakening); duplicate-merge gain line preserved (existing correction-safety tests keep passing)
+2. 138 tests pass (+2 compression supersession, +1 e2e retrieval authoritativeness, +1 E17 hidden-test strictness); `data/coding_tasks/cache_readonly/hidden/test_hidden.py` rewritten to a spy on `CacheCoordinator.set` (delegates to the original so the gold patch still passes) asserting `calls == [("beta","2")]`
+3. `experiments/e18_correction_safety.py`: 36-cell offline identity gate (4 tasks × 3 seeds × 3 budgets) ALL correction-bearing cells PASS (`correction_recall 1.0`, `obsolete_exposure 0.0`)
+4. 72-run targeted coding grid (`user_ids` + `validation_pure`, llama3.1:8b): adaptive 17/18 (94.4%, correction_recall 1.0) vs vanilla_rag 9/18 (100% OBSOLETE_INFORMATION_USED) / llm_summarization 9/18 (MEMORY_MISS) / raw_clipped 8/18 (RETRIEVAL_MISS); verdict rule honest
+5. `config.yaml` untouched; E17 JSON/report untouched; E18 artifacts committed at `experiments/results/e18_correction_safety.json` + `_report.md` (force-added)

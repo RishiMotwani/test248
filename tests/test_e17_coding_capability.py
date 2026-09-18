@@ -323,3 +323,24 @@ def test_output_paths_are_under_repo():
     assert str(e17.OUT_JSON).startswith(str(repo))
     assert str(e17.OUT_REPORT).startswith(str(repo))
     assert str(e17.WORK_ROOT).startswith(str(repo))
+
+
+def test_cache_hidden_test_strictly_enforces_coordinator():
+    """The cache_readonly fixture must prove a solution routes every mutation
+    through CacheCoordinator, and the gold patch must satisfy that proof."""
+    hidden = build_task("cache_readonly", seed=1).hidden_test_path.read_text()
+    assert "CacheCoordinator" in hidden, (
+        "hidden test must cross-check CacheCoordinator usage"
+    )
+    assert "monkeypatch.setattr" in hidden, (
+        "hidden test must spy on CacheCoordinator.set"
+    )
+    assert "calls ==" in hidden, (
+        "hidden test must assert the exact cache-mutation call log"
+    )
+
+    gold = (
+        Path(__file__).resolve().parent.parent
+        / "data" / "coding_tasks" / "cache_readonly" / "gold.patch"
+    ).read_text()
+    assert "CacheCoordinator" in gold, "gold patch must route through CacheCoordinator"

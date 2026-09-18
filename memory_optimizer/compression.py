@@ -70,6 +70,40 @@ def _has_supersession_marker(text: str) -> bool:
     return bool(text) and any(marker in text.lower() for marker in _SUPERSESSION_MARKERS)
 
 
+def _replace_with_supersession(ex: Dict, mem: Dict, mem_emb=None) -> None:
+    """Replace ``ex`` with a newer correcting statement.
+
+    Explicit supersession is intentionally independent of the generic
+    semantic duplicate threshold.
+    """
+    ex_emb = ex.get("fact_embedding")
+
+    ex["access_count"] = (
+        ex.get("access_count", 1) + mem.get("access_count", 1)
+    )
+    ex["ingest_reinforcement_count"] = (
+        ex.get("ingest_reinforcement_count", 0) + 1
+    )
+    ex["last_access_turn"] = mem.get(
+        "last_access_turn",
+        ex.get("last_access_turn", ex.get("source_turn_id")),
+    )
+    ex["duplicates"] = ex.get("duplicates", 1) + 1
+
+    if ex_emb is None and mem_emb is not None:
+        ex["fact_embedding"] = mem_emb
+
+    ex["superseded_prior_fact"] = ex["fact"]
+    ex["superseded_prior_fact_id"] = ex.get("fact_id")
+    ex["fact_id"] = mem.get("fact_id", ex.get("fact_id"))
+    ex["is_current_correction"] = True
+    ex["fact"] = mem["fact"]
+    ex["confidence"] = mem.get(
+        "confidence",
+        ex.get("confidence", 0.5),
+    )
+
+
 class MemoryCompressor:
     """Deduplicates redundant atomic facts within similar clusters.
 
@@ -90,12 +124,16 @@ class MemoryCompressor:
         the threshold. The surviving fact is reinforced (re-mention semantics)
         and keeps embeddings on the merged item when one was computed.
 
-        A merge that also reads as a *correction* (``_is_supersession``) replaces
-        the stale fact text instead of merely reinforcing it: the corrected text
-        becomes authoritative, the prior text is captured in
-        ``superseded_prior_fact``, and confidence follows the new statement. The
-        correction detector runs regardless of whether the merge similarity came
-        from embeddings or lexical overlap.
+        A same-category fact that reads as a *correction* (``_is_supersession``)
+        replaces the stale fact text *before* any generic similarity check: an
+        explicit correction/supersession is a semantic relationship and must not
+        be blocked by the generic duplicate threshold (cos >= 0.90 or lexical
+        overlap). The corrected text becomes authoritative, the prior text is
+        captured in ``superseded_prior_fact`` / ``superseded_prior_fact_id``,
+        ``fact_id`` follows the new statement, and confidence follows the new
+        statement. ``_is_supersession()`` itself is unchanged (Phase 14 / D35):
+        it still requires a revision/negation marker and full restatement of the
+        stored fact.
         """
         for mem in new_items:
             merged = False
@@ -119,33 +157,32 @@ class MemoryCompressor:
             target_turn = mem.get("supersedes_turn")
             if target_turn is not None:
                 for ex in existing:
-                    if (ex.get("source_turn_id") == target_turn
-                            and ex["category"] == mem["category"]):
-                        ex_emb = ex.get("fact_embedding")
-                        ex["access_count"] = ex.get("access_count", 1) + mem.get("access_count", 1)
-                        ex["ingest_reinforcement_count"] = ex.get("ingest_reinforcement_count", 0) + 1
-                        ex["last_access_turn"] = mem.get("last_access_turn", ex.get("last_access_turn",
-                                                                                      ex.get("source_turn_id")))
-                        ex["duplicates"] = ex.get("duplicates", 1) + 1
-                        if ex_emb is None and mem_emb is not None:
-                            ex["fact_embedding"] = mem_emb
-                        ex["superseded_prior_fact"] = ex["fact"]
-                        ex["superseded_prior_fact_id"] = ex.get("fact_id")
-                        ex["fact_id"] = mem.get("fact_id", ex.get("fact_id"))
-                        ex["is_current_correction"] = True
-                        ex["fact"] = mem["fact"]
-                        ex["confidence"] = mem.get("confidence", ex.get("confidence", 0.5))
+                    if (
+                        ex.get("source_turn_id") == target_turn
+                        and ex["category"] == mem["category"]
+                    ):
+                        _replace_with_supersession(ex, mem, mem_emb)
                         merged = True
                         break
+
                 if merged:
                     continue
 
             for ex in existing:
                 if ex["category"] != mem["category"]:
                     continue
+
+                # Explicit correction/supersession is authoritative.
+                # It must not be blocked by the generic duplicate threshold.
+                if _is_supersession(ex["fact"], mem["fact"]):
+                    _replace_with_supersession(ex, mem, mem_emb)
+                    merged = True
+                    break
+
                 ex_emb = ex.get("fact_embedding")
                 sim = None
                 semantic = False
+
                 if mem_emb is not None and ex_emb is not None:
                     cos = _cosine(mem_emb, ex_emb)
                     if cos is not None:
@@ -153,34 +190,33 @@ class MemoryCompressor:
                         semantic = True
                 else:
                     sim = _overlap(ex["fact"], mem["fact"])
+
                 threshold = 0.90 if semantic else overlap_threshold
+
                 if sim is not None and sim >= threshold:
-                    if _is_supersession(ex["fact"], mem["fact"]):
-                        ex["access_count"] = ex.get("access_count", 1) + mem.get("access_count", 1)
-                        ex["ingest_reinforcement_count"] = ex.get("ingest_reinforcement_count", 0) + 1
-                        ex["last_access_turn"] = mem.get("last_access_turn", ex.get("last_access_turn",
-                                                                                      ex.get("source_turn_id")))
-                        ex["duplicates"] = ex.get("duplicates", 1) + 1
-                        if ex_emb is None and mem_emb is not None:
-                            ex["fact_embedding"] = mem_emb
-                        ex["superseded_prior_fact"] = ex["fact"]
-                        ex["superseded_prior_fact_id"] = ex.get("fact_id")
-                        ex["fact_id"] = mem.get("fact_id", ex.get("fact_id"))
-                        ex["is_current_correction"] = True
-                        ex["fact"] = mem["fact"]
-                        ex["confidence"] = mem.get("confidence", ex.get("confidence", 0.5))
-                        merged = True
-                        break
                     if not semantic and _has_supersession_marker(mem["fact"]):
                         continue
-                    ex["access_count"] = ex.get("access_count", 1) + mem.get("access_count", 1)
-                    ex["ingest_reinforcement_count"] = ex.get("ingest_reinforcement_count", 0) + 1
-                    ex["last_access_turn"] = mem.get("last_access_turn", ex.get("last_access_turn",
-                                                                                  ex.get("source_turn_id")))
+
+                    ex["access_count"] = (
+                        ex.get("access_count", 1) + mem.get("access_count", 1)
+                    )
+                    ex["ingest_reinforcement_count"] = (
+                        ex.get("ingest_reinforcement_count", 0) + 1
+                    )
+                    ex["last_access_turn"] = mem.get(
+                        "last_access_turn",
+                        ex.get("last_access_turn", ex.get("source_turn_id")),
+                    )
                     ex["duplicates"] = ex.get("duplicates", 1) + 1
+
                     if ex_emb is None and mem_emb is not None:
                         ex["fact_embedding"] = mem_emb
-                    ex["confidence"] = max(ex.get("confidence", 0.5), mem.get("confidence", 0.5))
+
+                    # Re-mention of a true duplicate keeps the stronger
+                    # confidence (existing contract; unchanged in Phase 14).
+                    ex["confidence"] = max(
+                        ex.get("confidence", 0.5), mem.get("confidence", 0.5)
+                    )
                     merged = True
                     break
             if not merged:

@@ -1232,6 +1232,56 @@ facts and compressed the score distribution.
   `experiments/results/e17_coding_capability.json` + `_report.md` (24 sections;
   force-added). STOP — no Phase 14.
 
+### D35 ★ Explicit correction supersession precedes generic semantic-dedup thresholds
+
+**OBSERVED (E17, Phase 13):** adaptive and vanilla_rag fail identically on the
+correction-bearing coding tasks (`user_ids`, `validation_pure`). In every
+failing cell, both stored the obsolete fact and the correction as separate
+memories; retrieval ranks the stale predecessor above the correction
+(`correction_recall == 0`, `obsolete_fact_exposure == 1.0`). The two methods
+produce the same injected context for these cells.
+
+**Root cause:** `MemoryCompressor.dedupe_incremental` only ran `_is_supersession`
+inside `if sim >= 0.90`. A correction that restates the old fact using genuinely
+new wording (cosine ~0.7 vs the stored fact) never reached the supersession
+branch and was stored as a second, additional memory. The obsolete memory was
+therefore never replaced, and retrieval saw both facts.
+
+**Fix (Phase 14 / E18):** factor the supersession mutation into a shared
+`_replace_with_supersession` helper; invoke it (1) for `supersedes_turn`
+targets and (2) *before* any similarity computation in the generic
+same-category loop. The duplicate-merge path and `_is_supersession()` itself
+are unchanged — a correction still requires a revision/negation marker plus
+full restatement of the stored fact (no weakening).
+
+**E18 offline identity gate (Phase 14):** every correction-bearing cell across
+4 tasks × 3 seeds × 3 budgets shows `correction_recall == 1.0` and
+`obsolete_exposure == 0.0` — the current fact is the only authority in the
+store; the obsolete fact is absent by identity.
+
+**E18 targeted coding validation (Phase 14):** adaptive 94.4% success vs
+vanilla_rag / llm_summarization 50% and raw_clipped 44.4% on `user_ids` +
+`validation_pure`. vanilla_rag's failures are exclusively
+`OBSOLETE_INFORMATION_USED`; raw_clipped's are `RETRIEVAL_MISS`; adaptive's
+single failure (validation_pure, seed 2, budget 1024) is `CODING_ERROR`
+(correction in context but model made a wrong edit — model failure, not memory
+failure).
+
+**Decision:** An explicit correction is a *semantic relationship*, not merely a
+high-similarity duplicate. D35 is therefore: a supersession check must resolve
+*before* generic semantic-deduplication thresholds. `_is_supersession()` is
+unchanged; the change is purely about *when* it runs relative to the similarity
+gating. Config values, retrieval weights, decay, embedding model and pipeline
+semantics are unchanged.
+
+**Status:** Phase 14 complete. Committed + pushed. Artifacts:
+`experiments/e18_correction_safety.py`, `experiments/results/e18_correction_safety.json`
++ `_report.md` (19 sections; force-added), strengthened
+`data/coding_tasks/cache_readonly/hidden/test_hidden.py`, regression tests in
+`tests/test_compression_supersession.py` and `tests/test_retrieval_ranking.py`,
+benchmark-integrity test in `tests/test_e17_coding_capability.py`. STOP — no
+Phase 15.
+
 ---
 
 ## 8. Open questions for the human (blocking decisions)

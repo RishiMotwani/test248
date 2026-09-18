@@ -13,6 +13,7 @@ Also guards the new query-first retrieval semantics (Change 2):
 import pytest
 
 from memory_optimizer.retrieval import MemoryRetriever, _token_overlap
+from memory_optimizer.compression import MemoryCompressor
 from memory_optimizer.pipeline import AdaptiveMemoryPipeline
 
 TOPIC = "project feature flag configuration key_31 is enabled"
@@ -90,6 +91,38 @@ class TestRanking:
 
         assert ranked[0]["fact"] == highly_relevant["fact"], (
             f"Expected relevant fact to rank first, got: {ranked[0]['fact']}")
+
+    def test_compressed_correction_is_the_only_authoritative_memory(self, retriever):
+        """End-to-end (Phase 14): consolidation must replace the stale fact with
+        the correction even though the correction's semantics differ from the
+        original, so retrieval sees exactly one authoritative memory."""
+        original = (
+            "User IDs are stored as integers in the users table, so callers "
+            "cast them on the way in."
+        )
+        corrected = (
+            "Correction to an earlier note: user IDs are no longer stored as "
+            "integers in the users table, so callers do not cast them on the way "
+            "in. User IDs are opaque strings; preserve the client-provided "
+            "string exactly."
+        )
+
+        stored = [
+            _mem(original, source_turn_id=80, importance=0.5),
+            _mem(corrected, source_turn_id=260, importance=0.5),
+        ]
+
+        compressed = MemoryCompressor().dedupe_incremental(stored[:1], stored[1:])
+
+        assert len(compressed) == 1
+        assert compressed[0]["fact"] == corrected
+
+        ranked = retriever.retrieve(
+            "How are user IDs stored?",
+            compressed,
+            current_turn=300,
+        )
+        assert ranked and "User IDs are opaque strings" in ranked[0]["fact"]
 
     def test_token_limit_is_respected(self, retriever):
         """retrieve(..., token_limit=X) must never exceed X tokens and should
