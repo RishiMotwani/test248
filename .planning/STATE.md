@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 14 (E18 correction-safety validation) complete — offline identity gate PASS, targeted coding validation PASS, correction authoritativeness established
+**Current phase:** Phase 15 (E19 coding generalization pilot) complete — pilot grid run to completion, but gate C (no_history must fail for every primary) FAILED on honest 3-draw measurement (user_ids 2/3, transaction_atomicity 1/3 no-history successes at llama3.1:8b; only validation_pure 0/3 is cleanly gated); full grid NOT run; the honest pilot report records this.
 
 ## Completed Phases
 

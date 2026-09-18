@@ -124,6 +124,55 @@ class TestRanking:
         )
         assert ranked and "User IDs are opaque strings" in ranked[0]["fact"]
 
+    def test_superseded_memory_retrieves_using_current_embedding(self, retriever):
+        """End-to-end (Phase 15, D36): after supersession the corrected memory
+        must carry the *corrected* embedding so retrieval ranks it using the
+        current semantics. A stale embedding (which the pre-fix guard preserved
+        when the stored fact already had one) would describe the obsolete
+        predecessor and score ~0 against a query embedded as the corrected
+        truth."""
+        old = (
+            "User IDs are stored as integers in the users table, so callers "
+            "cast them on the way in."
+        )
+        corrected = (
+            "Correction to an earlier note: user IDs are no longer stored as "
+            "integers in the users table, so callers do not cast them on the way "
+            "in. User IDs are opaque strings; preserve the client-provided "
+            "string exactly."
+        )
+        old_embedding = [1.0, 0.0, 0.0]
+        corrected_embedding = [0.0, 1.0, 0.0]
+
+        def fake_embed(texts):
+            return [old_embedding if t == old else corrected_embedding
+                    for t in texts]
+
+        stored = [dict(_mem(old, source_turn_id=80, importance=0.5),
+                       fact_embedding=old_embedding)]
+        compressed = MemoryCompressor().dedupe_incremental(
+            stored,
+            [_mem(corrected, source_turn_id=260, importance=0.5)],
+            embed_fn=fake_embed,
+        )
+
+        assert len(compressed) == 1
+        assert compressed[0]["fact"] == corrected
+        assert compressed[0]["fact_embedding"] == corrected_embedding
+
+        # Query embedded as the corrected truth: cosine(query, stored) must be
+        # ~1.0 using the corrected embedding, and the corrected fact must win
+        # via the embedding engine (not lexical drift toward the old text).
+        embedded_retriever = MemoryRetriever(
+            top_k=5, sim_threshold=0.35, embed_fn=fake_embed)
+        ranked = embedded_retriever.retrieve(
+            "How are user IDs stored?", compressed, current_turn=300, ranked=True)
+        assert ranked, "corrected memory must be retrieved at all"
+        assert ranked[0]["fact"] == corrected
+        assert ranked[0]["retrieval_engine"] == "embedding"
+        assert ranked[0]["retrieval_sim"] > 0.99
+        assert round(ranked[0]["retrieval_sim"], 3) == 1.0
+
     def test_token_limit_is_respected(self, retriever):
         """retrieve(..., token_limit=X) must never exceed X tokens and should
         select as many facts as fit (not just top_k)."""

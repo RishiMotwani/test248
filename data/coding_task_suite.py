@@ -330,6 +330,114 @@ _TASK_SPECS: List[Dict] = [
             ("task_d.old.001", "task_d.correct.001"),
         ],
     },
+    {
+        "task_id": "config_contract",
+        "title": "Implement a config codec round-trip (long-range serialization contract)",
+        "dir": "config_contract",
+        "prompt": (
+            "Implement `ConfigCodec` in `configapp/codec.py`. It must parse "
+            "`key=value` config text into a dict, serialize a dict back into "
+            "`key=value` lines, and `load(text, spec)` must apply the spec's "
+            "defaults to the parsed config. Keep all existing public names and "
+            "signatures unchanged. Do not modify the hidden tests."
+        ),
+        "critical": [
+            _f("task_e.roundtrip.001", 42,
+               "The config loader deliberately preserves unknown fields: a "
+               "config written by a newer version must load and re-serialize in "
+               "older versions without losing extra keys.",
+               "constraint", "database",
+               "preserves unknown fields"),
+            _f("task_e.old.001", 180,
+               "Empty configuration values are treated as missing when the "
+               "config is loaded and fall back to the field default.",
+               "decision", "database", "values are treated as missing when",
+               obsolete=True),
+            _f("task_e.empty.001", 460,
+               "Correction to an earlier note: empty configuration values are "
+               "no longer treated as missing when the config is loaded and no "
+               "longer fall back to the field default. An explicitly empty "
+               "string is a valid value that must be preserved exactly; the "
+               "field default applies only when the key is absent from the "
+               "text.",
+               "correction", "database", "valid value"),
+        ],
+        "distractors": [
+            _f("task_e.d1", 130, "The config files are laid out under /etc/app/ "
+               "with one file per component.", "implementation", "database",
+               "one file per component"),
+            _f("task_e.d2", 220, "The deploy pipeline rewrites the config file "
+               "on every release with the pinned values.", "implementation",
+               "auth", "rewrites the config file on every release"),
+            _f("task_e.d3", 340, "The config fetcher keeps a checksummed cache "
+               "so unchanged files are not re-read.", "implementation",
+               "caching", "checksummed cache"),
+            _f("task_e.d4", 520, "The settings dashboard groups keys by their "
+               "declared environment scope.", "implementation", "caching",
+               "environment scope"),
+        ],
+        "corrections": [
+            ("task_e.old.001", "task_e.empty.001"),
+        ],
+    },
+    {
+        "task_id": "transaction_atomicity",
+        "title": "Implement an atomic two-step submit (all-or-nothing + no-retry)",
+        "dir": "transaction_atomicity",
+        "prompt": (
+            "Implement `Writer.submit(client, payload)` in `writeapp/writer.py`. "
+            "It must perform the two-step write through `write_record` and "
+            "`write_audit` in that order and return a dict with their results "
+            "under the keys `record` and `audit`. On `UpstreamError`, propagate "
+            "the error to the caller. Keep existing public signatures. Do not "
+            "modify the hidden tests."
+        ),
+        "critical": [
+            _f("task_f.atomic.001", 28,
+               "The write layer must never expose partial state: a submit that "
+               "fails after recording the first step must roll the first step "
+               "back before the error is surfaced to the caller.",
+               "negative", "database", "must never expose partial state"),
+            _f("task_f.old.001", 150,
+               "The two steps of a submit are committed independently for "
+               "throughput, so an intermittent failure in the second step still "
+               "keeps the first step's committed result.",
+               "decision", "database",
+               "in the second step still keeps the first step's committed result",
+               obsolete=True),
+            _f("task_f.no_retry.001", 310,
+               "The write layer must not retry a failed submit: the upstream "
+               "write is not idempotent and a second attempt duplicates "
+               "committed rows. Surface the failure after a single attempt.",
+               "negative", "database", "not retry a failed submit"),
+            _f("task_f.atomic.002", 505,
+               "Correction to an earlier note: the two steps of a submit are no "
+               "longer committed independently for throughput, so an "
+               "intermittent failure in the second step can still occur yet no "
+               "longer keeps the first step's committed result. A submit is "
+               "all-or-nothing: the first step's committed result must be "
+               "rolled back before the error is surfaced, and the steps must "
+               "not be split into independent commits.",
+               "correction", "database", "all-or-nothing"),
+        ],
+        "distractors": [
+            _f("task_f.d1", 130, "The metrics exporter sends UDP datagrams "
+               "without acknowledgement and never retries failed sends.",
+               "implementation", "auth", "never retries"),
+            _f("task_f.d2", 220, "The logging pipeline buffers entries and "
+               "retries the upload on the next interval.",
+               "implementation", "database", "retries the upload"),
+            _f("task_f.d3", 340, "The HTTP client retries GET requests up to "
+               "three times on transport errors.", "implementation", "caching",
+               "retries GET requests"),
+            _f("task_f.d4", 520, "The cache warmer refreshes entries after "
+               "every deploy, separately from the write path.",
+               "implementation", "caching", "refreshes entries after deploy"),
+        ],
+        "corrections": [
+            ("task_f.old.001", "task_f.atomic.002"),
+        ],
+    },
 ]
 
 

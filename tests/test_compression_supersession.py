@@ -21,6 +21,7 @@ import pytest
 
 from memory_optimizer.compression import (
     MemoryCompressor,
+    _embedding_matches_fact,
     _has_supersession_marker,
     _is_supersession,
 )
@@ -249,3 +250,73 @@ class TestSupersessionPrecedesSimilarityThreshold:
         assert out[0]["fact"] == corrected
         assert out[0]["superseded_prior_fact"] == old
         assert out[0]["is_current_correction"] is True
+
+
+# --------------------------------------------------------------------------- #
+# Phase 15 (D36): supersession must carry the current embedding
+# --------------------------------------------------------------------------- #
+
+class TestSupersessionEmbedding:
+    def test_supersession_replaces_stale_embedding(self, compressor):
+        # D36: the corrected fact text is authoritative AND its embedding must
+        # describe the corrected text, not the obsolete predecessor. The pre-fix
+        # guard only overwrote the embedding when the stored fact had none, so a
+        # supersession kept the *stale* embedding with the *new* text and
+        # retrieval kept ranking the corrected fact by obsolete semantics.
+        old = (
+            "User IDs are stored as integers in the users table, so callers cast "
+            "them on the way in."
+        )
+        corrected = (
+            "Correction to an earlier note: user IDs are no longer stored as "
+            "integers in the users table, so callers do not cast them on the way "
+            "in. User IDs are opaque strings; preserve the client-provided string "
+            "exactly."
+        )
+        old_embedding = [1.0, 0.0, 0.0]
+        new_embedding = [0.0, 1.0, 0.0]
+
+        def fake_embed(texts):
+            return [old_embedding if t == old else new_embedding for t in texts]
+
+        existing = [dict(_mem(old, turn=80, confidence=0.6),
+                         fact_embedding=old_embedding)]
+        out = compressor.dedupe_incremental(
+            existing,
+            [_mem(corrected, turn=260, confidence=0.9)],
+            embed_fn=fake_embed,
+        )
+
+        assert len(out) == 1
+        assert out[0]["fact"] == corrected
+        assert out[0]["fact_embedding"] == new_embedding
+        assert out[0]["fact_embedding"] != old_embedding
+        # diagnostic helper agrees the stored embedding matches the current fact
+        assert _embedding_matches_fact(out[0], fake_embed) is True
+
+    def test_supersession_without_embedding_drops_stale_embedding(self, compressor):
+        # If the correcting statement arrives without an embedding (embedding
+        # unavailable), the stale embedding of the predecessor must be dropped
+        # rather than left attached to the corrected text (D36).
+        old = (
+            "For initial velocity, request handlers may write directly to the "
+            "cache store while the audit path is being built."
+        )
+        corrected = (
+            "Correction to an earlier note: for initial velocity, request handlers "
+            "may no longer write directly to the cache store while the audit path "
+            "is being built. All cache mutation must go through CacheCoordinator; "
+            "a handler must never write to the store's internal data dict."
+        )
+        existing = [dict(_mem(old, turn=37, confidence=0.5),
+                         fact_embedding=[1.0, 0.0, 0.0])]
+
+        out = compressor.dedupe_incremental(
+            existing,
+            [_mem(corrected, turn=260, confidence=0.95)],
+            embed_fn=None,
+        )
+
+        assert len(out) == 1
+        assert out[0]["fact"] == corrected
+        assert "fact_embedding" not in out[0]

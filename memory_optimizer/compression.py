@@ -70,14 +70,40 @@ def _has_supersession_marker(text: str) -> bool:
     return bool(text) and any(marker in text.lower() for marker in _SUPERSESSION_MARKERS)
 
 
+def _embedding_matches_fact(mem: Dict, embed_fn) -> bool:
+    """Diagnostic: does ``mem["fact_embedding"]`` encode the current ``mem["fact"]``?
+
+    Recomputes the fact's embedding through ``embed_fn`` and reports whether it
+    agrees with the stored one (cosine >= 0.99). A supersession replaces the
+    fact text but must also replace the embedding (D36); if the old embedding
+    survives, it describes the obsolete predecessor and disagrees with the
+    corrected text. Tests and diagnostics only; the production consolidation
+    path stays O(1) metadata replacement (no live re-embedding).
+    """
+    stored = mem.get("fact_embedding")
+    text = mem.get("fact")
+    if stored is None or not text:
+        return False
+    try:
+        want = embed_fn([text])
+        want = want[0] if isinstance(want, (list, tuple)) and len(want) == 1 else want
+    except Exception:
+        return False
+    cos = _cosine(stored, want)
+    return cos is not None and cos >= 0.99
+
+
 def _replace_with_supersession(ex: Dict, mem: Dict, mem_emb=None) -> None:
     """Replace ``ex`` with a newer correcting statement.
 
     Explicit supersession is intentionally independent of the generic
     semantic duplicate threshold.
-    """
-    ex_emb = ex.get("fact_embedding")
 
+    The surviving entry must embed the *current* fact text. When the correcting
+    statement carries an embedding (mem_emb is not None) it is stored; otherwise
+    the stale embedding of the obsolete predecessor is dropped so retrieval
+    never ranks the corrected fact against the obsolete semantics (D36).
+    """
     ex["access_count"] = (
         ex.get("access_count", 1) + mem.get("access_count", 1)
     )
@@ -90,8 +116,10 @@ def _replace_with_supersession(ex: Dict, mem: Dict, mem_emb=None) -> None:
     )
     ex["duplicates"] = ex.get("duplicates", 1) + 1
 
-    if ex_emb is None and mem_emb is not None:
+    if mem_emb is not None:
         ex["fact_embedding"] = mem_emb
+    else:
+        ex.pop("fact_embedding", None)
 
     ex["superseded_prior_fact"] = ex["fact"]
     ex["superseded_prior_fact_id"] = ex.get("fact_id")

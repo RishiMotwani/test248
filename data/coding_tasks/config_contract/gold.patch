@@ -1,0 +1,16 @@
+diff --git a/configapp/codec.py b/configapp/codec.py
+index 5038eb4..47d8586 100644
+--- a/configapp/codec.py
++++ b/configapp/codec.py
+@@ -39,10 +39,7 @@ class ConfigCodec:
+         parsed = self.parse(text)
+         merged = {}
+         for key, default in spec.items():
+-            if key in parsed and parsed[key] == "":
+-                value = default
+-            else:
+-                value = parsed.get(key, default)
++            value = parsed.get(key, default)
+             merged[key] = value
+         for key in parsed:
+             if key not in merged:

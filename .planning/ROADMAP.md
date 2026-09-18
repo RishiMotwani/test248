@@ -166,3 +166,21 @@
 3. `experiments/e18_correction_safety.py`: 36-cell offline identity gate (4 tasks × 3 seeds × 3 budgets) ALL correction-bearing cells PASS (`correction_recall 1.0`, `obsolete_exposure 0.0`)
 4. 72-run targeted coding grid (`user_ids` + `validation_pure`, llama3.1:8b): adaptive 17/18 (94.4%, correction_recall 1.0) vs vanilla_rag 9/18 (100% OBSOLETE_INFORMATION_USED) / llm_summarization 9/18 (MEMORY_MISS) / raw_clipped 8/18 (RETRIEVAL_MISS); verdict rule honest
 5. `config.yaml` untouched; E17 JSON/report untouched; E18 artifacts committed at `experiments/results/e18_correction_safety.json` + `_report.md` (force-added)
+- verdict adaptive_advances: False — the pilot verdict rule is honest (gate B + gate C history dependence work; but the broader-set advantage is NOT established at this model tier)
+- config.yaml UNTOUCHED; E17/E18 artifacts immutable; report is pilot-only, reviewer-confirmable; tests 143 passing (+9)
+
+### Phase 15: E19 Coding Generalization, Honest Pilot (PILOT ONLY; gate C failed)
+**Goal:** Test whether the corrected (D36/D37/D39) adaptive memory generalizes beyond the two E18 tasks to a broader set of genuinely history-dependent long-horizon coding tasks (new fixtures for new tasks; fixed historical-context budgets; one shared harness), under an honest deterministic-hidden-test pilot; only if all gates pass, run a full grid.
+**Mode:** mvp
+**Success Criteria:**
+1. Task suite: 4 new fixtures (calibrated through multiple restate/delete designs this phase), ≥4 topic families, ≥2 critical facts, ≥1 constraint, ≥1 fact >300 turns old, ≥1 distractor thread, identity-safe fact IDs, no marker language / no hidden-test leakage; 3 history-gated primary tasks + 2 negative controls
+2. Shared harness `experiments/e19_coding_generalization.py`: one arm path; complete-file edit blocks applied verbatim; gold/gold-identity checks; diagnostic draws for reproducibility on the LLM path
+3. Gates A–J with multiple diagnostic draws (DIAG_DRAWS=3): no_history must fail for every primary (gate C); adaptive-vs-baseline paired CI condition
+4. Pilot grid 60 cells (3 primary × 2 seeds × 2 budgets × 5 methods), then full grid 225 — llama3.1:8b
+5. Honest verdict + 24-section report at `experiments/results/e19_coding_generalization.json` + `_report.md`
+
+**Outcome — HONEST, PILOT-ONLY (gate C failed):**
+- Pilot grid run to completion (60 grid + 27 offline + 12 diagnostics); **gate C (no_history must fail for every primary) FAILED** over honest 3-draw measurement at llama3.1:8b: `user_ids` no_history 2/3, `transaction_atomicity` 1/3; only `validation_pure` cleanly gated (0/3). `config_contract` EXCLUDED as fixture-only (oracle probes 0/3 — task nuance beyond llama3.1:8b), retained as a calibration finding.
+- Paired adaptive-vs-baseline 95% CI: only validation_pure adaptive 4/4 clean; broader-set advantage NOT established at this model tier → verdict **adaptive_advances = False** (gate A/B/C history-dependence honesty works, but the broader-set advantage is NOT established)
+- Full grid NOT run; report is pilot-only, reviewer-confirmable; `config.yaml` untouched; E17/E18 artifacts immutable; all 143 tests pass (+9)
+- verdict adaptive_advances: False — the pilot verdict rule is honest (gates all pass except gate C); config UNTOUCHED; report is pilot-only, reviewer-confirmable, tests 143 passing (+9)
