@@ -38,7 +38,7 @@ def test_counterfactual_suite_self_test():
 
 
 def test_three_groups_two_variants_each():
-    assert cf.list_group_ids() == ["identifier_policy", "retry_policy",
+    assert cf.list_group_ids() == ["routing_policy", "retry_policy",
                                    "serialization_policy"]
     for gid in cf.list_group_ids():
         assert cf.list_variants(gid) == ["A", "B"]
@@ -141,6 +141,72 @@ def test_gold_gate_is_satisfied_by_full_check_set():
 
 
 # ---------------------------------------------------------------------------
+# Phase 17: strict offline base-workspace validity + routing-specific integrity
+# ---------------------------------------------------------------------------
+
+def test_unpatched_workspace_fails_hidden_tests(tmp_path):
+    import subprocess
+    import sys
+
+    for gid in cf.list_group_ids():
+        for variant in cf.list_variants(gid):
+            task = cf.build_variant(gid, variant, seed=1)
+            repo = cb.prepare_workspace(
+                task,
+                tmp_path / f"base_{gid}_{variant}",
+            )
+            proc = subprocess.run(
+                task.hidden_test_command,
+                cwd=str(repo),
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            assert proc.returncode != 0, (
+                f"{gid}/{variant} hidden tests already pass on the "
+                "unmodified workspace"
+            )
+
+
+def test_routing_policy_workspace_contains_no_assignment_table():
+    gid = "routing_policy"
+    task = cf.build_variant(gid, "A", seed=1)
+    workspace = cb.workspace_context(task)
+
+    assert "op_17" in workspace
+    assert "op_23" in workspace
+    assert "op_41" in workspace
+    assert "op_52" in workspace
+    assert "lane_a" in workspace
+    assert "lane_b" in workspace
+
+    forbidden_pairs = [
+        'op_17": "lane_a"',
+        'op_17": "lane_b"',
+        'op_23": "lane_a"',
+        'op_23": "lane_b"',
+        'op_41": "lane_a"',
+        'op_41": "lane_b"',
+        'op_52": "lane_a"',
+        'op_52": "lane_b"',
+    ]
+
+    for pair in forbidden_pairs:
+        assert pair not in workspace
+
+
+def test_routing_policy_mapping_differs_only_by_history_contract():
+    a = cf.build_variant("routing_policy", "A", seed=1)
+    b = cf.build_variant("routing_policy", "B", seed=1)
+
+    assert cb.workspace_context(a) == cb.workspace_context(b)
+    assert a.task_prompt == b.task_prompt
+    assert a.history_text != b.history_text
+    assert a.hidden_test_path.read_text() != b.hidden_test_path.read_text()
+    assert a.gold_patch_path.read_text() != b.gold_patch_path.read_text()
+
+
+# ---------------------------------------------------------------------------
 # No hidden-test leakage
 # ---------------------------------------------------------------------------
 
@@ -228,7 +294,7 @@ def test_verdict_tracks_gates_and_eligibility():
 
 
 def test_verdict_names_failed_groups():
-    records = _all_method_records({"identifier_policy": True})
+    records = _all_method_records({"routing_policy": True})
     gates = {
         "gold_patch_validity": {"passed": True},
         "pair_integrity": {"passed": True},
@@ -236,7 +302,7 @@ def test_verdict_names_failed_groups():
     }
     v = e20.classify_verdict({"gates": gates, "records": records})
     assert v["history_dependence_benchmark"] == "INVALID"
-    assert "identifier_policy" in v["rationale"]
+    assert "routing_policy" in v["rationale"]
     assert "retry_policy" not in v["rationale"]
 
 

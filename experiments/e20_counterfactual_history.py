@@ -20,10 +20,13 @@ to make a memory-system claim. This experiment does **not** run E19 and does not
 touch the adaptive-memory system or production defaults.
 
 Grid (fixed, 54 cells)
-----------------------
+---------------------
 3 groups x 2 variants x 3 seeds x 3 methods:
 
-* ``identifier_policy``   — opaque-string ids (A) vs numeric ids (B)
+* ``routing_policy``     — opaque operation codes routed to lanes per the
+                           historical allocation table (A) vs the inverse
+                           allocation (B); the mapping is underivable from the
+                           workspace alone
 * ``retry_policy``        — exactly one attempt (A) vs retry once (B)
 * ``serialization_policy`` — preserve unknown keys (A) vs drop unknown keys (B)
 
@@ -116,8 +119,15 @@ def run_gold_checks() -> List[Dict]:
                                      embedding_model="", task=task)
             rec = cb.run_method_run(task=task, seed=1, historical_budget=BUDGET,
                                     method=method, coder=coder, work_root=root)
+            # Strict offline validity (no LLM): the unmodified base workspace
+            # must NOT already pass the variant's hidden tests, otherwise the
+            # fixture is solvable without history and Hard Gate 1 must stop.
+            base_root = WORK_ROOT / f"e20base_{group_id}_{variant}"
+            base_repo = cb.prepare_workspace(task, base_root)
+            base_pass, _out, _err = cb.run_hidden_tests(base_repo, task)
             checks.append({
                 "group_id": group_id, "variant": variant,
+                "base_hidden_test_pass": bool(base_pass),
                 "gold_patch_valid": bool(rec["final_success"]),
                 "patch_applied": bool(rec["patch_applied"]),
                 "hidden_test_pass": bool(rec["hidden_test_pass"]),
@@ -127,7 +137,8 @@ def run_gold_checks() -> List[Dict]:
 
 def gold_gate_passed(checks: List[Dict]) -> bool:
     return bool(checks) and len(checks) == GRID_CELLS // (len(SEEDS) * len(METHODS)) \
-        and all(c["gold_patch_valid"] for c in checks)
+        and all(c["gold_patch_valid"] for c in checks) \
+        and all(c.get("base_hidden_test_pass") is False for c in checks)
 
 
 # ---------------------------------------------------------------------------
@@ -138,9 +149,23 @@ def compute_integrity_gates() -> Dict:
     checks = {}
     for group_id in GROUPS:
         # Workspace and prompt are single per-group fixtures: both variants of a
-        # group are byte-identical by construction (no variant-specific files).
-        checks[f"{group_id}:workspace_identical_a_b"] = True
-        checks[f"{group_id}:prompt_identical_a_b"] = True
+        # group must be byte-identical. Verify the hashes on disk (not by
+        # construction) so fixture drift cannot mask an assignment in only one
+        # variant's copy.
+        workspace_hashes = {
+            variant: cf.workspace_sha(group_id)
+            for variant in cf.list_variants(group_id)
+        }
+        prompt_hashes = {
+            variant: cf.prompt_sha(group_id)
+            for variant in cf.list_variants(group_id)
+        }
+        checks[f"{group_id}:workspace_identical_a_b"] = (
+            workspace_hashes["A"] == workspace_hashes["B"]
+        )
+        checks[f"{group_id}:prompt_identical_a_b"] = (
+            prompt_hashes["A"] == prompt_hashes["B"]
+        )
         hashes = {v: cf.history_sha(group_id, v) for v in cf.list_variants(group_id)}
         checks[f"{group_id}:histories_differ"] = (
             hashes["A"] != hashes["B"])
@@ -277,10 +302,19 @@ def generate_report(result: Dict) -> str:
     gates = result.get("gates") or {}
     hd = gates.get("history_dependence") or {}
     verdict = result.get("verdict") or {}
+    is_reval = bool(result.get("revalidation"))
+    phase_label = "Phase 17" if is_reval else "Phase 16"
     L: List[str] = []
 
-    L.append("# E20 Counterfactual-History Benchmark Calibration (Phase 16)")
+    L.append(f"# E20 Counterfactual-History Benchmark Calibration ({phase_label})")
     L.append("")
+    if is_reval:
+        L.append("*This is an E20 revalidation after replacement of the invalid "
+                 "identifier_policy counterfactual. The original E20 result "
+                 "remains immutable. The replacement group is routing_policy. "
+                 "The purpose is benchmark validity, not adaptive-memory "
+                 "comparison.*")
+        L.append("")
     L.append("## 1. Purpose")
     L.append("")
     L.append("E19 pilot gate C failed: fixtures had to be demonstrated *genuinely* "
@@ -308,13 +342,18 @@ def generate_report(result: Dict) -> str:
 
     L.append("## 3. Hard Gate 1 — Gold Patch Validity (offline)")
     L.append("")
-    L.append("| group | variant | gold patch applies | hidden tests pass |")
-    L.append("| --- | --- | --- | --- |")
+    L.append("| group | variant | base hidden fails | gold patch applies | hidden tests pass |")
+    L.append("| --- | --- | --- | --- | --- |")
     for g in gold:
-        L.append(f"| {g['group_id']} | {g['variant']} | "
+        base = g.get("base_hidden_test_pass")
+        base_cell = "PASS" if base is False else ("FAIL" if base else "n/a")
+        L.append(f"| {g['group_id']} | {g['variant']} | {base_cell} | "
                  f"{'PASS' if g['patch_applied'] else 'FAIL'} | "
                  f"{'PASS' if g['hidden_test_pass'] else 'FAIL'} |")
     g1 = gates.get("gold_patch_validity", {})
+    L.append("")
+    L.append("Base hidden-test gate: the unmodified workspace must NOT already "
+             "pass each variant's hidden tests (base_hidden_test_pass == False).")
     L.append("")
     L.append(f"**Hard Gate 1 passed: {g1.get('passed')}**")
     L.append("")
@@ -472,6 +511,9 @@ def main(argv=None):
                 "ingestion": "oracle_pre_extracted",
                 "generated_at": time.time(),
             },
+            "revalidation": (
+                OUT_JSON.name == "e20_counterfactual_history_repair.json"
+            ),
             "gold_checks": gold_checks,
             "integrity_gates": compute_integrity_gates(),
             "records": records,

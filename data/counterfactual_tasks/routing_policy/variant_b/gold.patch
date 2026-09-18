@@ -1,0 +1,16 @@
+diff --git a/routeapp/router.py b/routeapp/router.py
+index 7438f7e..d8e5f21 100644
+--- a/routeapp/router.py
++++ b/routeapp/router.py
+@@ -4,4 +4,10 @@ LANES = ("lane_a", "lane_b")
+ 
+ def select_route(operation):
+     """Return the configured lane for one opaque operation code."""
+-    raise NotImplementedError
++    routes = {
++        "op_17": "lane_a",
++        "op_23": "lane_b",
++        "op_41": "lane_b",
++        "op_52": "lane_a",
++    }
++    return routes[operation]

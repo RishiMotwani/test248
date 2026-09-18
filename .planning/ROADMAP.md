@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 16
+**Phases:** 17
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -195,3 +195,14 @@
 4. Non-trivial fixtures: gold.patch applies cleanly AND base (unmodified workspace) fails hidden tests for every variant; no history/prompt/test leakage
 5. **Outcome — HONEST INVALID:** Gate 1 PASS (all 6 gold patches valid); pair-integrity PASS; Gate 2 fails on `identifier_policy` (dh 6/6 vs nh 6/6, sep 0 — solvable from the workspace alone at llama3.1:8b); `retry_policy` PASS (6/6 vs 3/6, sep 3); `serialization_policy` PASS (5/6 vs 0/6, sep 5) → **history_dependence_benchmark = INVALID, e19_full_grid_eligible = FALSE**; identifier_policy-family fixtures (and E19's `user_ids`) must be redesigned so the required behavior is underivable from workspace alone
 6. All 174 tests pass (+31 in `tests/test_counterfactual_history.py`); E19 report presentation-only fix (sections 14/15/18 derive from cfg mode/budgets); E20 JSON + report + fixtures force-committed
+
+### Phase 17: E20 Counterfactual Fixture Repair and Revalidation
+**Goal:** fix the single failing E20 counterfactual family (identifier_policy — solvable from the workspace alone) with a genuinely history-dependent replacement (routing_policy), harden the offline fixture-validity gate, and re-run the E20 calibration as a repair run. No adaptive-memory change; original E20 artifacts immutable.
+**Mode:** mvp
+**Success Criteria:**
+1. `data/counterfactual_task_suite.py`: `identifier_policy` replaced by `routing_policy` (opaque op→lane routing; mapping present ONLY in variant hidden tests / gold patches / 600-turn histories; workspace + prompt byte-identical across A/B); group list exactly `["routing_policy","retry_policy","serialization_policy"]`; `data/counterfactual_tasks/identifier_policy/` deleted, `routing_policy/` materialized via `python -m data.counterfactual_task_suite --force` with retry/serialization byte-reproducible
+2. `experiments/e20_counterfactual_history.py`: `compute_integrity_gates()` uses real per-variant `workspace_sha`/`prompt_sha` A==B comparisons (no hardcoded True); `run_gold_checks()` adds strict offline `base_hidden_test_pass` (unmodified workspace must FAIL hidden tests) + gold-applies-and-passes, required by `gold_gate_passed()` and reported in a base-failing column
+3. `experiments/e21_counterfactual_history_repair.py` (new): thin wrapper over `e20.main` swapping `OUT_JSON`/`OUT_REPORT` to `e20_counterfactual_history_repair.{json,_report.md}` — no duplicated benchmark logic
+4. All 177 tests pass (+3: unpatched-workspace-fails-hidden-tests across all 6 variants; routing workspace contains all ops+lanes with no op→lane assignment pair; routing pairs differ only by history/hidden/gold contract)
+5. **Outcome — VALID:** offline Gate 1 PASS (all 6 variants: base fails, gold passes); pair-integrity PASS (real hashes); Hard Gate 2 ALL PASS — routing_policy dh 6/6 v nh 0/6 (sep 6), retry_policy dh 5/6 v nh 3/6 (sep 5), serialization dh 6/6 v nh 1/6 (sep 6) → **history_dependence_benchmark = VALID, e19_full_grid_eligible = TRUE** (E19 full grid NOT auto-run — reviewer's decision)
+6. Original `e20_counterfactual_history.json` + `_report.md` byte-identical (sha256 re-verified); repair artifacts `e20_counterfactual_history_repair.json` + `_repair_report.md` force-committed; `config.yaml` untouched; commit `research: repair E20 counterfactual fixture and revalidate`

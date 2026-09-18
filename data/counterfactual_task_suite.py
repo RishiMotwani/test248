@@ -20,7 +20,8 @@ the fixtures; the experiment lives in ``experiments/e20_counterfactual_history.p
 
 Three groups, each with two byte-identical workspaces+prompts:
 
-* ``identifier_policy``  — opaque-string ids (A) vs numeric ids (B)
+* ``routing_policy`` — opaque operations routed to lanes per the historical
+  allocation table (finalized table A) vs the inverse allocation (B)
 * ``retry_policy``       — no auto-retry, non-idempotent (A) vs retry exactly once (B)
 * ``serialization_policy`` — preserve unknown keys (A) vs drop unknown keys (B)
 
@@ -83,30 +84,32 @@ class CounterfactualGroup:
 
 _GROUPS: List[CounterfactualGroup] = [
     CounterfactualGroup(
-        group_id="identifier_policy",
-        dir="identifier_policy",
+        group_id="routing_policy",
+        dir="routing_policy",
         prompt=(
-            "Implement `canonical_user_id(value)` in `idapp/users.py` according "
-            "to the repository's established contract. Keep the existing public "
-            "name and signature. Do not modify hidden tests."
+            "Implement `select_route(operation)` in `routeapp/router.py` "
+            "according to the repository's established contract. Keep the "
+            "existing public name and signature. Do not modify hidden tests."
         ),
         workspace={
-            "idapp/__init__.py": (
-                '"""idapp - user identity helpers used as an E20 counterfactual '
+            "routeapp/__init__.py": (
+                '"""routeapp - routing helpers used as an E20 counterfactual '
                 'workspace."""\n'
             ),
-            "idapp/users.py": (
-                'id="vkfrlu"\n'
-                '"""User identity helper."""\n'
-                "def canonical_user_id(value):\n"
-                '    """Return the repository\'s canonical representation of a user id."""\n'
+            "routeapp/router.py": (
+                '"""Routing policy helper."""\n'
+                'OPS = ("op_17", "op_23", "op_41", "op_52")\n'
+                'LANES = ("lane_a", "lane_b")\n'
+                "\n"
+                "def select_route(operation):\n"
+                '    """Return the configured lane for one opaque operation code."""\n'
                 "    raise NotImplementedError\n"
             ),
             "README.md": (
-                "# idapp\n\n"
-                "User identity helpers.\n\n"
-                "The single public entry point for the storage layer is\n"
-                "`idapp.users.canonical_user_id`.\n"
+                "# routeapp\n\n"
+                "Routing policy helpers.\n\n"
+                "`routeapp.router.select_route` is the public routing entry point.\n\n"
+                "Operations are opaque repository codes and lanes are deployment targets.\n"
             ),
         },
         variants=[
@@ -114,46 +117,57 @@ _GROUPS: List[CounterfactualGroup] = [
                 variant="A",
                 dir="variant_a",
                 decision_summary=(
-                    "identifiers are opaque strings; the canonical form is the "
-                    "exact string the caller provided"),
+                    "the current routing contract assigns opaque operations to "
+                    "deployment lanes according to the historical allocation "
+                    "table"
+                ),
                 critical=[
-                    _f("idp.a.inter.001", 32, "The first schema used an integer "
-                       "surrogate key for users and the initial services coerced "
-                       "every client-supplied id with int() before storing it.",
-                       "decision", "database",
-                       "coerced every client-supplied id", obsolete=True),
-                    _f("idp.a.sup.001", 155, "The public contract for idapp is "
-                       "that the canonical id for a user is exactly the identifier "
-                       "the identity provider presented; downstream consumers "
-                       "must not assume ids are numeric.",
-                       "decision", "database",
-                       "exactly the identifier the identity provider presented"),
-                    _f("idp.a.corr.001", 268, "Correction to an earlier note: "
-                       "user identifiers are opaque strings. The canonical form "
-                       "returned for any client-supplied id is the exact string "
-                       "the caller provided; idapp must not coerce ids or fold "
-                       "them into numbers.",
-                       "correction", "database", "opaque strings"),
+                    _f("rp.a.inter.001", 40, "The first routing plan assigned "
+                       "operation codes using the opposite lane table during an "
+                       "early deployment rehearsal.",
+                       "decision", "routing", "opposite lane table",
+                       obsolete=True),
+                    _f("rp.a.sup.001", 420, "The finalized routing allocation "
+                       "table for this release is: op_17 goes to lane_b; op_23 "
+                       "goes to lane_a; op_41 goes to lane_a; op_52 goes to "
+                       "lane_b. The operation codes are intentionally opaque "
+                       "and the mapping is an external engineering contract.",
+                       "decision", "routing",
+                       "finalized routing allocation table"),
+                    _f("rp.a.corr.001", 470, "Correction to an earlier routing "
+                       "note: use the finalized allocation table, not the "
+                       "rehearsal table. The current contract is op_17 -> "
+                       "lane_b, op_23 -> lane_a, op_41 -> lane_a, and op_52 -> "
+                       "lane_b.",
+                       "correction", "routing", "current contract"),
                 ],
                 distractors=[
-                    _f("idp.a.d1", 120, "The cache namespace is prefixed per "
-                       "environment so staging and production cannot cross-talk.",
-                       "implementation", "caching", "prefixed per environment"),
-                    _f("idp.a.d2", 340, "Auth middleware caches verified session "
-                       "material for the lifetime of a request.",
-                       "implementation", "auth", "caches verified session material"),
-                    _f("idp.a.d3", 470, "The database connection pool is warmed "
-                       "on startup to keep first requests fast.",
-                       "implementation", "database", "connection pool is warmed"),
+                    _f("rp.a.d1", 130, "The health checker reports deployment-"
+                       "lane readiness once per minute.",
+                       "implementation", "routing", "deployment-lane readiness"),
+                    _f("rp.a.d2", 310, "The release dashboard groups incidents "
+                       "by service owner.",
+                       "implementation", "auth", "groups incidents by service owner"),
+                    _f("rp.a.d3", 520, "The deployment CLI records the selected "
+                       "lane in its audit event.",
+                       "implementation", "database", "records the selected lane"),
                 ],
-                corrections=[("idp.a.inter.001", "idp.a.corr.001")],
+                corrections=[("rp.a.inter.001", "rp.a.corr.001")],
                 gold={
-                    "idapp/users.py": (
-                        'id="vkfrlu"\n'
-                        '"""User identity helper."""\n'
-                        "def canonical_user_id(value):\n"
-                        '    """Return the repository\'s canonical representation of a user id."""\n'
-                        "    return str(value)\n"
+                    "routeapp/router.py": (
+                        '"""Routing policy helper."""\n'
+                        'OPS = ("op_17", "op_23", "op_41", "op_52")\n'
+                        'LANES = ("lane_a", "lane_b")\n'
+                        "\n"
+                        "def select_route(operation):\n"
+                        '    """Return the configured lane for one opaque operation code."""\n'
+                        '    routes = {\n'
+                        '        "op_17": "lane_b",\n'
+                        '        "op_23": "lane_a",\n'
+                        '        "op_41": "lane_a",\n'
+                        '        "op_52": "lane_b",\n'
+                        "    }\n"
+                        "    return routes[operation]\n"
                     ),
                 },
             ),
@@ -161,43 +175,56 @@ _GROUPS: List[CounterfactualGroup] = [
                 variant="B",
                 dir="variant_b",
                 decision_summary=(
-                    "identifiers are numeric; the canonical form is the integer "
-                    "value of the client-supplied id"),
+                    "the current routing contract assigns the same opaque "
+                    "operation codes to the inverse deployment-lane allocation"
+                ),
                 critical=[
-                    _f("idp.b.inter.001", 35, "User ids were originally issued "
-                       "by the account service as variable-length strings and "
-                       "early callers forwarded them verbatim.",
-                       "decision", "auth", "variable-length strings", obsolete=True),
-                    _f("idp.b.sup.001", 158, "The public contract for idapp is "
-                       "that the canonical id for a user is stored and exchanged "
-                       "as a number; consumers read integers from the user table.",
-                       "decision", "database",
-                       "stored and exchanged as a number"),
-                    _f("idp.b.corr.001", 275, "Correction to an earlier note: "
-                       "user identifiers are numeric. The canonical form returned "
-                       "for any client-supplied id is its integer value; idapp "
-                       "exists to produce that integer for the storage layer.",
-                       "correction", "database", "numeric"),
+                    _f("rp.b.inter.001", 42, "The first routing plan assigned "
+                       "operation codes using the opposite lane table during an "
+                       "early deployment rehearsal.",
+                       "decision", "routing", "opposite lane table",
+                       obsolete=True),
+                    _f("rp.b.sup.001", 425, "The finalized routing allocation "
+                       "table for this release is: op_17 goes to lane_a; op_23 "
+                       "goes to lane_b; op_41 goes to lane_b; op_52 goes to "
+                       "lane_a. The operation codes are intentionally opaque "
+                       "and the mapping is an external engineering contract.",
+                       "decision", "routing",
+                       "finalized routing allocation table"),
+                    _f("rp.b.corr.001", 475, "Correction to an earlier routing "
+                       "note: use the finalized allocation table, not the "
+                       "rehearsal table. The current contract is op_17 -> "
+                       "lane_a, op_23 -> lane_b, op_41 -> lane_b, and op_52 -> "
+                       "lane_a.",
+                       "correction", "routing", "current contract"),
                 ],
                 distractors=[
-                    _f("idp.b.d1", 125, "Deploys warm a compute cache at startup "
-                       "so the first user request never pays a cold-cache price.",
-                       "implementation", "caching", "warm a compute cache"),
-                    _f("idp.b.d2", 335, "The session store rotates refresh "
-                       "tokens and keeps the audit trail in a separate table.",
-                       "implementation", "auth", "rotates refresh tokens"),
-                    _f("idp.b.d3", 465, "Read replicas serve the reporting load "
-                       "while the primary handles writes.",
-                       "implementation", "database", "serve the reporting load"),
+                    _f("rp.b.d1", 135, "The readiness probe confirms that the "
+                       "deployment agents are alive.",
+                       "implementation", "routing", "deployment agents are alive"),
+                    _f("rp.b.d2", 315, "The release dashboard groups incidents "
+                       "by service owner.",
+                       "implementation", "auth", "groups incidents by service owner"),
+                    _f("rp.b.d3", 525, "The deployment CLI writes the selected "
+                       "lane into the audit record.",
+                       "implementation", "database", "writes the selected lane"),
                 ],
-                corrections=[("idp.b.inter.001", "idp.b.corr.001")],
+                corrections=[("rp.b.inter.001", "rp.b.corr.001")],
                 gold={
-                    "idapp/users.py": (
-                        'id="vkfrlu"\n'
-                        '"""User identity helper."""\n'
-                        "def canonical_user_id(value):\n"
-                        '    """Return the repository\'s canonical representation of a user id."""\n'
-                        "    return int(value)\n"
+                    "routeapp/router.py": (
+                        '"""Routing policy helper."""\n'
+                        'OPS = ("op_17", "op_23", "op_41", "op_52")\n'
+                        'LANES = ("lane_a", "lane_b")\n'
+                        "\n"
+                        "def select_route(operation):\n"
+                        '    """Return the configured lane for one opaque operation code."""\n'
+                        '    routes = {\n'
+                        '        "op_17": "lane_a",\n'
+                        '        "op_23": "lane_b",\n'
+                        '        "op_41": "lane_b",\n'
+                        '        "op_52": "lane_a",\n'
+                        "    }\n"
+                        "    return routes[operation]\n"
                     ),
                 },
             ),
@@ -486,35 +513,43 @@ _GROUP_BY_ID: Dict[str, CounterfactualGroup] = {g.group_id: g for g in _GROUPS}
 # ---------------------------------------------------------------------------
 
 _HIDDEN_TESTS: Dict[Tuple[str, str], str] = {
-    ("identifier_policy", "A"): (
-        "from idapp.users import canonical_user_id\n"
+    ("routing_policy", "A"): (
+        "from routeapp.router import select_route\n"
         "\n"
         "\n"
-        "def test_preserves_opaque_string():\n"
-        '    assert canonical_user_id("007") == "007"\n'
+        "def test_op_17_route():\n"
+        '    assert select_route("op_17") == "lane_b"\n'
         "\n"
         "\n"
-        "def test_does_not_cast():\n"
-        '    assert canonical_user_id("1e3") == "1e3"\n'
+        "def test_op_23_route():\n"
+        '    assert select_route("op_23") == "lane_a"\n'
         "\n"
         "\n"
-        "def test_returns_string():\n"
-        '    assert isinstance(canonical_user_id("42"), str)\n'
+        "def test_op_41_route():\n"
+        '    assert select_route("op_41") == "lane_a"\n'
+        "\n"
+        "\n"
+        "def test_op_52_route():\n"
+        '    assert select_route("op_52") == "lane_b"\n'
     ),
-    ("identifier_policy", "B"): (
-        "from idapp.users import canonical_user_id\n"
+    ("routing_policy", "B"): (
+        "from routeapp.router import select_route\n"
         "\n"
         "\n"
-        "def test_casts_to_int():\n"
-        '    assert canonical_user_id("007") == 7\n'
+        "def test_op_17_route():\n"
+        '    assert select_route("op_17") == "lane_a"\n'
         "\n"
         "\n"
-        "def test_parses_numeric_string():\n"
-        '    assert canonical_user_id("42") == 42\n'
+        "def test_op_23_route():\n"
+        '    assert select_route("op_23") == "lane_b"\n'
         "\n"
         "\n"
-        "def test_returns_int():\n"
-        '    assert isinstance(canonical_user_id("42"), int)\n'
+        "def test_op_41_route():\n"
+        '    assert select_route("op_41") == "lane_b"\n'
+        "\n"
+        "\n"
+        "def test_op_52_route():\n"
+        '    assert select_route("op_52") == "lane_a"\n'
     ),
     ("retry_policy", "A"): (
         "from writeapp.client import Client, UpstreamError\n"
@@ -882,10 +917,10 @@ def self_test() -> None:
             assert task.hidden_test_path.is_file(), f"hidden missing: {group_id}/{variant}"
             for f in task.gold_facts:
                 assert f.probe.lower() in f.text.lower()
-    a, b = list_variants("identifier_policy")
-    assert prompt_bytes("identifier_policy") == prompt_bytes("identifier_policy")
-    assert no_history_prompt("identifier_policy", a) == \
-        no_history_prompt("identifier_policy", b)
+    a, b = list_variants("routing_policy")
+    assert prompt_bytes("routing_policy") == prompt_bytes("routing_policy")
+    assert no_history_prompt("routing_policy", a) == \
+        no_history_prompt("routing_policy", b)
     print("counterfactual_task_suite self-test OK")
 
 

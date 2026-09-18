@@ -1,110 +1,120 @@
-# GSD Handoff — Phase 16 (E20 counterfactual-history benchmark calibration, HONEST INVALID)
+# GSD Handoff — Phase 17 (E20 counterfactual fixture repair + revalidation, VALID)
 
-Generated: after committing the Phase-16 / E20 calibration grid.
+Generated: after committing the Phase-17 / E20 repair revalidation grid.
 
 This doc is the single reviewer-readable artifact for the phase. Kept docs:
 ROADMAP.md, STATE.md, PROJECT.md, config.json, codebase.
 
 ## Where we are
 
-Phase 16 (E20) complete — **honest INVALID verdict at llama3.1:8b**. The E20
-counterfactual-history calibration answers E19's open gate-C question directly:
-two of three counterfactual groups ARE genuinely history dependent
-(retry_policy dh 6/6 vs nh 3/6; serialization_policy dh 5/6 vs nh 0/6), but
-`identifier_policy` is fully solvable from the workspace alone (dh 6/6 AND
-nh 6/6, separation 0). Because the predeclared Hard Gate 2 requires ALL three
-groups to pass, `history_dependence_benchmark = INVALID` and
-`e19_full_grid_eligible = FALSE`. **The E19 full grid must NOT be run until
-identifier_policy-family fixtures (including E19's `user_ids`) are redesigned.**
+Phase 16 declared E20 INVALID because the `identifier_policy` counterfactual
+was solvable from the workspace alone at llama3.1:8b (no_history 6/6,
+separation 0) — the fixture family, not the measurement, was wrong. **Phase 17
+replaced `identifier_policy` with `routing_policy`** (opaque operation codes →
+lane assignment; the op→lane mapping exists ONLY in variant hidden tests, gold
+patches, and 600-turn histories — it is underivable from the workspace, which
+contains no mapping table), added a strict **offline base-hidden-test gate**
+(unmodified workspace must FAIL every variant's hidden tests; gold patch must
+apply and pass), and re-ran the full 54-cell E20 calibration as a repair run.
 
-## Locked contract (from the E20 prompt)
+**All three counterfactual groups now pass Hard Gate 2:**
+
+| group | direct_history | no_history | separation | gate |
+| --- | --- | --- | --- | --- |
+| routing_policy | 6/6 | 0/6 | 6 | PASS |
+| retry_policy | 5/6 | 3/6 | 5 | PASS |
+| serialization_policy | 6/6 | 1/6 | 6 | PASS |
+
+`history_dependence_benchmark = VALID`, `e19_full_grid_eligible = TRUE`.
+
+## Locked contract (from the Phase-17 prompt)
 
 - **Config:** `config.yaml` UNTOUCHED; `memory_optimizer/` and `server.py`
-  behavior UNTOUCHED. E20 is benchmark calibration, not an adaptive-memory run.
-- **No tuning:** no dual_score / retention / decay / retrieval-weight / threshold
-  / embedding-model changes.
+  behavior UNTOUCHED. Repair = fixture + offline-gate + re-run, not tuning.
+- **Original E20 artifacts immutable:** `e20_counterfactual_history.json` +
+  `_report.md` byte-for-byte unchanged (sha256 re-verified:
+  `1aeb771c…` / `46edec2a…`). New artifacts only:
+  `e20_counterfactual_history_repair.json` (`b0e1894a…`) +
+  `_repair_report.md` (`0a3ba3aa…`).
 - **Methods (3):** `no_history` (identical prompt for A/B), `direct_history`
-  (oracle: the same variant's non-obsolete gold facts only), `full_context`
-  (raw 600-turn history; always overflows the 1024-word budget → recorded as
-  CONTEXT_OVERFLOW diagnostic).
-- **Grid:** 3 groups × 2 variants × 3 seeds × 3 methods = 54 cells @ 1024 words,
-  llama3.1:8b @ localhost:11434, temperature 0.1.
-- **Hard Gate 1:** all 6 gold patches must apply cleanly and pass hidden tests
-  (offline) BEFORE any model run → STOP if failed.
-- **Hard Gate 2 (per group, /6):** direct_history ≥ 5, no_history ≤ 3,
-  separation ≥ 2; ALL three groups must pass → else INVALID.
-- **Pair-integrity gates:** workspace+prompt byte-identical per pair; history,
-  final fact ids, hidden tests and gold patches differ per variant; no
-  leakage.
+  (oracle: same variant's non-obsolete gold facts), `full_context` (raw 600-turn
+  history → always overflows 1024-word budget → CONTEXT_OVERFLOW diagnostic).
+- **Grid:** 54 cells (3 × 2 × 3 × 3) @ 1024 words, llama3.1:8b @ localhost:11434,
+  temperature 0.1; run via `python -m experiments.e21_counterfactual_history_repair --run --force`.
+- **Hard Gate 1 (offline):** all 6 variants: base workspace FAILS hidden tests,
+  gold patch applies cleanly and passes → STOP if any fails. No LLM used.
+- **Hard Gate 2 (per group, /6):** dh ≥ 5, nh ≤ 3, sep ≥ 2; ALL three groups
+  must pass → verdict VALID/INVALID. No averaging, no threshold override.
+- **Final group list:** exactly `["routing_policy","retry_policy","serialization_policy"]`.
+- **E19 full grid NOT auto-run** — eligibility is now TRUE but running it is the
+  reviewer's decision.
 
 ## Findings (measured, not inferred)
 
-1. **Hard Gate 1 PASS:** all 6 variants' `gold.patch` files apply cleanly and
-   pass their hidden tests (offline `StaticCoder` path). Fixture quality is good.
-2. **Pair-integrity PASS** — workspace/prompt identical within each pair;
-   histories, final fact IDs, hidden tests and gold patches all differ;
-   zero prompt/history leakage across all 54 records.
-3. **Hard Gate 2 FAILS on `identifier_policy`** — no_history 6/6, direct_history
-   6/6, separation 0. The model guesses `str(value)`/`int(value)` for the
-   canonical-user-id contract without any history at llama3.1:8b. This is the
-   SAME failure class as E19 gate C's `user_ids` (2/3 no-history successes),
-   providing direct causal evidence for the E19 finding.
-4. **retry_policy PASS** — dh 6/6 vs nh 3/6 (sep 3). The "no auto-retry" arm is
-   default-guess solvable; the "retry exactly once" arm is not (nh 0/3 for B).
-5. **serialization_policy PASS** — dh 5/6 vs nh 0/6 (sep 5). Cleanest pair: no
-   history solves neither preserve-unknown-keys nor drop-unknown-keys.
-6. **full_context overflow confirmed:** 18/18 diagnostic cells overflow the
-   1024-word budget (raw ~7.2k words) — consistent with E17/E19; recorded, not
-   used for any gate.
+1. **routing_policy is genuinely history dependent:** direct_history 6/6 vs
+   no_history 0/6 (separation 6). With no history the model cannot guess the
+   op→lane allocation (ops are opaque labels; no mapping in the workspace,
+   docstring, constants, or filenames) — 0/6 solves it. With the variant's
+   history it solves 6/6. This is exactly the fix Phase 16 required.
+2. **retry_policy revalidated PASS:** dh 5/6, nh 3/6, sep 5 (Phase 16: sep 3).
+3. **serialization_policy revalidated PASS:** dh 6/6, nh 1/6, sep 6 (Phase 16:
+   sep 5).
+4. **Offline base-hidden-test gate gives every gold check a `base_hidden_test_pass`
+   field** — False for all 6 variants, with gold patch applies + hidden tests
+   pass. Gate 1 therefore proves the fixture is not solvable without history
+   before any model runs.
+5. **Pair-integrity gates now compare real hashes** (`workspace_sha`/`prompt_sha`
+   per variant, A==B) instead of hardcoded True; routing workspace contains all
+   4 ops and both lanes but none of the 8 op-to-lane literal pairs.
+6. **Originals preserved:** pre- and post-run sha256 of the Phase-16 JSON and
+   report are identical; `git diff` on those two files is empty.
+7. **No adaptive-memory change:** only `data/counterfactual_task_suite.py`,
+   `experiments/e20_counterfactual_history.py`, new
+   `experiments/e21_counterfactual_history_repair.py`, `tests/…`, fixtures,
+   and `.planning` docs changed.
 
 ## Honest verdict (reviewer-confirmable)
 
-- `history_dependence_benchmark`: **INVALID**
-- `e19_full_grid_eligible`: **FALSE**
-- `config.yaml` UNTOUCHED; E17/E18/E19 artifacts immutable (E19 report had a
-  presentation-only heading/column fix: sections 14/15/18 now derive from
-  cfg mode/budgets — data unchanged).
-- Verdict + 7-section report: `experiments/results/e20_counterfactual_history.json` +
-  `experiments/results/e20_counterfactual_history_report.md` (force-added).
-- Tests: 174 passing (+31 in `tests/test_counterfactual_history.py`).
+- `history_dependence_benchmark`: **VALID**
+- `e19_full_grid_eligible`: **TRUE** (running it = reviewer's decision)
+- `config.yaml` UNTOUCHED; E17/E18/E19 + original E20 artifacts immutable.
+- Repair JSON + 141-section report: `experiments/results/e20_counterfactual_history_repair.json` +
+  `_repair_report.md` (force-added).
+- Tests: 177 passing (+3 in `tests/test_counterfactual_history.py`).
 
-## What must change for E19 full-grid eligibility (next phase)
+## Next decision (reviewer)
 
-Redesign `identifier_policy`-family fixtures so the required behavior is NOT
-derivable from the workspace / function signature alone (e.g., make both
-variants require an external contract fact — the NUMBER or TYPE of id can no
-longer be inferred from the empty-stub repo), then re-run E20's Hard Gate 2
-on that group. Only when all three groups pass is the E19 full grid eligible.
+The E20 benchmark is now fully calibrated; all groups discriminate. Whether to
+run the E19 full 225-cell grid (unconstrained adaptive vs baselines across the
+4-task fixture set, now understood as genuinely history dependent) is the
+reviewer's call. It is not run automatically and nothing in this phase
+overrides that.
 
 ## Cryptographic checkpoint
 
-- Checkpoint branch: `checkpoint/phase-16-e20-complete` → `d331243`
-- Checkpoint tag: `checkpoint-phase-16-e20-d331243` = same SHA
+- Checkpoint branch: `checkpoint/phase-17-e20-repair-complete` → `<SHA>`
+- Checkpoint tag: `checkpoint-phase-17-e20-repair-<SHA>` = same SHA
 
 ## Restore
 
 ```bash
-git checkout checkpoint/phase-16-e20-complete
+git checkout checkpoint/phase-17-e20-repair-complete
 ```
 
 or
 
 ```bash
-git reset --hard checkpoint/phase-16-e20-complete
+git reset --hard checkpoint/phase-17-e20-repair-complete
 ```
 
 ## Do-not-regress (locked)
 
 1. Do not tune `config.yaml` (dual_score, retention, decay, thresholds, top_k,
    embedding model, task affinity all frozen).
-2. Do not run the E19 full 225-cell grid — E20 declares it NOT eligible until
-   identifier_policy-family fixtures are redesigned and re-gated.
-3. E17/E18/E19 JSON + reports immutable (E19 report presentation-only fix
-   applied).
-4. Do not claim history dependence for any coding task without a counterfactual
-   no_history-vs-direct_history gate.
-
-## Next phase
-
-Redesign the identifier_policy counterfactual (require history to choose the
-id contract), re-run E20 Hard Gate 2, and only then revisit E19.
+2. Original E20 JSON/report and all E17/E18/E19 artifacts immutable.
+3. Any new coding fixture must pass the offline base-hidden-test gate BEFORE it
+   may claim history dependence: unmodified workspace fails, gold patch passes.
+4. Requires a reproducible counterfactual pair at the claimed model tier to
+   declare a coding benchmark history dependent (no_history vs direct_history).
+5. E19 full grid must not be auto-run by a phase; only a reviewer decision may
+   trigger it.

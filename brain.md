@@ -1326,6 +1326,61 @@ derive headings and columns from `cfg["mode"]` and `cfg["budgets"]`).
 **Status:** Phase 16 complete. No adaptive-memory algorithm, production
 defaults, or prior experiment artifact was modified.
 
+### D39 ★ Phase 17 — Counterfactual fixture repair: E20 revalidated VALID (E19 full grid eligible)
+
+**OBSERVED (E20 repair, Phase 17):** Phase 16 declared E20 INVALID because one
+of three counterfactual groups (`identifier_policy`) was solvable from the
+workspace alone — no_history 6/6, direct_history 6/6, separation 0. The fix was
+NOT to tune the model or the measurement; it was to replace the fixture family
+so the required behavior is *underdetermined* by the workspace/signature.
+
+**Repair:** `identifier_policy` (a `canonical_user_id` stub whose contract is a
+plausible default guess) replaced by `routing_policy`: an opaque operation code
+→ deployment-lane assignment. The workspace is a stub `routeapp` package whose
+`select_route(operation)` stub lists four opaque ops (`op_17`, `op_23`,
+`op_41`, `op_52`) and two lanes (`lane_a`, `lane_b`) but contains NO mapping —
+ops are opaque labels, so the allocation is information-theoretically absent
+from the workspace, docstring, constants, and filenames. The mapping exists only
+in the variant's hidden tests, gold patch, and 600-turn history (final facts
+>300 turns old). Variant A and variant B differ by the allocation; retrieving
+the wrong variant's history must be useless, and the workspace alone must be
+unsolvable.
+
+**Results (54-cell repair grid, llama3.1:8b @ 1024 words):**
+
+| group | direct_history | no_history | separation | gate |
+| --- | --- | --- | --- | --- |
+| routing_policy | 6/6 | 0/6 | 6 | PASS |
+| retry_policy | 5/6 | 3/6 | 5 | PASS |
+| serialization_policy | 6/6 | 1/6 | 6 | PASS |
+
+All three groups pass → `history_dependence_benchmark = VALID`,
+`e19_full_grid_eligible = TRUE`. A strict offline base-hidden-test gate now
+backs Hard Gate 1: for every variant the unmodified workspace must FAIL its
+hidden tests (`base_hidden_test_pass == False`) while the gold patch must apply
+and pass — verified before any model run.
+
+**Benchmark lesson (testable claim):** a coding task is NOT history-dependent
+merely because (a) it ships an unimplemented stub and (b) the transcript records
+discussion of the required behavior. Both are true of any scaffold—the stub that
+raises `NotImplementedError` and a history that "decided" something are cheap to
+produce. What makes a fixture genuinely history-gated is that the workspace +
+prompt *underdetermine* the answer: removing the history must remove the only
+source of the deciding constraint, and no_history must fail at the claimed model
+tier. The counterfactual pair (two hidden tests / gold patches, byte-identical
+workspace + prompt) is the gate — it ties a pass to the variant's own history
+and nothing else. This is now encoded in the offline base gate and in
+`tests/test_counterfactual_history.py`. E19 full grid eligibility is TRUE but is
+the reviewer's decision to run; it is not auto-run by any phase.
+
+**Artifacts:** `experiments/e21_counterfactual_history_repair.py`,
+`experiments/results/e20_counterfactual_history_repair.json` + `_repair_report.md`
+(original E20 JSON/report byte-identical), `data/counterfactual_tasks/routing_policy/`
+(identifier_policy deleted), `tests/test_counterfactual_history.py` (177 total).
+
+**Status:** Phase 17 complete. No adaptive-memory algorithm, production
+defaults, or E17/E18/E19/original-E20 artifact was modified.
+
 ---
 
 ## 8. Open questions for the human (blocking decisions)
