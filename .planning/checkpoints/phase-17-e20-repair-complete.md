@@ -1,10 +1,10 @@
 # Phase-17/E20 Repair Immutable Checkpoint
 
-Checkpoint SHA: <SHA>
-Checkpoint short SHA: <SHORT_SHA>
+Checkpoint SHA: ba7238c219d73205af52a08446e6a61376011796
+Checkpoint short SHA: ba7238c
 Current branch: master
 Checkpoint branch: checkpoint/phase-17-e20-repair-complete
-Checkpoint tag: checkpoint-phase-17-e20-repair-<SHORT_SHA>
+Checkpoint tag: checkpoint-phase-17-e20-repair-ba7238c
 
 Phase: 17
 Experiment: E20 (repair revalidation via e21 wrapper)
@@ -61,4 +61,4 @@ git checkout checkpoint/phase-17-e20-repair-complete
 
 or:
 
-git reset --hard <SHA>
+git reset --hard ba7238c219d73205af52a08446e6a61376011796

@@ -92,8 +92,8 @@ overrides that.
 
 ## Cryptographic checkpoint
 
-- Checkpoint branch: `checkpoint/phase-17-e20-repair-complete` → `<SHA>`
-- Checkpoint tag: `checkpoint-phase-17-e20-repair-<SHA>` = same SHA
+- Checkpoint branch: `checkpoint/phase-17-e20-repair-complete` → `ba7238c`
+- Checkpoint tag: `checkpoint-phase-17-e20-repair-ba7238c` = same SHA
 
 ## Restore
 
