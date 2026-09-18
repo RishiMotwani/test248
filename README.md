@@ -180,7 +180,7 @@ The only external service is local Ollama (unauthenticated HTTP). All Ollama cal
 
 ---
 
-## Experiments (E1–E8)
+## Experiments (E1–E17)
 
 | ID | Experiment | Entry point |
 |---|---|---|
@@ -194,8 +194,16 @@ The only external service is local Ollama (unauthenticated HTTP). All Ollama cal
 | E7 | Sensitivity sweep (retriever/budget geometry) | `experiments/e7_sensitivity_sweep.py` |
 | E8 | LongMemEval-style needled-QA benchmark | `experiments/e8_external_benchmark.py` |
 | E9 | Correction/negation isolation probe (task E regression) | `experiments/e9_correction_isolation.py` |
+| E10 | Context-pressure probe recall (point-of-need) | `run_experiments.py` / `experiments/paper.py` |
+| E12 | Coding-context usefulness benchmark (+E13 generalization/ablations, E14 retention diagnosis, E15 retention-policy separation, E16 retention selectivity) | `experiments/e12_coding_benchmark.py`, `experiments/e16_retention_selectivity.py` |
+| E17 | Long-horizon coding capability (hidden-test pass at fixed historical budgets) | `experiments/coding_benchmark.py` + `experiments/e17_coding_capability.py` |
 
-Baselines (each a `BaseBaseline` subclass in `baselines/`): `SlidingWindowBaseline`, `MemGPTStyleBaseline`, `SummarizationOnlyBaseline`, `VanillaRAGBaseline`. All consume the identical pre-extracted fact stream (writer held fixed, brain.md D9).
+E17 is resumable: it rewrites `e17_coding_capability.json` after every run and
+skips completed `task:seed:budget:method` cells on restart. Run the full grid with
+`python experiments/e17_coding_capability.py --full` (pilot = default; `--report-only`
+reclassifies the saved JSON without reruns).
+
+Baselines (each a `BaseBaseline` subclass in `baselines/`): `SlidingWindowBaseline`, `MemGPTStyleBaseline`, `SummarizationOnlyBaseline`, `VanillaRAGBaseline`. All consume the identical pre-extracted fact stream (writer held fixed, brain.md D9). E17 adds `raw_clipped` (`baselines/raw_clipped.py`) and `llm_summarization` (`baselines/llm_summarization.py`) plus a shared word-count tokenizer (`memory_optimizer/tokenizer.py`), and the shared coding harness in `experiments/coding_benchmark.py`.
 
 Results are written to `experiments/results/` (gitignored): `manifest_<sha8>.json`, `latest_manifest.json`, `live_manifest.json`, plus per-experiment outputs and `jobs_history.json` (research-job log). Paper tables and figure data go to `artifacts/`.
 
@@ -206,7 +214,7 @@ Results are written to `experiments/results/` (gitignored): `manifest_<sha8>.jso
 Verification is a **pytest suite + assert-based script gates**:
 
 ```bash
-python -m pytest tests/                      # 24 tests: compression supersession, salience, retrieval ranking
+python -m pytest tests/                      # 134 tests: compression supersession, salience, retrieval ranking, retention policy/selectivity, coding-capability harness
 python run_experiments.py --quick            # whole-stack wiring gate (50 turns, 1 seed, oracle)
                                              #   + hard-case gate: fails if correction_recall < 0.5
                                              #     or wrongly_retained.fraction > 0.5

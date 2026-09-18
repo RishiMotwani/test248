@@ -1,104 +1,120 @@
-# GSD Handoff — Phase 12 of 12 COMPLETE
+# GSD Handoff — Phase 13 of 13 COMPLETE
 
-Generated: 2026-09-17 after committing `research: test retention selectivity under hard memory pressure (E16)`
+Generated: 2026-09-18 after committing `research: evaluate adaptive memory on long-horizon coding tasks (E17)`
 
 Note: `gsd_metrics.json`/`gsd_review_files.md` are not present in `.planning/` at
 handoff time; the docs kept are ROADMAP.md, STATE.md, REQUIREMENTS.md, config.json,
-codebase/. Any reviewer tooling that expected them should treat them as absent (not
-deleted) — consistent with the Phase 11 handoff.
+codebase/. Reviewer tooling should treat them as absent (not deleted), consistent
+with prior handoffs.
 
 ## Current commit
 
 - **Commit:** `(this commit)` (pushed to `origin/master`, RishiMotwani/test248)
-- Previous: `9ec8f03` (Phase 11 docs handoff); actual Phase 11 research commit `4889f2b`
+- Previous: `6b25a80` (Phase 12 E16 raw results + report docs); research commit `c971553`
 - Working tree: clean after commit.
-- `experiments/results/e16_retention_selectivity.json` (300 grid + 15 no-pressure +
-  10 window cells + e15_audit + verdict) and `..._report.md` are gitignored →
-  force-added per the repo's "commit raw evidence" convention.
+- `experiments/results/e17_coding_capability.json` (180-run full grid + 12
+  diagnostics + gold checks + gates + paired CIs) and `_report.md` (24 sections)
+  are gitignored → force-added per the repo's "commit raw evidence" convention.
+  Work directory `experiments/results/e17_work/` stays gitignored.
 
-## What changed this phase (D33, E16)
+## What changed this phase (D34, E17)
 
-1. **Identity-safe evaluation** (`data/coding_workload.py`): deterministic `fact_id =
-   category:qtype:source_turn:SHA256(text)[:16]` (SHA-256, NOT Python `hash()`);
-   queries carry `target_fact_ids`/`forbidden_fact_ids`; corrections assert new id
-   present / old id absent. New metrics `fact_identity_{context,store,correction}_recall`
-   + `fact_identity_obsolete_retention` — immune to token collisions.
-2. **Access separation** (`retrieval.py`, `compression.py`): `retrieval_access_count`
-   increments only via retriever `_bump`; `ingest_reinforcement_count` only via
-   compressor merge/supersession. Legacy `access_count` unchanged (backward compat).
-   Feedback loops diagnosable per cell (`diagnostics.spearman_vs_future_use`).
-3. **`memory_optimizer/task_state.py`**: `TaskStateTracker(window=32)` FIFO of
-   fact-carrying turn embeddings; `task_affinity = mean(top-4 cosine)`, clamped [0,1],
-   observed at current-turn ingest (causal, future-blind). Guardrails assert oracle
-   future labels never reach policy/decay code.
-4. **Eviction policies** (all `retention.mode=dual_score`, retrieval FROZEN):
-   `dual_score` (retention_priority), `base_score_only`, `task_affinity` (lexicographic
-   `(task_affinity, retention_priority)`), `random` (seeded lower bound),
-   `oracle_future_use` (offline future-peeking ceiling).
-5. **`pipeline.py`**: `protect_corrections=True` in E16 (a current correction is never
-   evicted while its superseded predecessor exists); `protected_capacity_conflict`
-   records when the budget is too tight to honour it.
-6. **experiments/e16_retention_selectivity.py**: 300-cell grid (5 policies ×
-   STORE[256,512,1024,2048] × active[64,128,256] × seeds[42..46], 1200 turns,
-   scale 27 = 662 gt facts, genuine pressure) + no-pressure fingerprints (store_budget=0;
-   identical across policies — True) + window ablation 16/32/64 + 18-section auto
-   report + E15 raw-JSON audit. Flags: `--quick`, `--report-only`, `--force`,
-   `--no-window`, `--no-nopressure`.
-7. **Tests**: 117 passing total; +37 in `tests/test_e16_retention_selectivity.py`.
+1. **Task suite** (`data/coding_task_suite.py` + `data/coding_tasks/*`): 4 real
+   packages (`cache_readonly`, `user_ids`, `write_retry`, `validation_pure`); each
+   has a ~600-turn transcript that buries critical facts (incl. >300-turn-old facts,
+   corrections, negative constraints) among distractors, a workspace the model
+   edits, and a deterministic hidden test the model never sees. Gold patches
+   verified (base fails / gold passes). Ingestion is oracle-pre-extracted (E17
+   measures retention + retrieval + context allocation, not extraction).
+2. **Shared harness** (`experiments/coding_benchmark.py`): one code path for every
+   arm — method `prepare(history, budget) → retrieve(prepared, task, budget)` → the
+   harness builds the prompt, calls the model, applies the edit, runs hidden tests.
+   Same model, temperature 0.1, retry (initial + repair), shared word-count
+   tokenizer (`memory_optimizer/tokenizer.py`). Failure taxonomy is deterministic;
+   recall diagnostics exclude obsolete facts from denominators.
+3. **Harness fix (required, not an experiment result):** llama3.1:8b emits
+   malformed multi-hunk unified diffs (missing `@@`) that `git apply` applied
+   *partially and silently* — even the oracle failed. Primary edit format is now
+   complete-file blocks (`### FILE:`/`### END FILE`, tolerant of missing end marker
+   and code fences) applied verbatim; a diff fallback is retained. The applied
+   change is captured as a git diff for provenance/determinism.
+4. **Methods** (the history mechanism is the only difference): `raw_clipped`,
+   `sliding_window`, `llm_summarization` (running summary from the same model every
+   50 turns), `vanilla_rag` (static cosine store, no decay/importance/eviction),
+   `adaptive` (production `dual_score` + `protect_corrections=True`, e.g.
+   `injection_token_limit=budget`, `memory_store_token_budget=max(4096, budget*4)`).
+   Diagnostics: `no_history`, `full_context` (unconstrained upper bound),
+   `direct_history` (oracle gold facts).
+5. **Driver** (`experiments/e17_coding_capability.py`): pilot (3×2×2×5=60) then
+   full grid (4×3×3×5=180), 9 gates, paired bootstrap CIs
+   (`statistics.bootstrap_ci_mean_diff`), verdict rule, 24-section report. **Runs
+   are resumable**: JSON is rewritten incrementally after every run and completed
+   `task:seed:budget:method` keys are skipped on restart; `--report-only`
+   reclassifies without reruns; `--limit`/`--force`/`--no-embed`/`--skip-model-check`
+   flags.
+6. **Tests**: +17 in `tests/test_e17_coding_capability.py` (offline; fake coder +
+   lexical embeddings): task-suite determinism, gold-patch harness correctness on
+   all 4 tasks, per-method budget enforcement, no-history vs oracle diagnostics,
+   leakage logic-vs-imports, file-edit parse/apply + path-traversal guard, failure
+   precedence, aggregation/verdict shape, 24-section report, artifact paths under repo.
 
-## Evidence (E16; details in experiments/results/e16_retention_selectivity_report.md)
+## Evidence (E17 full grid; details in experiments/results/e17_coding_capability_report.md)
 
-- identity_store_recall (mean over active/seeds; stores 256/512/1024/2048):
-  dual_score 0.057/0.103/0.129/0.253; task_affinity 0.049/0.093/0.126/0.252;
-  base_score_only 0.045/0.088/0.120/0.241; random 0.048/0.095/0.126/0.250;
-  oracle_future_use 0.057/0.103/0.129/0.253 (≈ dual at grid store range).
-- precision_of_retention = 1.000 for ALL policies; correction recall 1.0;
-  fact-level obsolete retention 0; SUPERSEDED_INCORRECTLY = 0 across all 300 cells.
-- E15 reconciliation (81 stress cells, from raw JSON): token-based
-  obsolete_retention > 0 in 27 cells, correction_recall < 1 in 44 (11 both, 21 clean) —
-  token-collision artifact (`memcache` 3, `redis` 8 facts; `100`/`250` only legacy).
-  Real residual loss = NEW corrected fact evicted (dual 0/0/0, hard_threshold 18/14/13,
-  soft_decay 18/13/9 at 1024/2048/4096) — now guarded by correction protection.
-- Window sensitivity (task_affinity, store 512, active 128): w16 rr 0.0636/prec 1.0;
-  w64 rr 0.0667/prec 1.0 — insensitive.
-- dual_score identity correction recall dips to 0.867 at store 1024 (vs 1.0 at
-  256/512) — verified real marginal-eviction behavior near natural store size
-  (~1043 tokens), NOT a metric or code bug.
+- **All 9 gates pass** (pilot and full): budget pressure (full raw history ~7.2k
+  tokens > 1k budget; `full_context` always overflows the 8k window once the
+  workspace is attached), workspace independence, methods differ (4+ distinct
+  contexts), real summarization (144 model update calls), adaptive uses production
+  pipeline, zero leakage, history dependence (user_ids + validation_pure:
+  no-history fails, oracle succeeds), test determinism, edit determinism.
+- **Overall success** (final, ≤2 attempts): adaptive 0.75, llm_summarization 0.75,
+  raw_clipped/sliding_window/vanilla_rag 0.722. No separation between arms.
+- **Paired adaptive vs X** (36 pairs each): raw +0.028 (95% CI 0.000–0.083),
+  sliding +0.028 (CI 0.000–0.083), llm +0.000 (CI 0–0), vanilla +0.028 (CI
+  0.000–0.083). Every CI lower bound = 0.
+- **First-pass success**: adaptive 0.53 (worst) vs 0.58–0.69 others.
+- **Failing-cell mechanism**: `correction_recall=0` + `obsolete_fact_exposure=1.0`
+  — adaptive and vanilla_rag inject the same obsolete fact and miss the correction
+  (identical `context_sha`), i.e. retrieval *contamination*, not store size.
+- **History dependence is partial**: cache_readonly and write_retry are solvable
+  from the workspace alone (no-history succeeds); the archive of this project's
+  own suite limitation: cache_readonly's hidden test only asserts `put_count==1`,
+  which a naive `store.put` also satisfies (CacheCoordinator constraint not strictly
+  enforced).
 
 ## Decision (auto-classified, reviewer-confirmable)
 
-8-criteria gate, task_affinity vs dual_score:
-1. `task_affinity` future-use retention recall (low store 256/512): 0.0709 vs
-   dual 0.0802 → **FAIL** (c1)
-2. Same at tightest low store 256: 0.060 vs 0.070; precision both 1.0 → **FAIL** (c6:
-   0/5 seed wins)
-3. vs random (0.0709 vs 0.0706) → **FAIL** (c7); oracle store gap task +0.009 vs
-   dual −0.0003 → **FAIL** (c8)
-4. PASS: precision parity (c2), correction recall 1.0 (c3), obsolete 0 (c4), active
-   context unchanged (c5) — but hard-fail criteria dominate.
-
-**Verdict: TASK_AFFINITY_IS_SUPPORTED → NOT SUPPORTED (0/8). RETENTION STAYS
-`dual_score`. Config UNCHANGED.** No silent flip; `task_affinity` remains opt-in for
-workloads with concentrated future use. Retrieval stays frozen (sim 0.85 + imp 0.15 +
-cat_bonus 0.02, top_k 5, sim_threshold 0.35).
+- ADAPTIVE MEMORY IMPROVES LONG-HORIZON CODING AT FIXED BUDGET → **NOT SUPPORTED**.
+  `adaptive_advances=False`: no paired 95% CI excludes zero; all arms cluster at
+  0.72–0.75. The grid is valid (all gates pass), so this negative is a finding.
+- No production change. `config.yaml` untouched; no `memory_optimizer` behavior
+  modified by E17 (harness + baselines + data only). Retrieval stays frozen
+  (sim 0.85 + imp 0.15 + cat_bonus 0.02, top_k 5, sim_threshold 0.35).
 
 ## Verification status
 
-- `python -m pytest tests/` → **117 passed** (venv python at
+- `python -m pytest tests/` → **134 passed** (venv python at
   `/home/goku/prototype/prototype3/venv/bin/python`; system `/usr/bin/python` has no pytest).
-- Full grid (300 cells) + no-pressure + window completed in one foreground run;
-  JSON + report written to `experiments/results/`; report regenerated with 0 "N/A"
-  via `--report-only`.
+- Full grid (180 runs) + diagnostics completed in one foreground run (user-aborted
+  run resumed cleanly via the incremental JSON — this is the documented resume
+  path). JSON + 24-section report written to `experiments/results/`.
 - `/tmp` was 100% full — all logs/artifacts under the repo (`experiments/results/`).
 
-## Next unresolved question (do NOT start a new phase)
+## Next unresolved questions (do NOT start a new phase)
 
-- Whether ANY future-blind survival signal can beat retrieval-feedback survival in
-  this workload remains open — `task_affinity` is not it. At low store budgets
-  oracle ≈ causal policies, so the grid's store range cannot discriminate policies;
-  a workload with more concentrated future use (fewer distinct target facts, denser
-  repeats) may separate them. Documented under UNRESOLVED in D33. This is a design
-  question, not a bug.
+- **Retrieval contamination dominates failing cells.** In every E17 failure the
+  injected context contained the obsolete fact and missed the correction
+  (`correction_recall=0`, `obsolete_fact_exposure=1.0`) for BOTH adaptive and
+  vanilla_rag — identical contexts. The corrected fact exists in the store but is
+  outranked by its obsolete predecessor. Priorities/fusion of correction-aware
+  retrieval is a possible follow-up decision.
+- **History dependence is only 2/4 tasks** in this suite — cache_readonly and
+  write_retry are solvable from the workspace alone. A denser/cleaner suite (and a
+  strictly enforced constraint test like CacheCoordinator) would increase power.
+- The archive keeps asking the SAME upstream question E16 left open: whether ANY
+  future-blind survival signal can beat retrieval-feedback survival. E17 shows that
+  even the value of correct retrieval is not visible at fixed budgets on
+  these tasks — model-noise and patch-format were controlled, but coding-model
+  capability is now the binding constraint.
 
-External reviewers: read experiments/results/e16_retention_selectivity_report.md and
-the D33 brain.md entry for the complete OBSERVED/INFERRED/UNRESOLVED breakdown.
+External reviewers: read experiments/results/e17_coding_capability_report.md and
+the D34 brain.md entry for the complete OBSERVED/INFERRED/UNRESOLVED breakdown.

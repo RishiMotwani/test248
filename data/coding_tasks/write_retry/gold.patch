@@ -1,0 +1,18 @@
+diff --git a/writeapp/writer.py b/writeapp/writer.py
+index 7ae42cf..8be49be 100644
+--- a/writeapp/writer.py
++++ b/writeapp/writer.py
+@@ -15,7 +15,10 @@ def write_record(client, payload):
+ def submit(client, payload):
+     """Submit ``payload`` for writing, surfacing failures to the caller.
+ 
+-    Must return the upstream result on success. On ``UpstreamError`` it must
+-    raise ``WriteFailed``.
++    The upstream is not idempotent, so the write is attempted exactly once and
++    any ``UpstreamError`` is surfaced as ``WriteFailed`` without retrying.
+     """
+-    raise NotImplementedError("submit is not implemented yet")
++    try:
++        return write_record(client, payload)
++    except UpstreamError as exc:
++        raise WriteFailed(str(exc)) from exc

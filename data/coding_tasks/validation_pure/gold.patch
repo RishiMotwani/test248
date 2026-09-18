@@ -1,0 +1,43 @@
+diff --git a/parseapp/service.py b/parseapp/service.py
+index 07fedad..01f608d 100644
+--- a/parseapp/service.py
++++ b/parseapp/service.py
+@@ -1,11 +1,12 @@
+ """Service layer that loads and validates configuration."""
+ 
+ from parseapp.parser import parse_config
+-from parseapp.validator import validate_required
++from parseapp.validator import validate_config, validate_required
+ 
+ 
+ def load_config(text, required):
+     """Parse ``text``, validate it, and return the parsed config."""
+     config = parse_config(text)
+     validate_required(config, required)
++    validate_config(config)
+     return config
+diff --git a/parseapp/validator.py b/parseapp/validator.py
+index 191ea69..9e311ac 100644
+--- a/parseapp/validator.py
++++ b/parseapp/validator.py
+@@ -1,7 +1,7 @@
+ """Config validation.
+ 
+ ``AUDIT`` is a shared in-memory log used by the service layer to record
+-validation events. Validators may append to it.
++validation events. Validators must remain pure and must not append to it.
+ """
+ 
+ AUDIT = []
+@@ -18,3 +18,11 @@ def validate_required(config, required):
+     if missing:
+         raise ValueError(f"missing required keys: {missing}")
+     return True
++
++
++def validate_config(config):
++    """Strict validation: reject empty string values; pure, no side effects."""
++    for value in config.values():
++        if value == "":
++            raise ValueError("empty value in config")
++    return True

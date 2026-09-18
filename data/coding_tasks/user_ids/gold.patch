@@ -1,0 +1,20 @@
+diff --git a/idapp/users.py b/idapp/users.py
+index 440258a..52e3357 100644
+--- a/idapp/users.py
++++ b/idapp/users.py
+@@ -6,5 +6,13 @@ turned into the canonical value used as the storage key.
+ 
+ 
+ def normalize_user_id(value):
+-    """Return the canonical representation of a client-supplied user id."""
+-    return int(value)
++    """Return the canonical representation of a client-supplied user id.
++
++    User ids are opaque strings: the client-provided value is preserved exactly.
++    """
++    return str(value)
++
++
++def user_key(uid):
++    """Return the canonical storage key for a user id."""
++    return normalize_user_id(uid)

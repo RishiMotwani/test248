@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 12 (E16 retention selectivity under hard pressure) complete — task_affinity rejected, dual_score retained
+**Current phase:** Phase 13 (E17 long-horizon coding capability) complete — adaptive shows NO advantage at fixed historical budgets; config unchanged
 
 ## Completed Phases
 
@@ -20,7 +20,8 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 9** — E13 generalization + causal ablations (store capacity + retrieval policy) · commit `f6da170`
 - **Phase 10** — E14 retention diagnosis (causal analysis of store losses) · commit `7a026b9`
 - **Phase 11** — E15 retention-policy separation (activation vs survival) · commit `4889f2b`
-- **Phase 12** — E16 retention selectivity under hard pressure (task_affinity rejected) · commit `TBD`
+- **Phase 12** — E16 retention selectivity under hard pressure (task_affinity rejected) · commit `c971553` (+docs `6b25a80`)
+- **Phase 13** — E17 long-horizon coding capability (no adaptive advantage) · commit `TBD`
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -179,10 +180,38 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Tests:** 117 passing (+37 new in `tests/test_e16_retention_selectivity.py`: identity-safe API, tracker causality/windowing, access-separation cell fields, evicted-population stamps, oracle isolation/ceiling, SUPERSEDED_INCORRECTLY==0 across cells, correction gate, no-leak flags, hard-budget enforcement, fingerprints, `_cell_key`, workload self-test)
 
+## E17 Long-Horizon Coding Capability (D34) — Phase 13
+
+**Objective:** the downstream validity test — does the adaptive memory system help a real coding model (llama3.1:8b) complete long-running repository-editing tasks better than simpler historical-context managers when the historical context supplied to the model is fixed? Dependent variable = hidden-test pass of the produced edit, not recall.
+
+**Implementation:**
+- `data/coding_task_suite.py` + `data/coding_tasks/{cache_readonly,user_ids,write_retry,validation_pure}/{workspace,hidden,gold.patch}`: 4 real packages, ~600-turn transcripts burying constraints among distractors, deterministic hidden tests never seen by the model; gold patches verified (base fails / gold passes)
+- `experiments/coding_benchmark.py` (shared harness): method protocol (prepare→retrieve), complete-file edit blocks applied verbatim (+diff fallback), 2 coding attempts, word-count tokenizer, per-run leakage assertion, deterministic failure taxonomy, recall diagnostics (obsolete facts excluded from recall denominators)
+- Methods (history mechanism = only difference): raw_clipped, sliding_window, llm_summarization (running summary from same model every 50 turns), vanilla_rag (static cosine store, no decay/importance/eviction), adaptive (production `dual_score` + `protect_corrections=True`); diagnostics no_history / full_context / direct_history (oracle gold facts)
+- `experiments/e17_coding_capability.py`: pilot (3×2×2×5=60) + full grid (4×3×3×5=180), 9 gates, paired bootstrap CIs, verdict rule, 24-section report; **incremental JSON → resumable** (`--force`/`--report-only`/`--limit`/`--full` CLI)
+- Required harness fix (recorded, not an experiment result): the coding model emits malformed multi-hunk unified diffs that `git apply` applies partially/silently (even the oracle failed) → primary edit format is complete-file blocks, applied deterministically
+
+**Results (full grid: 4×3×3×5 = 180 runs, ≤2 attempts each):**
+- All 9 gates pass: budget pressure (full raw history ~7.2k tokens > 1k budget and > 8k window with workspace), workspace independence, methods differ, real summarization (144 update calls), adaptive production path, no leakage, history dependence (user_ids + validation_pure: no-history fails, oracle succeeds), test determinism, edit determinism
+- Overall success rate: adaptive/llm_summarization 0.75, raw_clipped/sliding_window/vanilla_rag 0.722 — no separation
+- Paired vs adaptive (36 pairs each): diff vs raw +0.028 (CI 0.00–0.08), vs sliding +0.028 (CI 0.00–0.08), vs llm +0.000 (CI 0–0), vs vanilla +0.028 (CI 0.00–0.08) → **no CI excludes zero; adaptive_advances = False**
+- First-pass success worst for adaptive (0.53 vs 0.58–0.69); retrieval highlight does not help first-try code correctness at these budgets
+- Failure mechanism in failing cells: `correction_recall=0` + `obsolete_fact_exposure=1.0` — both adaptive and vanilla_rag inject the obsolete fact and miss the correction (identical contexts); recall-only metrics would have masked this
+- `full_context` diagnostics always overflow the 8k window once the workspace is attached → "show everything" is genuinely unavailable
+- cache_readonly/write_retry are solvable from the workspace alone (no-history passes); only 2/4 tasks are strictly history-dependent
+
+**Decision rule verdict (auto-classified, reviewer-confirmable):**
+- ADAPTIVE MEMORY IMPROVES LONG-HORIZON CODING AT FIXED BUDGET → **NOT SUPPORTED** (no paired CI excludes zero; all arms cluster at 0.72–0.75)
+- All 9 pilot gates PASS → the grid is a valid experiment; the negative verdict is a finding, not a noisy instrument
+
+**Production default UNCHANGED:** `config.yaml` untouched; no memory_optimizer behavior modified by E17 (harness + baselines + data only). Retrieval remains frozen (0.85 sim + 0.15 imp + 0.02 cat_bonus, top_k 5, sim_threshold 0.35).
+
+**Tests:** 134 passing (+17 new in `tests/test_e17_coding_capability.py`: task-suite determinism, gold-patch harness correctness on all 4 tasks, per-method budget enforcement, no-history vs oracle diagnostics, leakage logic-vs-import separation, file-edit parse/apply + path-traversal guard, failure-class precedence, aggregation/verdict shape, 24-section report, artifact paths under repo). Results: `experiments/results/e17_coding_capability.json` + `_report.md` (force-added; /tmp unavailable).
+
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected, D34 Phase 13 long-horizon coding capability / no adaptive advantage)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -212,8 +241,10 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 11. D33: Phase 12 complete — E16 task_affinity rejected at 8-criteria gate (c1/c6/c7/c8 FAIL, 0/5 seed wins; oracle ≈ causal at low store, workload cannot discriminate); dual_score retained, config unchanged
 12. E16 full grid verified via identity-safe metrics; E15 token-based obsolete_retention reclassifies as metric artifact (real residual loss = new corrected fact evicted, now guarded by correction protection)
 13. `/tmp` 100% full during E16 runs — all logs/artifacts written under `experiments/results/` (repo), not /tmp
+14. D34: Phase 13 complete — E17 full grid (180 runs) valid, all gates pass, but adaptive shows NO advantage at fixed historical budgets (all arms 0.72–0.75, every paired CI lower bound 0); failing cells = obsolete fact injected + correction missed (both adaptive and vanilla_rag); harness fixed to complete-file edit format (model's diffs were malformed — applied partially/silently)
+15. E17 coding task `cache_readonly` hidden test only asserts `put_count==1`, which a naive `store.put` also satisfies — the CellCoordinator/CacheCoordinator constraint is not strictly enforced (documented as a suite limitation)
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-17 after Phase 12 E16 retention selectivity — task_affinity rejected, dual_score retained
+Last updated: 2026-09-18 after Phase 13 E17 long-horizon coding capability — adaptive shows NO advantage at fixed historical budgets

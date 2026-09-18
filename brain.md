@@ -1167,6 +1167,73 @@ facts and compressed the score distribution.
 
 ---
 
+### D34 ★ Phase 13 Long-Horizon Coding Capability (E17) — adaptive shows NO advantage at fixed historical budgets
+  **Motivation:** every earlier experiment measured memory recall or
+  injected-context answerability. E17 asked the actual question: does the
+  adaptive memory system help a *real coding model* complete long-running
+  repository-editing tasks (hidden-test pass) better than simpler historical
+  context managers when the historical context given to the model is capped at a
+  fixed budget?
+
+  **34.1 Design (what made it a controlled comparison):**
+  - 4 real tasks under `data/coding_tasks/*` (~600-turn transcripts, buried
+    constraints, deterministic hidden tests the model never sees; gold patches
+    verified to pass). `no_history`/`direct_history` (oracle) diagnostics per
+    task measure reachability.
+  - Only the history mechanism differs across arms: `raw_clipped`,
+    `sliding_window`, `llm_summarization` (same-model running summary every 50
+    turns), `vanilla_rag` (static cosine store, no decay/importance/eviction),
+    `adaptive` (production `dual_score` + `protect_corrections=True`). Same model,
+    prompt scaffold, temperature 0.1, retry (initial + repair), shared word-count
+    tokenizer. Budgets 256/512/1024; ingestion oracle-pre-extracted.
+  - Model editing format: complete-file blocks (`### FILE:`/`### END FILE`)
+    written verbatim; the model's multi-hunk unified diffs were malformed (missing
+    `@@`) and `git apply` applied them *partially and silently*, and even the
+    oracle failed — a harness bug that destroyed the benchmark's signal
+    (recorded as a required harness fix, not an experiment result).
+
+  **34.2 Findings (full grid: 4 tasks × 3 seeds × 3 budgets × 5 methods = 180, 2 attempts max each):**
+  - **9/9 pilot + full gates pass** (budget pressure real: full raw history
+    ~7.2k tokens > 1k budget and > workspace+model context; methods produce
+    distinct contexts; real summarizer calls; adaptive uses the production
+    pipeline; zero leakage; hidden tests deterministic; applied edits
+    deterministic).
+  - **Success rates are flat across every arm** (~0.72–0.75 overall); paired
+    adaptive-vs-baseline diffs are 0.00–0.03 with every 95% bootstrap CI lower
+    bound at 0. Valid experiment, **no demonstrated adaptive advantage**
+    (`adaptive_advances=False`).
+  - **First-pass success is if anything worst for adaptive** (0.53 vs
+    0.58–0.69). At these budgets the retrieval highlight is not helping first-try
+    code correctness.
+  - **History dependence is partial and asymmetric:** only `user_ids` and
+    `validation_pure` are strictly history-dependent (no-history fails, oracle
+    succeeds); `cache_readonly` and `write_retry` are solvable from the workspace
+    alone. `full_context` always overflows the 8k window with the workspace
+    attached, so "just show everything" is not available — the constraint is real.
+  - **Adaptive ≈ vanilla_rag in behaviour** on these tasks: identical contexts
+    (same `context_sha`), same obsolescence exposure, `correction_recall=0`,
+    `obsolete_fact_exposure=1.0` in every cell where they fail. The retention
+    machinery adds no retrieval advantage over a static cosine store here; the
+    failing runs are exactly the ones where the memory introduced the obsolete
+    fact into context.
+
+  **Decision (reviewer-verifiable from E17 JSON/report):**
+  - "ADAPTIVE MEMORY IMPROVES LONG-HORIZON CODING AT FIXED BUDGET" → **NOT
+    SUPPORTED**. No paired CI excludes zero; all arms cluster.
+  - The bottleneck in failing cells is retrieval *accuracy/contamination*
+    (obsolete facts injected, corrections missed), not store size; recall-only
+    diagnostics would have missed this if they had been the dependent variable.
+  - E17 does **not** modify production memory behavior (`config.yaml` untouched).
+
+  **Status:** Phase 13 complete. Committed + pushed. Artifacts:
+  `experiments/coding_benchmark.py`, `experiments/e17_coding_capability.py`,
+  `data/coding_task_suite.py`, `data/coding_tasks/*`, `baselines/raw_clipped.py`,
+  `baselines/llm_summarization.py`, `memory_optimizer/tokenizer.py`,
+  `experiments/results/e17_coding_capability.json` + `_report.md` (24 sections;
+  force-added). STOP — no Phase 14.
+
+---
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.

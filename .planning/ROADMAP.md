@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 12
+**Phases:** 13
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -144,3 +144,15 @@
 5. E15 reconciliation from raw JSON (81 cells): SUPERSEDED_INCORRECTLY = 0 everywhere; residual loss = new corrected fact evicted (now guarded by `protect_corrections`)
 6. 8-criteria verdict: **task_affinity REJECTED** (0/8; c1/c6/c7/c8 FAIL; oracle ≈ dual at grid store range); config UNCHANGED (dual_score + retention_priority); no post-result tuning
 7. All 117 tests pass (+37 new); results JSON + 18-section report committed to `experiments/results/`
+
+### Phase 13: E17 Long-Horizon Coding Capability
+**Goal:** Determine whether the adaptive memory system helps a real coding model complete long-running repository-editing tasks (hidden-test pass) better than simpler historical-context managers when the historical context is capped at a fixed budget. Outcome = produced patch passing deterministic hidden tests; recall is diagnostic only; do NOT tune the adaptive algorithm
+**Mode:** mvp
+**Success Criteria:**
+1. `data/coding_task_suite.py` + 4 real tasks under `data/coding_tasks/*` (~600-turn transcripts; buried constraints; deterministic hidden tests; gold patches verified to pass; no gold/test leakage asserted per run)
+2. Shared harness `experiments/coding_benchmark.py`: one path for all arms; complete-file edit blocks applied verbatim (diff fallback); 2 attempts max; shared word-count tokenizer
+3. Methods (history-only difference): `raw_clipped`, `sliding_window`, `llm_summarization` (same-model running summary), `vanilla_rag` (static cosine), `adaptive` (production dual_score + protect_corrections); diagnostics `no_history` / `full_context` / `direct_history` (oracle)
+4. Fixed budgets 256/512/1024; adaptive `injection_token_limit=budget`, `memory_store_token_budget=max(4096, budget*4)`
+5. All 9 gates pass on pilot AND full grid: budget pressure, workspace independence, methods differ, real summarization, adaptive production path, no leakage, history dependence (oracle-based), test determinism, patch determinism
+6. Full grid 180 cells (4 tasks × 3 seeds × 3 budgets × 5 methods): success rates flat across arms (0.72–0.75); every adaptive-vs-baseline paired 95% CI lower bound = 0 → **adaptive_advances NOT SUPPORTED**; honest verdict written, no production change (`config.yaml` untouched)
+7. All 134 tests pass (+17 new); `experiments/results/e17_coding_capability.json` + 24-section `_report.md` committed (force-added)
