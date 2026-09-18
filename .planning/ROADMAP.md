@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 17
+**Phases:** 18
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -206,3 +206,14 @@
 4. All 177 tests pass (+3: unpatched-workspace-fails-hidden-tests across all 6 variants; routing workspace contains all ops+lanes with no op→lane assignment pair; routing pairs differ only by history/hidden/gold contract)
 5. **Outcome — VALID:** offline Gate 1 PASS (all 6 variants: base fails, gold passes); pair-integrity PASS (real hashes); Hard Gate 2 ALL PASS — routing_policy dh 6/6 v nh 0/6 (sep 6), retry_policy dh 5/6 v nh 3/6 (sep 5), serialization dh 6/6 v nh 1/6 (sep 6) → **history_dependence_benchmark = VALID, e19_full_grid_eligible = TRUE** (E19 full grid NOT auto-run — reviewer's decision)
 6. Original `e20_counterfactual_history.json` + `_report.md` byte-identical (sha256 re-verified); repair artifacts `e20_counterfactual_history_repair.json` + `_repair_report.md` force-committed; `config.yaml` untouched; commit `research: repair E20 counterfactual fixture and revalidate`
+
+### Phase 18: E19 aligned to the E20-validated benchmark + full grid
+**Goal:** E19's primary tasks were re-anchored onto the three E20-validated counterfactual families (routing_policy, retry_policy, serialization_policy — genuinely history-dependent per D39, fixed Variant A), with history dependence certified by the E20 calibration instead of stochastic no-history draws, then the 225-cell full grid was run and reported honestly.
+**Mode:** standard
+**Success Criteria:**
+1. `experiments/e19_coding_generalization.py`: PRIMARY_TASKS = the three E20 families; `E19_COUNTERFACTUAL_VARIANTS` maps each to Variant A; `build_e19_task()` builds the counterfactual variant (fallback `build_task`) and normalises `task_id` to the family name; `run_one`/`check_gold`/`run_offline_cell` use `build_e19_task`; Gate C = `check_e20_calibration()` (frozen E20 repair certification: revalidation, groups match, validation/pair-integrity/history-dependence all pass, verdict VALID + eligible); `persist()` stores `e20_calibration`
+2. Report alignment: section 3 lists the three families; section 5 describes the E20-validated history-dependence design; section 12 → "## 12. Experiment Gates A-J" with Gate C explained as "E20 counterfactual history calibration"; section 13 title dynamic (Pilot vs Full-Grid); task-suite loop uses `build_e19_task`; per-task prose for the three families; diagnostics section 20 descriptive only
+3. `experiments/e22_e19_full_grid.py` (new): thin runner swapping `e19.OUT_JSON`/`OUT_REPORT` to `e19_coding_generalization_full.{json,_report.md}`, delegating to `e19.main(argv)`, restoring paths in `finally` — no duplicated benchmark logic
+4. `tests/test_e19_full_grid_alignment.py` (new, 8 offline tests, no Ollama): exact PRIMARY_TASKS; Variant-A mapping; `check_e20_calibration()["passed"] is True` and groups == PRIMARY_TASKS; `build_e19_task` counterfactual metadata (variant A, group == task_id), gold/hidden exist, 600-turn history, task_id normalised; negative controls not counterfactual; full-grid paths distinct from pilot; 225 dimensions (135 + 90, seeds [1,2,3], budgets [256,512,1024], methods); Gate C is the E20 certification
+5. Full grid: 225/225 records (no user_ids/validation_pure/transaction_atomicity as primary records); 9/10 gates pass; offline correction_identity (Gate B) FAILS in all 27 correction-bearing cells (counterfactual correction facts don't restate the prior text with full word coverage under the locked `_is_supersession` heuristic) → **gates_all_passed = False → adaptive_advances = False** (locked verdict logic; no gate weakening, no tuning); E20-certified Gate C passes
+6. Original E19/E20 artifacts + `config.yaml`/`memory_optimizer/`/`server.py` untouched; new artifacts `e19_coding_generalization_full.json` + `_full_report.md` force-committed; all 185 tests pass; commit `research: align E19 with validated history benchmark and run full grid`

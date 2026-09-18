@@ -1,34 +1,29 @@
-"""E19 — Phase 15: does the corrected adaptive memory generalize to a broader
-set of long-horizon coding tasks under a fixed historical-context budget?
+"""E19 — does the corrected adaptive memory generalize to genuinely
+history-dependent long-horizon coding tasks under a fixed historical-context
+budget?
 
-Research question (D37)
------------------------
+Research question (D37 / Phase 15)
+----------------------------------
 Does the adaptive memory system — after the Phase 15 supersession-embedding fix
 (D36) — generalize to a wider, genuinely history-dependent set of coding tasks
 better than simpler context-management strategies (raw_clipped,
 sliding_window, llm_summarization, vanilla_rag) under the same historical
 budget, measured by deterministic hidden-test patch pass?
 
-Design (locked by the Phase 15 specification; not tuned here)
---------------------------------------------------------------
-* Primary tasks (genuinely history-dependent): user_ids, validation_pure,
-  NEW transaction_atomicity (calibrated this phase). Every primary has >=600
-  deterministic scripted turns, >=3 topic families, >=2 critical facts,
-  >=1 correction or negative constraint, >=1 fact >300 turns old, >=1
-  distractor thread, identity-safe fact_ids and no marker language / hidden
-  test leakage.
-* config_contract (new task authored this phase) is excluded from the E19
-  primary set: calibration probing showed llama3.1:8b cannot reliably
-  express its required "explicit empty string is a valid value" nuance even
-  with oracle history (0/3 across four fixture designs), so the task carries
-  no memory signal at this model tier. Its fixture is retained for future,
-  stronger models and documented in the report.
+Design (Phase 18 alignment; benchmark calibrated by E20)
+----------------------------------------------------------
+* Primary tasks are fixed Variant-A instances of the three counterfactual
+  families independently calibrated by E20 (Phase 17): routing_policy,
+  retry_policy, serialization_policy. E20 established history dependence
+  using identical A/B workspaces and task prompts with different historical
+  contracts and hidden tests. E19 uses Variant A of each validated family as
+  the fixed coding task.
 * Negative controls (harness sanity only — never contribute to the
-  adaptive-advances decision): cache_readonly, write_retry.
+  adaptive-advances decision): cache_readonly, write_retry (ordinary
+  coding-task-suite fixtures).
 * Methods (5, history mechanism differs only): raw_clipped, sliding_window,
   llm_summarization, vanilla_rag, adaptive (the production pipeline,
   retention=dual_score, protect_corrections=True; exactly one adaptive arm).
-* Pilot grid: 3 primary x 2 seeds x 2 budgets (256, 512) x 5 methods = 60 runs.
 * Full grid: 3 primary x 3 seeds x 3 budgets (256/512/1024) x 5 methods = 135,
   plus 2 negative controls x 3 x 3 x 5 = 90 diagnostic runs (225 total).
 * The harness (experiments/coding_benchmark.py) is reused unchanged.
@@ -37,14 +32,16 @@ Design (locked by the Phase 15 specification; not tuned here)
 * Embedding consistency (D36) is verified offline: every correction-superseded
   memory in the adaptive store must carry the embedding of the current fact
   text, not of its obsolete predecessor.
-
-Pilot gates A-J must all pass before the full grid is treated as an experiment;
-pilot results alone are labelled PILOT.
+* Benchmark-validity certification comes from the E20 counterfactual
+  calibration (Phase 17), not from stochastic E19 no-history draws. E19's
+  no_history / direct_history / full_context diagnostics remain descriptive
+  only.
 """
 
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import hashlib
 import json
 import re
@@ -57,7 +54,10 @@ from typing import Dict, List, Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from data.coding_task_suite import build_task, list_task_ids  # noqa: E402
+from data.coding_task_suite import build_task  # noqa: E402
+from data.counterfactual_task_suite import (
+    build_variant as build_counterfactual_variant,
+)  # noqa: E402
 from experiments import coding_benchmark as cb  # noqa: E402
 from experiments.e17_coding_capability import check_models  # noqa: E402
 from experiments.statistics import (  # noqa: E402
@@ -71,10 +71,36 @@ from memory_optimizer.tokenizer import TOKENIZER_NAME  # noqa: E402
 # Configuration (locked by the Phase 15 specification)
 # ---------------------------------------------------------------------------
 
-PRIMARY_TASKS = ["user_ids", "validation_pure", "transaction_atomicity"]
+PRIMARY_TASKS = [
+    "routing_policy",
+    "retry_policy",
+    "serialization_policy",
+]
 CALIB_EXCLUDED_TASK = "config_contract"  # fixture-only; see module docstring
 NEGATIVE_CONTROL_TASKS = ["cache_readonly", "write_retry"]
 ALL_TASKS = PRIMARY_TASKS + NEGATIVE_CONTROL_TASKS
+
+E19_COUNTERFACTUAL_VARIANTS = {
+    "routing_policy": "A",
+    "retry_policy": "A",
+    "serialization_policy": "A",
+}
+
+
+def build_e19_task(task_id: str, seed: int = 1):
+    """Build an E19 task from a validated E20 counterfactual family.
+
+    Counterfactual fixtures carry a suffixed task_id (``routing_policy_A``),
+    but E19's record keying, gates and verdict all use the family name.
+    A copy of the frozen task is returned with the id normalised back to the
+    family name so the suffixed suffix never leaks into E19 records.
+    """
+    variant = E19_COUNTERFACTUAL_VARIANTS.get(task_id)
+    if variant is not None:
+        task = build_counterfactual_variant(task_id, variant, seed=seed)
+        return dataclasses.replace(task, task_id=task_id)
+    return build_task(task_id, seed=seed)
+
 
 PILOT_SEEDS = [1, 2]
 FULL_SEEDS = [1, 2, 3]
@@ -87,11 +113,11 @@ BASELINE_METHODS = [m for m in METHODS if m != "adaptive"]
 DIAG_SEED = 1
 DIAG_BUDGET = 1024
 
-# Diagnostics for gate C and the solvability checks are stochastic (an LLM can
-# pass no_history once by luck). Gate C therefore measures *reproducibility*:
-# a task is taken to genuinely require history only when no_history fails on
-# every diagnostic draw. oracle direct_history solvability is recorded as a
-# success RATE, not a gate.
+# No-history / direct-history diagnostics are stochastic (an LLM can pass
+# no_history once by luck). They are measured over DIAG_DRAWS draws and
+# reported as descriptive observations only; benchmark-validity history
+# dependence is certified by the E20 counterfactual calibration (Phase 17),
+# not by these draws.
 DIAG_DRAWS = 3
 
 DEFAULT_MODEL = "llama3.1:8b"
@@ -103,6 +129,7 @@ RESULTS_DIR = Path(__file__).resolve().parent / "results"
 OUT_JSON = RESULTS_DIR / "e19_coding_generalization.json"
 OUT_REPORT = RESULTS_DIR / "e19_coding_generalization_report.md"
 WORK_ROOT = RESULTS_DIR / "e19_work"
+E20_REPAIR_JSON = RESULTS_DIR / "e20_counterfactual_history_repair.json"
 
 GATE_NAMES = [
     "embedding_consistency",       # A
@@ -206,7 +233,7 @@ def to_schema(rec: Dict) -> Dict:
 def run_one(task_id: str, seed: int, budget: int, method_name: str, *,
             coder, embed_fn, model: str, endpoint: str,
             embedding_model: str, summarizer_generate_fn=None) -> Dict:
-    task = build_task(task_id, seed=seed)
+    task = build_e19_task(task_id, seed=seed)
     method = cb.build_method(
         method_name, model=model, endpoint=endpoint, embed_fn=embed_fn,
         embedding_model=embedding_model,
@@ -232,7 +259,7 @@ class StaticCoder:
 
 
 def check_gold(task_id: str, seed: int = 1) -> Dict:
-    task = build_task(task_id, seed=seed)
+    task = build_e19_task(task_id, seed=seed)
     gold_path = getattr(task, "gold_patch_path", None)
     if gold_path is None:
         gold_path = task.workspace_path.parent / "gold.patch"
@@ -254,7 +281,7 @@ def check_gold(task_id: str, seed: int = 1) -> Dict:
 def run_offline_cell(task_id: str, seed: int, budget: int, *,
                      embed_fn, embedding_model: str, endpoint: str,
                      model: str) -> Dict:
-    task = build_task(task_id, seed=seed)
+    task = build_e19_task(task_id, seed=seed)
     method = cb.build_method("adaptive", model=model, endpoint=endpoint,
                              embed_fn=embed_fn, embedding_model=embedding_model,
                              task=task)
@@ -320,6 +347,51 @@ def offline_gate(cells: List[Dict], primary_tasks: List[str]) -> Dict:
 # Gates A-J
 # ---------------------------------------------------------------------------
 
+def check_e20_calibration() -> Dict:
+    """Return the frozen E20 history-dependence certification."""
+    if not E20_REPAIR_JSON.is_file():
+        return {
+            "passed": False,
+            "reason": "missing E20 repair artifact",
+            "artifact": str(E20_REPAIR_JSON),
+        }
+
+    payload = json.loads(E20_REPAIR_JSON.read_text())
+    expected_groups = [
+        "routing_policy",
+        "retry_policy",
+        "serialization_policy",
+    ]
+
+    configured_groups = (
+        payload.get("config", {}).get("groups", [])
+    )
+
+    verdict = payload.get("verdict", {})
+    gates = payload.get("gates", {})
+
+    passed = (
+        payload.get("revalidation") is True
+        and configured_groups == expected_groups
+        and gates.get("gold_patch_validity", {}).get("passed") is True
+        and gates.get("pair_integrity", {}).get("passed") is True
+        and gates.get("history_dependence", {}).get("passed") is True
+        and verdict.get("history_dependence_benchmark") == "VALID"
+        and verdict.get("e19_full_grid_eligible") is True
+    )
+
+    return {
+        "passed": passed,
+        "artifact": str(E20_REPAIR_JSON),
+        "groups": configured_groups,
+        "expected_groups": expected_groups,
+        "gold_patch_validity": gates.get("gold_patch_validity", {}),
+        "pair_integrity": gates.get("pair_integrity", {}),
+        "history_dependence": gates.get("history_dependence", {}),
+        "verdict": verdict,
+    }
+
+
 def compute_gates(*, records: List[Dict], diagnostics: List[Dict],
                   offline: Dict, gold_checks: List[Dict], unit_tests: Dict,
                   task_ids_primary: List[str],
@@ -340,27 +412,14 @@ def compute_gates(*, records: List[Dict], diagnostics: List[Dict],
     # B: correction identity (offline) — obsolete fact dropped, current kept.
     gb = bool(og.get("identity_gate"))
 
-    # C: history dependence — no_history must FAIL on every diagnostic draw for
-    #    every primary task (no task is solvable from the workspace alone, even
-    #    by luck). Oracle direct-history solvability is recorded per task as a
-    #    diagnostic success RATE: coding-model variance makes it unsuitable as a
-    #    hard gate, so it is reported, not enforced (see the report's
-    #    diagnostics section).
-    no_hist = {r["task_id"]: r for r in diagnostics if r["method"] == "no_history"}
-    direct = {r["task_id"]: r for r in diagnostics if r["method"] == "direct_history"}
-    per_task = {}
-    for tid in task_ids_primary:
-        nh = no_hist.get(tid)
-        dh = direct.get(tid)
-        nh_ok = bool(nh and (nh.get("successes") or 0) > 0)
-        dh_suc = int(dh.get("successes", 0)) if dh else 0
-        per_task[tid] = {"no_history_success": nh_ok,
-                         "no_history_successes": int(nh.get("successes", 0)) if nh else 0,
-                         "oracle_direct_history_success": dh_suc > 0,
-                         "oracle_direct_history_successes": dh_suc}
-    # g3 uses `no_history_success` (all-draws must fail) but the per-task
-    # detail stays available via the extended dict above.
-    g3 = all(not p["no_history_success"] for p in per_task.values())
+    # C: history dependence — certified by the E20 counterfactual calibration
+    #    (Phase 17). E20 established history dependence per counterfactual
+    #    family with identical A/B workspaces and task prompts, variant-specific
+    #    historical contracts and hidden tests, deterministic 600-turn histories
+    #    and predeclared success thresholds. E19's own no_history/direct_history
+    #    diagnostics are descriptive only and do not override this certification.
+    calibration = check_e20_calibration()
+    g3 = bool(calibration["passed"])
 
     # D: method separation — at least one (task,seed,budget) group shows >=3
     #    distinct historical contexts.
@@ -422,7 +481,9 @@ def compute_gates(*, records: List[Dict], diagnostics: List[Dict],
             "failing_cells": og.get("failing_identity_cells"),
         },
         "history_dependence": {
-            "passed": g3, "per_task": per_task,
+            "passed": g3,
+            "source": "E20 counterfactual history calibration",
+            "calibration": calibration,
         },
         "method_separation": {
             "passed": g4, "max_distinct_contexts": max_distinct,
@@ -655,27 +716,32 @@ def generate_report(result: Dict) -> str:
     L.append("## 3. Design: Primary vs Negative-Control Split (D37)")
     L.append("")
     L.append("- **Primary tasks** (history-dependent; the paired/verdict analysis "
-             "uses only these): user_ids, validation_pure, transaction_atomicity.")
+             "uses only these): "
+             + ", ".join(PRIMARY_TASKS) + ".")
     L.append("- **Negative-control tasks** (harness sanity only; recorded and "
              "reported, never used in paired comparisons or the adaptive-advances "
              "verdict): cache_readonly, write_retry.")
     L.append("- **Fixture-only task**: config_contract (authored and calibrated "
-             "this phase, but excluded from the primary set — llama3.1:8b cannot "
-             "reliably express its explicit-empty-string fact even with oracle "
-             "history; probing: 0/3 oracle passes across four fixture designs). "
-             "Its fixture is committed for future stronger models.")
+             "during the Phase 15 pilot, but excluded from the primary set — "
+             "llama3.1:8b cannot reliably express its explicit-empty-string fact "
+             "even with oracle history; probing: 0/3 oracle passes across four "
+             "fixture designs). Its fixture remains committed for future stronger "
+             "models; it is not part of the Phase 18 primary set.")
     L.append("- Reasoning: a generalization claim must be earned on tasks whose "
              "constraints genuinely require the buried history; tasks that can be "
              "solved from the workspace alone would measure coding ability, not "
-             "memory. The negative controls keep the environment honest (a "
-             "correctly-built harness passes them with the gold patch).")
+             "memory. Each primary task is a fixed Variant-A instance of a "
+             "counterfactual family independently calibrated by E20, so the "
+             "history dependence of the benchmark is externally certified. The "
+             "negative controls keep the environment honest (a correctly-built "
+             "harness passes them with the gold patch).")
 
     L.append("## 4. Task Suite")
     L.append("")
     L.append("| task | group | title | critical facts | corrections | negative constraints |")
     L.append("| --- | --- | --- | --- | --- | --- |")
     for tid in ALL_TASKS:
-        t = build_task(tid, seed=1)
+        t = build_e19_task(tid, seed=1)
         group = "primary" if tid in PRIMARY_TASKS else "negative-control"
         L.append(f"| {tid} | {group} | {t.title} | {len(t.gold_facts)} | "
                  f"{len(t.corrections)} | "
@@ -684,18 +750,28 @@ def generate_report(result: Dict) -> str:
 
     L.append("## 5. Historical Dependence Design")
     L.append("")
-    L.append("Each task spreads critical facts across a ~600-turn deterministic "
-             "transcript among distractors (>=3 topic families), with >=2 critical "
-             "facts, >=1 correction or negative constraint, >=1 fact >300 turns "
-             "old, and >=1 distractor thread. user_ids buries the opaque-string-cast "
-             "constraint (cast ids no longer); validation_pure buries the pure-"
-             "validation constraint (no audit I/O on the critical path); "
-             "transaction_atomicity buries the all-or-nothing rollback rule "
-             "(correction turn 505) and the no-retry rule (turn 310). "
-             "No fact text uses IMPORTANT/CRITICAL marker language; fact_ids are "
+    L.append(
+        "Each primary task is sourced from a Phase-17-validated E20 "
+        "counterfactual family. The E20 calibration used identical workspace "
+        "and task prompt across variants, variant-specific historical contracts, "
+        "variant-specific hidden tests/gold patches, deterministic 600-turn "
+        "histories, and predeclared success thresholds. E19 uses Variant A of "
+        "each validated family as the fixed coding task. The A/B counterfactual "
+        "validation, rather than stochastic E19 no_history draws, is the "
+        "benchmark-level history-dependence certification."
+    )
+    L.append("")
+    L.append("Task-specific mechanisms: routing_policy uses an opaque "
+             "operation→lane allocation absent from the workspace; "
+             "retry_policy uses a historical idempotency/retry contract; "
+             "serialization_policy uses a historical policy governing unknown "
+             "configuration keys.")
+    L.append("")
+    L.append("No fact text uses IMPORTANT/CRITICAL marker language; fact_ids are "
              "identity-safe; histories are generated from structured data with no "
              "LLM calls. The task prompts never mention the critical historical "
-             "rules; the no_history diagnostic (section 20) quantifies dependence.")
+             "rules; the no_history diagnostic (section 20) quantifies dependence "
+             "descriptively.")
 
     L.append("## 6. Memory Methods Under Test")
     L.append("")
@@ -766,7 +842,7 @@ def generate_report(result: Dict) -> str:
              "`task_id:seed:budget:method`; the grid is resumable and completed "
              "results are never deleted.")
 
-    L.append("## 12. Pilot Gates A-J")
+    L.append("## 12. Experiment Gates A-J")
     L.append("")
     L.append("| gate | passed | detail |")
     L.append("| --- | --- | --- |")
@@ -776,9 +852,19 @@ def generate_report(result: Dict) -> str:
         L.append(f"| {name} | {'PASS' if g.get('passed') else 'FAIL'} | "
                  f"{json.dumps(detail, default=str)[:500]} |")
     L.append("")
-    L.append(f"**All gates passed: {gates.get('all_passed')}** (verdict section 16).")
+    L.append("Gate C (`history_dependence`) uses **E20 counterfactual history "
+             "calibration**: E20 is the benchmark-validity certification. E19 "
+             "diagnostics are descriptive and are not used to override the E20 "
+             "certification.")
+    L.append("")
+    L.append(f"**All experiment gates passed: {gates.get('all_passed')}** "
+             "(verdict section 16).")
 
-    L.append("## 13. Pilot Results: Success Rate by Method x Budget (PILOT)")
+    section_13_title = (
+        "Pilot Results: Success Rate by Method x Budget"
+        if cfg.get("mode") == "pilot"
+        else "Full-Grid Results: Success Rate by Method x Budget")
+    L.append(f"## 13. {section_13_title}")
     L.append("")
     if cfg.get("mode") == "pilot":
         L.append("The full grid has not been run yet; these are PILOT numbers and "
@@ -895,9 +981,11 @@ def generate_report(result: Dict) -> str:
     L.append("## 20. No-History / Full-Context / Direct-History Diagnostics")
     L.append("")
     L.append(f"no_history and direct_history are stochastic diagnostics and are "
-             f"measured over {DIAG_DRAWS} draws (seed 1, budget {DIAG_BUDGET}); "
-             f"gate C requires *zero* no_history successes across all draws for "
-             f"every primary. Oracle direct_history is a recorded success rate, "
+             f"measured over {DIAG_DRAWS} draws (seed 1, budget {DIAG_BUDGET}). "
+             f"These diagnostics are descriptive only and are NOT used to "
+             f"certify history dependence: benchmark-level history dependence "
+             f"is certified by the E20 counterfactual calibration (Gate C, "
+             f"section 12). Oracle direct_history is a recorded success rate, "
              f"not a gate.")
     L.append("")
     L.append("| task | no_history (x{}) | full_context | direct_history oracle (x{}) |".format(
@@ -1109,9 +1197,11 @@ def main(argv=None):
     summarizer_generate_fn = lambda prompt, mx: coder.generate(prompt)["text"]
 
     def persist(partial=False):
+        e20_calibration = check_e20_calibration()
         payload = {
             "experiment": "e19_coding_generalization",
             "partial": partial,
+            "e20_calibration": e20_calibration,
             "config": {
                 "mode": mode, "tasks": tasks,
                 "primary_tasks": PRIMARY_TASKS,

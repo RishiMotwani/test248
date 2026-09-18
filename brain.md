@@ -1383,6 +1383,31 @@ defaults, or E17/E18/E19/original-E20 artifact was modified.
 
 ---
 
+### D40 ★ Phase 18 — E19 aligned to the E20-validated benchmark; 225-cell full grid run
+
+**DECISION (locked contract, Phase 18):** E19's primary tasks are fixed
+Variant-A instances of the three E20-validated counterfactual families
+(`routing_policy`, `retry_policy`, `serialization_policy`). Gate C
+(`history_dependence`) is the frozen E20 counterfactual history calibration
+(`check_e20_calibration()` on `e20_counterfactual_history_repair.json`), not
+stochastic E19 no-history draws; E19's diagnostics remain descriptive only.
+`adaptive_advances` uses the predeclared paired criterion and nothing is tuned.
+
+**OBSERVED (225-cell grid, llama3.1:8b @ localhost:11434, seeds 1–3, budgets
+256/512/1024, 5 methods):** 225/225 records (135 primary + 90 negative);
+exactly 5 task families; E20 certification Gate C PASS. 9/10 gates pass; the
+offline **correction-identity gate (B) FAILS in all 27 correction-bearing
+cells** — the obsolete fact (`*.inter.001` etc.) survives in the adaptive
+store because the counterfactual correction facts do not restate the old fact
+with full word coverage, so the unchanged `_is_supersession` consolidation
+heuristic never fires (verified directly on the raw `build_variant` fixture,
+zero E19 changes). Consequently `gates_all_passed = False` →
+`adaptive_advances = False` (paired: adaptive 27/27 vs raw_clipped 13/27,
+sliding_window 9/27, llm_summarization 14/27, vanilla_rag 27/27).
+
+**Status:** Phase 18 complete; results recorded without claims. `config.yaml`,
+`memory_optimizer/`, `server.py` and all original E19/E20 artifacts untouched.
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.
