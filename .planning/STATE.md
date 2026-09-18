@@ -22,7 +22,7 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 11** — E15 retention-policy separation (activation vs survival) · commit `4889f2b`
 - **Phase 12** — E16 retention selectivity under hard pressure (task_affinity rejected) · commit `c971553` (+docs `6b25a80`)
 - **Phase 13** — E17 long-horizon coding capability (no adaptive advantage) · commit `0025589`
-- **Phase 14** — E18 correction-safe memory, targeted validation (retrieval-safe supersession) · commit `TBD_AFTER_COMMIT`
+- **Phase 14** — E18 correction-safe memory, targeted validation (retrieval-safe supersession) · commit `4597496` (+docs)
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
