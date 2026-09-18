@@ -78,8 +78,8 @@ on that group. Only when all three groups pass is the E19 full grid eligible.
 
 ## Cryptographic checkpoint
 
-- Checkpoint branch: `checkpoint/phase-16-e20-complete` → HEAD SHA (this commit)
-- Checkpoint tag: `checkpoint-phase-16-e20-<sha>` = same SHA
+- Checkpoint branch: `checkpoint/phase-16-e20-complete` → `d331243`
+- Checkpoint tag: `checkpoint-phase-16-e20-d331243` = same SHA
 
 ## Restore
 

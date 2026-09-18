@@ -1,10 +1,10 @@
 # Phase-16/E20 Immutable Checkpoint
 
-Checkpoint SHA: (this commit — set at commit time)
-Checkpoint short SHA: (this commit)
+Checkpoint SHA: d3312431ab1a1d14ef4b1e91254c2bfa03566094
+Checkpoint short SHA: d331243
 Current branch: master
 Checkpoint branch: checkpoint/phase-16-e20-complete
-Checkpoint tag: checkpoint-phase-16-e20-<short-sha>
+Checkpoint tag: checkpoint-phase-16-e20-d331243
 
 Phase: 16
 Experiment: E20
@@ -42,4 +42,4 @@ git checkout checkpoint/phase-16-e20-complete
 
 or:
 
-git reset --hard <full-sha-of-this-commit>
+git reset --hard d3312431ab1a1d14ef4b1e91254c2bfa03566094
