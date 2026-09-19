@@ -1591,6 +1591,48 @@ no production change. `experiments/results/e27_calibration.json` +
 `config.yaml`, `server.py` and every E26/E19/E20/E24/E25 artifact
 byte-identical.
 
+### D45 ★ E28 model-tier certification — the frozen E27 surface fails at qwen2.5:7b as well
+
+**DECISION (locked contract, Phase 23):** answer D44's open question — is the
+E27 failure a property of the benchmark surface or of the llama3.1:8b model
+tier? — by re-running the byte-identical, frozen 48-cell E27 calibration at
+exactly one other tier, `qwen2.5:7b`, with the exact same fixtures, budget 96,
+methods, nomic-embed-text embeddings and E27's locked gate thresholds. E28 is
+a thin output-rebinding wrapper (same delegation pattern as the E22/E23 E19
+wrappers) that calls `e27_calibration.main` unchanged and then wraps the
+E27-shaped payload into the E28 result shape. E28 never redesigns the surface,
+never re-runs E26/E19, never runs a head-to-head grid and never ranks models;
+`head_to_head_eligible = calibration_valid` and a head-to-head is only a
+separate, explicitly commissioned phase.
+
+**OBSERVED (E28, Phase 23 — 48 cells at qwen2.5:7b @ localhost:11434, budget
+96, seeds 1–2):** a no-LLM dry-run verified all four contexts construct under
+the Qwen setting (no_history 0, direct_history 51, vanilla_rag 93, adaptive 88
+tokens on the route_contract/A probe); offline fixture gates PASS on all 6
+variants; 48/48 cells completed. The gate pattern is exactly E27's:
+budget_binding (vanilla_rag and adaptive both 1.0 fraction bound at 96 tokens),
+context_difference (12/12 paired cells distinct) and no_leakage (0) PASS.
+**Gate `history_dependence` FAIL** — route_contract and serialization_contract
+now reach direct_history 1.0 AND no_history 1.0 (the stronger tier solves both
+groups with no history at all, so the per-group diff collapses to 0), and
+retry_contract direct_history 0.25 / no_history 0.50 (diff -1, direct below the
+0.75 bar and no_history above the 0.25 cap). **Gate `contradiction_state`
+FAIL** — adaptive correction_recall 1.0 / obsolete_fact_exposure 0.0 (clean
+side), vanilla_rag obsolete_fact_exposure 0.6667 < 0.75 (the *identical*
+exposure to E27: vanilla still retrieves the current correction on the
+serialization/retry variant-A cells). Per-method pilot success: no_history
+0.833, direct_history 0.75, adaptive 0.667, vanilla_rag 0.417.
+
+**STATUS:** Phase 23 reports the two-tier gate comparison and stops.
+`calibration_valid = False`, `head_to_head_eligible = False` at `qwen2.5:7b`.
+Because the identical frozen surface fails identically at both tiers, the E27
+failure does **NOT** isolate to the llama3.1:8b tier — the surface itself
+remains the leading explanation. No redesign is performed here (this is a
+measurement, not a fix); the two-tier evidence goes to the architect.
+`experiments/results/e28_model_tier_certification.json` + `_report.md`
+force-added; `memory_optimizer/`, `baselines/`, `config.yaml`, `server.py` and
+every E27/E26/E19/E20/E24/E25 artifact byte-identical.
+
 ---
 
 ## 8. Open questions for the human (blocking decisions)
@@ -1599,7 +1641,13 @@ byte-identical.
 2. **D4 reinforcement semantics**: refresh + recompute base_score ★ / clock-refresh only / capped signal.
 3. **D4/D1 demo controls**: `planted_count` cap — 50 leaving ≥20 filler turns ★ vs up to `turns/2`; and the exact meaning of the density control (re-mention rate of planted facts — user's 10-Sep mental model — vs "% of turns that carry a planted fact" which the current UI tooltip claims but the code ignores).
 4. **D7 fill-mode**: when relevance candidates are scarce, fill the remaining `injection_token_limit` with best remaining by rank ★ vs strict top-k only (conservative, avoids injecting irrelevant context à la §6.3).
-5. **D44 next move (post E27)**: E27 calibrated INVALID at llama3.1:8b. Options — switch to a stronger/cheaper model tier re-certified on the same offline gates; re-specify families with multi-fact decisive policies so `no_history` falls harder while `direct_history` stays solvable; or stop the benchmark line. (E27 itself does none of these.)
+5. **D44 next move (post E27/E28)**: E27 calibrated INVALID at llama3.1:8b and
+   E28 (D45) re-certified the frozen surface at qwen2.5:7b — it is ALSO invalid
+   (same gate pattern: history_dependence and contradiction_state fail at both
+   tiers). Options — redesign the surface (multi-fact decisive policies so
+   `no_history` falls harder while `direct_history` stays solvable) and/or add a
+   solvability pre-gate per tier; or stop the benchmark line. E28 itself does
+   none of these.
 
 ## 9. Benchmark / source index (how we'll verify changes)
 
