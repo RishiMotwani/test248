@@ -1,0 +1,127 @@
+{
+  "group_id": "release_adapter",
+  "variant": "B",
+  "decision_summary": "the adapter must journal every published release payload to the local pending_releases.json file before export, recording the journal as the delivery source",
+  "facts": [
+    {
+      "fact_id": "ra.b.old.001",
+      "turn_index": 78,
+      "kind": "decision",
+      "topic": "caching",
+      "old": true
+    },
+    {
+      "fact_id": "ra.b.old.002",
+      "turn_index": 109,
+      "kind": "decision",
+      "topic": "caching",
+      "old": true
+    },
+    {
+      "fact_id": "ra.b.old.003",
+      "turn_index": 146,
+      "kind": "decision",
+      "topic": "caching",
+      "old": true
+    },
+    {
+      "fact_id": "ra.b.old.004",
+      "turn_index": 178,
+      "kind": "decision",
+      "topic": "caching",
+      "old": true
+    },
+    {
+      "fact_id": "ra.b.cur.001",
+      "turn_index": 427,
+      "kind": "correction",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ra.b.cur.002",
+      "turn_index": 458,
+      "kind": "correction",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ra.b.cur.003",
+      "turn_index": 502,
+      "kind": "correction",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ra.b.cur.004",
+      "turn_index": 538,
+      "kind": "correction",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ra.b.d1",
+      "turn_index": 133,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ra.b.d2",
+      "turn_index": 258,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ra.b.d3",
+      "turn_index": 356,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ra.b.d4",
+      "turn_index": 564,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    }
+  ],
+  "corrections": [
+    {
+      "obsolete": "ra.b.old.001",
+      "current": "ra.b.cur.001"
+    },
+    {
+      "obsolete": "ra.b.old.002",
+      "current": "ra.b.cur.002"
+    },
+    {
+      "obsolete": "ra.b.old.003",
+      "current": "ra.b.cur.003"
+    },
+    {
+      "obsolete": "ra.b.old.004",
+      "current": "ra.b.cur.004"
+    }
+  ],
+  "current_fact_ids": [
+    "ra.b.cur.001",
+    "ra.b.cur.002",
+    "ra.b.cur.003",
+    "ra.b.cur.004"
+  ],
+  "obsolete_fact_ids": [
+    "ra.b.old.001",
+    "ra.b.old.002",
+    "ra.b.old.003",
+    "ra.b.old.004"
+  ],
+  "distractor_fact_ids": [
+    "ra.b.d1",
+    "ra.b.d2",
+    "ra.b.d3",
+    "ra.b.d4"
+  ]
+}

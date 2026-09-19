@@ -1,0 +1,10 @@
+diff --git a/invoiceapp/adapter.py b/invoiceapp/adapter.py
+index 735e63c..f2adc5b 100644
+--- a/invoiceapp/adapter.py
++++ b/invoiceapp/adapter.py
+@@ -2,4 +2,4 @@
+ 
+ def normalize_invoice(row, registry):
+     """Normalize one invoice row according to repository contract."""
+-    raise NotImplementedError
++    return {"invoice_id": row["invoice_id"], "line_items": [{"id": i["id"], "code": i["code"]} for i in row["line_items"]]}

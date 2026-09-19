@@ -1,0 +1,127 @@
+{
+  "group_id": "message_adapter",
+  "variant": "B",
+  "decision_summary": "acceptance by the relay IS delivery; the adapter must never wait for downstream consumer confirmation",
+  "facts": [
+    {
+      "fact_id": "ma.b.old.001",
+      "turn_index": 75,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.b.old.002",
+      "turn_index": 106,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.b.old.003",
+      "turn_index": 143,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.b.old.004",
+      "turn_index": 179,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.b.cur.001",
+      "turn_index": 425,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.b.cur.002",
+      "turn_index": 453,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.b.cur.003",
+      "turn_index": 497,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.b.cur.004",
+      "turn_index": 539,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.b.d1",
+      "turn_index": 130,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ma.b.d2",
+      "turn_index": 255,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.b.d3",
+      "turn_index": 353,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.b.d4",
+      "turn_index": 559,
+      "kind": "distractor",
+      "topic": "auth",
+      "old": false
+    }
+  ],
+  "corrections": [
+    {
+      "obsolete": "ma.b.old.001",
+      "current": "ma.b.cur.001"
+    },
+    {
+      "obsolete": "ma.b.old.002",
+      "current": "ma.b.cur.002"
+    },
+    {
+      "obsolete": "ma.b.old.003",
+      "current": "ma.b.cur.003"
+    },
+    {
+      "obsolete": "ma.b.old.004",
+      "current": "ma.b.cur.004"
+    }
+  ],
+  "current_fact_ids": [
+    "ma.b.cur.001",
+    "ma.b.cur.002",
+    "ma.b.cur.003",
+    "ma.b.cur.004"
+  ],
+  "obsolete_fact_ids": [
+    "ma.b.old.001",
+    "ma.b.old.002",
+    "ma.b.old.003",
+    "ma.b.old.004"
+  ],
+  "distractor_fact_ids": [
+    "ma.b.d1",
+    "ma.b.d2",
+    "ma.b.d3",
+    "ma.b.d4"
+  ]
+}

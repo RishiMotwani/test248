@@ -1,0 +1,127 @@
+{
+  "group_id": "invoice_adapter",
+  "variant": "B",
+  "decision_summary": "unknown line-item codes must be remapped to the generic MISCELLANEOUS code during normalization",
+  "facts": [
+    {
+      "fact_id": "ia.b.old.001",
+      "turn_index": 80,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ia.b.old.002",
+      "turn_index": 111,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ia.b.old.003",
+      "turn_index": 148,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ia.b.old.004",
+      "turn_index": 178,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ia.b.cur.001",
+      "turn_index": 429,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ia.b.cur.002",
+      "turn_index": 460,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ia.b.cur.003",
+      "turn_index": 504,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ia.b.cur.004",
+      "turn_index": 538,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ia.b.d1",
+      "turn_index": 135,
+      "kind": "distractor",
+      "topic": "auth",
+      "old": false
+    },
+    {
+      "fact_id": "ia.b.d2",
+      "turn_index": 260,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ia.b.d3",
+      "turn_index": 358,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ia.b.d4",
+      "turn_index": 566,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    }
+  ],
+  "corrections": [
+    {
+      "obsolete": "ia.b.old.001",
+      "current": "ia.b.cur.001"
+    },
+    {
+      "obsolete": "ia.b.old.002",
+      "current": "ia.b.cur.002"
+    },
+    {
+      "obsolete": "ia.b.old.003",
+      "current": "ia.b.cur.003"
+    },
+    {
+      "obsolete": "ia.b.old.004",
+      "current": "ia.b.cur.004"
+    }
+  ],
+  "current_fact_ids": [
+    "ia.b.cur.001",
+    "ia.b.cur.002",
+    "ia.b.cur.003",
+    "ia.b.cur.004"
+  ],
+  "obsolete_fact_ids": [
+    "ia.b.old.001",
+    "ia.b.old.002",
+    "ia.b.old.003",
+    "ia.b.old.004"
+  ],
+  "distractor_fact_ids": [
+    "ia.b.d1",
+    "ia.b.d2",
+    "ia.b.d3",
+    "ia.b.d4"
+  ]
+}

@@ -1,0 +1,600 @@
+Turn 1: Discussed the migration ordering for the next release; no change yet.
+Turn 2: The cache eviction counter looked off by one; traced it to labels.
+Turn 3: The CI runner was slow after lunch; eventually recovered.
+Turn 4: Talked through MFA enrollment edge cases with the platform team.
+Turn 5: One slow join showed up in the query log; added it to the tuning list.
+Turn 6: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 7: Pair-reviewed a trivial formatting change.
+Turn 8: Investigated a logout race; added it to the backlog for later.
+Turn 9: The ORM generated a nested select again; replaced it in one spot.
+Turn 10: Reviewed TTL settings informally; left them alone.
+Turn 11: Updated the on-call runbook with a couple of small clarifications.
+Turn 12: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 13: Reviewed backup retention with the ops team; policy unchanged.
+Turn 14: Compared two serialization formats for the cache values, no decision.
+Turn 15: Reopened and re-closed an old issue that was already fixed.
+Turn 16: Cleaned up the permissions matrix doc after the access review.
+Turn 17: Cleaned up unused columns from a scratch table.
+Turn 18: Compared two serialization formats for the cache values, no decision.
+Turn 19: Coffee machine broke again; work continued regardless.
+Turn 20: Investigated a logout race; added it to the backlog for later.
+Turn 21: Talked about read replicas for the reporting workload.
+Turn 22: Cleared a stale namespace on staging to reproduce a bug.
+Turn 23: Updated the on-call runbook with a couple of small clarifications.
+Turn 24: Wrote a small script to dump active sessions for support.
+Turn 25: One slow join showed up in the query log; added it to the tuning list.
+Turn 26: Saw a memory spike in the cache process during the load test.
+Turn 27: Standup ran long today; mostly status updates.
+Turn 28: Spent the morning rotating the staging service account keys.
+Turn 29: Vacuumed the analytics replica and watched the query plans settle.
+Turn 30: Talked about whether to persist cache entries across restarts.
+Turn 31: The build cache got cleared to fix a flaky stage.
+Turn 32: Spent the morning rotating the staging service account keys.
+Turn 33: Added an index on a lookup column in dev to see if it helps.
+Turn 34: Talked about whether to persist cache entries across restarts.
+Turn 35: Updated the on-call runbook with a couple of small clarifications.
+Turn 36: Cleaned up the permissions matrix doc after the access review.
+Turn 37: Discussed partitioning options for the events table, deferred.
+Turn 38: Compared two serialization formats for the cache values, no decision.
+Turn 39: The build cache got cleared to fix a flaky stage.
+Turn 40: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 41: Reviewed backup retention with the ops team; policy unchanged.
+Turn 42: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 43: The build cache got cleared to fix a flaky stage.
+Turn 44: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 45: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 46: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 47: Filed a docs ticket for the onboarding guide.
+Turn 48: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 49: Reviewed backup retention with the ops team; policy unchanged.
+Turn 50: Discussed key naming conventions for the cache namespace.
+Turn 51: Standup ran long today; mostly status updates.
+Turn 52: Cleaned up the permissions matrix doc after the access review.
+Turn 53: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 54: Talked about whether to persist cache entries across restarts.
+Turn 55: The CI runner was slow after lunch; eventually recovered.
+Turn 56: Reviewed the session revocation PR; left comments about token naming.
+Turn 57: The ORM generated a nested select again; replaced it in one spot.
+Turn 58: Cleared a stale namespace on staging to reproduce a bug.
+Turn 59: Discussed the offsite logistics for a few minutes.
+Turn 60: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 61: Discussed partitioning options for the events table, deferred.
+Turn 62: Saw a memory spike in the cache process during the load test.
+Turn 63: Coffee machine broke again; work continued regardless.
+Turn 64: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 65: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 66: Reviewed TTL settings informally; left them alone.
+Turn 67: The build cache got cleared to fix a flaky stage.
+Turn 68: The identity provider had a brief outage; nothing we can do about it.
+Turn 69: The schema diff tool produced noise again, ignored it.
+Turn 70: Discussed key naming conventions for the cache namespace.
+Turn 71: Discussed the offsite logistics for a few minutes.
+Turn 72: Wrote a small script to dump active sessions for support.
+Turn 73: Reviewed backup retention with the ops team; policy unchanged.
+Turn 74: Fixed a typo in the cache client docstring.
+Turn 75: Reopened and re-closed an old issue that was already fixed.
+Team note: The invoice normalizer maps every unrecognised line-item code to the generic MISCELLANEOUS code so downstream reports stay grouped.
+Turn 77: Cleaned up unused columns from a scratch table.
+Turn 78: Compared two serialization formats for the cache values, no decision.
+Turn 79: Pair-reviewed a trivial formatting change.
+Turn 80: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 81: Discussed partitioning options for the events table, deferred.
+Turn 82: Reviewed TTL settings informally; left them alone.
+Turn 83: Reopened and re-closed an old issue that was already fixed.
+Turn 84: The identity provider had a brief outage; nothing we can do about it.
+Turn 85: Discussed the migration ordering for the next release; no change yet.
+Turn 86: Saw a memory spike in the cache process during the load test.
+Turn 87: The build cache got cleared to fix a flaky stage.
+Turn 88: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 89: The ORM generated a nested select again; replaced it in one spot.
+Turn 90: Cleared a stale namespace on staging to reproduce a bug.
+Turn 91: The lint config got reordered; no rule changes.
+Turn 92: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 93: Reviewed backup retention with the ops team; policy unchanged.
+Turn 94: Talked about whether to persist cache entries across restarts.
+Turn 95: The build cache got cleared to fix a flaky stage.
+Turn 96: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 97: Discussed the migration ordering for the next release; no change yet.
+Turn 98: Fixed a typo in the cache client docstring.
+Turn 99: Reopened and re-closed an old issue that was already fixed.
+Turn 100: Benchmarked password hashing cost and left the parameters as they are.
+Turn 101: Reviewed backup retention with the ops team; policy unchanged.
+Turn 102: Cleared a stale namespace on staging to reproduce a bug.
+Turn 103: Standup ran long today; mostly status updates.
+Turn 104: Investigated a logout race; added it to the backlog for later.
+Turn 105: Vacuumed the analytics replica and watched the query plans settle.
+Turn 106: Discussed key naming conventions for the cache namespace.
+Team note: An unknown line-item code is replaced by MISCELLANEOUS and its original code is discarded before the row leaves the adapter.
+Turn 108: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 109: Cleaned up unused columns from a scratch table.
+Turn 110: The cache eviction counter looked off by one; traced it to labels.
+Turn 111: Talked about the release train schedule, no action items.
+Turn 112: Cleaned up the permissions matrix doc after the access review.
+Turn 113: The ORM generated a nested select again; replaced it in one spot.
+Turn 114: Talked about cache stampede mitigation for a shared key.
+Turn 115: Cleaned up a pile of stale branches in the repo.
+Turn 116: Renamed a few role constants for readability, no behavior change.
+Turn 117: The schema diff tool produced noise again, ignored it.
+Turn 118: Compared two serialization formats for the cache values, no decision.
+Turn 119: Updated the on-call runbook with a couple of small clarifications.
+Turn 120: Renamed a few role constants for readability, no behavior change.
+Turn 121: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 122: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 123: Reopened and re-closed an old issue that was already fixed.
+Turn 124: Renamed a few role constants for readability, no behavior change.
+Turn 125: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 126: The cache eviction counter looked off by one; traced it to labels.
+Turn 127: The lint config got reordered; no rule changes.
+Turn 128: Investigated a logout race; added it to the backlog for later.
+Turn 129: Talked about read replicas for the reporting workload.
+Turn 130: Talked about whether to persist cache entries across restarts.
+Team note: The approval queue holds invoices over a configured threshold amount until manual review before processing can continue downstream in the pipeline.
+Turn 132: Renamed a few role constants for readability, no behavior change.
+Turn 133: Cleaned up unused columns from a scratch table.
+Turn 134: Cleared a stale namespace on staging to reproduce a bug.
+Turn 135: Standup ran long today; mostly status updates.
+Turn 136: Cleaned up the permissions matrix doc after the access review.
+Turn 137: Discussed partitioning options for the events table, deferred.
+Turn 138: Fixed a typo in the cache client docstring.
+Turn 139: Cleaned up a pile of stale branches in the repo.
+Turn 140: Renamed a few role constants for readability, no behavior change.
+Turn 141: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 142: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 143: Reopened and re-closed an old issue that was already fixed.
+Team note: The registry lookup fallback maps unknowns to MISCELLANEOUS with the display name Miscellaneous for every report that consumes invoices.
+Turn 145: Vacuumed the analytics replica and watched the query plans settle.
+Turn 146: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 147: The lint config got reordered; no rule changes.
+Turn 148: Wrote a small script to dump active sessions for support.
+Turn 149: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 150: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 151: The build cache got cleared to fix a flaky stage.
+Turn 152: Cleaned up the permissions matrix doc after the access review.
+Turn 153: Reviewed backup retention with the ops team; policy unchanged.
+Turn 154: Saw a memory spike in the cache process during the load test.
+Turn 155: Reopened and re-closed an old issue that was already fixed.
+Turn 156: Benchmarked password hashing cost and left the parameters as they are.
+Turn 157: Vacuumed the analytics replica and watched the query plans settle.
+Turn 158: Fixed a typo in the cache client docstring.
+Turn 159: The build cache got cleared to fix a flaky stage.
+Turn 160: Wrote a small script to dump active sessions for support.
+Turn 161: Cleaned up unused columns from a scratch table.
+Turn 162: Saw a memory spike in the cache process during the load test.
+Turn 163: Pair-reviewed a trivial formatting change.
+Turn 164: Wrote a small script to dump active sessions for support.
+Turn 165: Vacuumed the analytics replica and watched the query plans settle.
+Turn 166: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 167: Filed a docs ticket for the onboarding guide.
+Turn 168: Reviewed the session revocation PR; left comments about token naming.
+Turn 169: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 170: The cache eviction counter looked off by one; traced it to labels.
+Turn 171: Cleaned up a pile of stale branches in the repo.
+Turn 172: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 173: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 174: Discussed key naming conventions for the cache namespace.
+Turn 175: Standup ran long today; mostly status updates.
+Turn 176: The identity provider had a brief outage; nothing we can do about it.
+Turn 177: One slow join showed up in the query log; added it to the tuning list.
+Turn 178: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 179: Standup ran long today; mostly status updates.
+Team note: Unknown line-item codes never survive normalization because forward consumers expect only recognised codes to appear in their downstream input stream.
+Turn 181: Reviewed backup retention with the ops team; policy unchanged.
+Turn 182: Compared two serialization formats for the cache values, no decision.
+Turn 183: Discussed the offsite logistics for a few minutes.
+Turn 184: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 185: Talked about read replicas for the reporting workload.
+Turn 186: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 187: Talked about the release train schedule, no action items.
+Turn 188: Reviewed the session revocation PR; left comments about token naming.
+Turn 189: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 190: Discussed key naming conventions for the cache namespace.
+Turn 191: The CI runner was slow after lunch; eventually recovered.
+Turn 192: Reviewed the session revocation PR; left comments about token naming.
+Turn 193: Discussed the migration ordering for the next release; no change yet.
+Turn 194: Discussed key naming conventions for the cache namespace.
+Turn 195: The build cache got cleared to fix a flaky stage.
+Turn 196: Reviewed the session revocation PR; left comments about token naming.
+Turn 197: The ORM generated a nested select again; replaced it in one spot.
+Turn 198: Discussed key naming conventions for the cache namespace.
+Turn 199: Filed a docs ticket for the onboarding guide.
+Turn 200: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 201: Talked about read replicas for the reporting workload.
+Turn 202: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 203: Coffee machine broke again; work continued regardless.
+Turn 204: Benchmarked password hashing cost and left the parameters as they are.
+Turn 205: Reviewed backup retention with the ops team; policy unchanged.
+Turn 206: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 207: The CI runner was slow after lunch; eventually recovered.
+Turn 208: Spent the morning rotating the staging service account keys.
+Turn 209: Talked about read replicas for the reporting workload.
+Turn 210: Reviewed TTL settings informally; left them alone.
+Turn 211: The lint config got reordered; no rule changes.
+Turn 212: Cleaned up the permissions matrix doc after the access review.
+Turn 213: The schema diff tool produced noise again, ignored it.
+Turn 214: Discussed key naming conventions for the cache namespace.
+Turn 215: The CI runner was slow after lunch; eventually recovered.
+Turn 216: Talked through MFA enrollment edge cases with the platform team.
+Turn 217: Discussed partitioning options for the events table, deferred.
+Turn 218: Fixed a typo in the cache client docstring.
+Turn 219: Updated the on-call runbook with a couple of small clarifications.
+Turn 220: Wrote a small script to dump active sessions for support.
+Turn 221: Added an index on a lookup column in dev to see if it helps.
+Turn 222: Compared two serialization formats for the cache values, no decision.
+Turn 223: Updated the on-call runbook with a couple of small clarifications.
+Turn 224: Spent the morning rotating the staging service account keys.
+Turn 225: Added an index on a lookup column in dev to see if it helps.
+Turn 226: Talked about cache stampede mitigation for a shared key.
+Turn 227: Standup ran long today; mostly status updates.
+Turn 228: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 229: Discussed the migration ordering for the next release; no change yet.
+Turn 230: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 231: Coffee machine broke again; work continued regardless.
+Turn 232: Renamed a few role constants for readability, no behavior change.
+Turn 233: The ORM generated a nested select again; replaced it in one spot.
+Turn 234: Reviewed TTL settings informally; left them alone.
+Turn 235: The build cache got cleared to fix a flaky stage.
+Turn 236: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 237: The ORM generated a nested select again; replaced it in one spot.
+Turn 238: Cleared a stale namespace on staging to reproduce a bug.
+Turn 239: The build cache got cleared to fix a flaky stage.
+Turn 240: Investigated a logout race; added it to the backlog for later.
+Turn 241: The schema diff tool produced noise again, ignored it.
+Turn 242: Fixed a typo in the cache client docstring.
+Turn 243: Filed a docs ticket for the onboarding guide.
+Turn 244: Spent the morning rotating the staging service account keys.
+Turn 245: Added an index on a lookup column in dev to see if it helps.
+Turn 246: Talked about whether to persist cache entries across restarts.
+Turn 247: Talked about the release train schedule, no action items.
+Turn 248: Benchmarked password hashing cost and left the parameters as they are.
+Turn 249: The ORM generated a nested select again; replaced it in one spot.
+Turn 250: Talked about whether to persist cache entries across restarts.
+Turn 251: Reopened and re-closed an old issue that was already fixed.
+Turn 252: Spent the morning rotating the staging service account keys.
+Turn 253: Discussed partitioning options for the events table, deferred.
+Turn 254: Discussed key naming conventions for the cache namespace.
+Turn 255: Cleaned up a pile of stale branches in the repo.
+Team note: Currency rounding is applied only at report time and is never stored on the normalized invoice row by the adapter.
+Turn 257: The schema diff tool produced noise again, ignored it.
+Turn 258: Compared two serialization formats for the cache values, no decision.
+Turn 259: Discussed the offsite logistics for a few minutes.
+Turn 260: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 261: One slow join showed up in the query log; added it to the tuning list.
+Turn 262: Discussed key naming conventions for the cache namespace.
+Turn 263: Discussed the offsite logistics for a few minutes.
+Turn 264: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 265: Discussed the migration ordering for the next release; no change yet.
+Turn 266: Reviewed TTL settings informally; left them alone.
+Turn 267: Talked about the release train schedule, no action items.
+Turn 268: Talked through MFA enrollment edge cases with the platform team.
+Turn 269: Discussed the migration ordering for the next release; no change yet.
+Turn 270: Compared two serialization formats for the cache values, no decision.
+Turn 271: The build cache got cleared to fix a flaky stage.
+Turn 272: Spent the morning rotating the staging service account keys.
+Turn 273: Cleaned up unused columns from a scratch table.
+Turn 274: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 275: Talked about the release train schedule, no action items.
+Turn 276: Investigated a logout race; added it to the backlog for later.
+Turn 277: Discussed the migration ordering for the next release; no change yet.
+Turn 278: Cleared a stale namespace on staging to reproduce a bug.
+Turn 279: Talked about the release train schedule, no action items.
+Turn 280: Renamed a few role constants for readability, no behavior change.
+Turn 281: Vacuumed the analytics replica and watched the query plans settle.
+Turn 282: Reviewed TTL settings informally; left them alone.
+Turn 283: Updated the on-call runbook with a couple of small clarifications.
+Turn 284: Benchmarked password hashing cost and left the parameters as they are.
+Turn 285: One slow join showed up in the query log; added it to the tuning list.
+Turn 286: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 287: Talked about the release train schedule, no action items.
+Turn 288: The identity provider had a brief outage; nothing we can do about it.
+Turn 289: Added an index on a lookup column in dev to see if it helps.
+Turn 290: The cache eviction counter looked off by one; traced it to labels.
+Turn 291: Updated the on-call runbook with a couple of small clarifications.
+Turn 292: Investigated a logout race; added it to the backlog for later.
+Turn 293: One slow join showed up in the query log; added it to the tuning list.
+Turn 294: Talked about whether to persist cache entries across restarts.
+Turn 295: Reopened and re-closed an old issue that was already fixed.
+Turn 296: Talked through MFA enrollment edge cases with the platform team.
+Turn 297: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 298: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 299: Standup ran long today; mostly status updates.
+Turn 300: Benchmarked password hashing cost and left the parameters as they are.
+Turn 301: Cleaned up unused columns from a scratch table.
+Turn 302: Reviewed TTL settings informally; left them alone.
+Turn 303: Discussed the offsite logistics for a few minutes.
+Turn 304: Spent the morning rotating the staging service account keys.
+Turn 305: Discussed the migration ordering for the next release; no change yet.
+Turn 306: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 307: The lint config got reordered; no rule changes.
+Turn 308: Wrote a small script to dump active sessions for support.
+Turn 309: Discussed the migration ordering for the next release; no change yet.
+Turn 310: Saw a memory spike in the cache process during the load test.
+Turn 311: Reopened and re-closed an old issue that was already fixed.
+Turn 312: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 313: Talked about read replicas for the reporting workload.
+Turn 314: Talked about whether to persist cache entries across restarts.
+Turn 315: The CI runner was slow after lunch; eventually recovered.
+Turn 316: Cleaned up the permissions matrix doc after the access review.
+Turn 317: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 318: Saw a memory spike in the cache process during the load test.
+Turn 319: Filed a docs ticket for the onboarding guide.
+Turn 320: Renamed a few role constants for readability, no behavior change.
+Turn 321: Reviewed backup retention with the ops team; policy unchanged.
+Turn 322: Fixed a typo in the cache client docstring.
+Turn 323: Updated the on-call runbook with a couple of small clarifications.
+Turn 324: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 325: Discussed partitioning options for the events table, deferred.
+Turn 326: Compared two serialization formats for the cache values, no decision.
+Turn 327: The CI runner was slow after lunch; eventually recovered.
+Turn 328: Reviewed the session revocation PR; left comments about token naming.
+Turn 329: Discussed the migration ordering for the next release; no change yet.
+Turn 330: Talked about cache stampede mitigation for a shared key.
+Turn 331: The build cache got cleared to fix a flaky stage.
+Turn 332: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 333: Talked about read replicas for the reporting workload.
+Turn 334: Saw a memory spike in the cache process during the load test.
+Turn 335: Talked about the release train schedule, no action items.
+Turn 336: Renamed a few role constants for readability, no behavior change.
+Turn 337: Talked about read replicas for the reporting workload.
+Turn 338: Saw a memory spike in the cache process during the load test.
+Turn 339: The lint config got reordered; no rule changes.
+Turn 340: Benchmarked password hashing cost and left the parameters as they are.
+Turn 341: One slow join showed up in the query log; added it to the tuning list.
+Turn 342: Discussed key naming conventions for the cache namespace.
+Turn 343: Updated the on-call runbook with a couple of small clarifications.
+Turn 344: Wrote a small script to dump active sessions for support.
+Turn 345: Discussed partitioning options for the events table, deferred.
+Turn 346: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 347: Cleaned up a pile of stale branches in the repo.
+Turn 348: Wrote a small script to dump active sessions for support.
+Turn 349: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 350: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 351: The lint config got reordered; no rule changes.
+Turn 352: Spent the morning rotating the staging service account keys.
+Turn 353: Added an index on a lookup column in dev to see if it helps.
+Team note: Batch exports page through normalized invoices in fixed chunks of five hundred rows each for the downstream warehouse load job.
+Turn 355: The CI runner was slow after lunch; eventually recovered.
+Turn 356: Cleaned up the permissions matrix doc after the access review.
+Turn 357: Discussed the migration ordering for the next release; no change yet.
+Turn 358: Talked about cache stampede mitigation for a shared key.
+Turn 359: The lint config got reordered; no rule changes.
+Turn 360: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 361: Cleaned up unused columns from a scratch table.
+Turn 362: The cache eviction counter looked off by one; traced it to labels.
+Turn 363: Reopened and re-closed an old issue that was already fixed.
+Turn 364: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 365: Cleaned up unused columns from a scratch table.
+Turn 366: Fixed a typo in the cache client docstring.
+Turn 367: Updated the on-call runbook with a couple of small clarifications.
+Turn 368: Wrote a small script to dump active sessions for support.
+Turn 369: One slow join showed up in the query log; added it to the tuning list.
+Turn 370: Discussed key naming conventions for the cache namespace.
+Turn 371: The lint config got reordered; no rule changes.
+Turn 372: Talked through MFA enrollment edge cases with the platform team.
+Turn 373: Cleaned up unused columns from a scratch table.
+Turn 374: Fixed a typo in the cache client docstring.
+Turn 375: The CI runner was slow after lunch; eventually recovered.
+Turn 376: Investigated a logout race; added it to the backlog for later.
+Turn 377: Talked about read replicas for the reporting workload.
+Turn 378: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 379: Standup ran long today; mostly status updates.
+Turn 380: Talked through MFA enrollment edge cases with the platform team.
+Turn 381: Vacuumed the analytics replica and watched the query plans settle.
+Turn 382: The cache eviction counter looked off by one; traced it to labels.
+Turn 383: Filed a docs ticket for the onboarding guide.
+Turn 384: Spent the morning rotating the staging service account keys.
+Turn 385: One slow join showed up in the query log; added it to the tuning list.
+Turn 386: Reviewed TTL settings informally; left them alone.
+Turn 387: The CI runner was slow after lunch; eventually recovered.
+Turn 388: Spent the morning rotating the staging service account keys.
+Turn 389: The schema diff tool produced noise again, ignored it.
+Turn 390: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 391: Talked about the release train schedule, no action items.
+Turn 392: Cleaned up the permissions matrix doc after the access review.
+Turn 393: Discussed the migration ordering for the next release; no change yet.
+Turn 394: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 395: Pair-reviewed a trivial formatting change.
+Turn 396: Reviewed the session revocation PR; left comments about token naming.
+Turn 397: The ORM generated a nested select again; replaced it in one spot.
+Turn 398: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 399: Cleaned up a pile of stale branches in the repo.
+Turn 400: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 401: One slow join showed up in the query log; added it to the tuning list.
+Turn 402: Reviewed TTL settings informally; left them alone.
+Turn 403: Reopened and re-closed an old issue that was already fixed.
+Turn 404: Renamed a few role constants for readability, no behavior change.
+Turn 405: Talked about read replicas for the reporting workload.
+Turn 406: Fixed a typo in the cache client docstring.
+Turn 407: Discussed the offsite logistics for a few minutes.
+Turn 408: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 409: Reviewed backup retention with the ops team; policy unchanged.
+Turn 410: Saw a memory spike in the cache process during the load test.
+Turn 411: The CI runner was slow after lunch; eventually recovered.
+Turn 412: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 413: The ORM generated a nested select again; replaced it in one spot.
+Turn 414: Saw a memory spike in the cache process during the load test.
+Turn 415: Standup ran long today; mostly status updates.
+Turn 416: Spent the morning rotating the staging service account keys.
+Turn 417: Vacuumed the analytics replica and watched the query plans settle.
+Turn 418: Discussed key naming conventions for the cache namespace.
+Turn 419: Coffee machine broke again; work continued regardless.
+Turn 420: Wrote a small script to dump active sessions for support.
+Turn 421: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 422: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 423: Reopened and re-closed an old issue that was already fixed.
+Turn 424: Benchmarked password hashing cost and left the parameters as they are.
+Turn 425: Added an index on a lookup column in dev to see if it helps.
+Correction to an earlier note: Correction to an earlier note: the invoice normalizer preserves unrecognised line-item codes verbatim and does not map them to MISCELLANEOUS.
+Turn 427: The CI runner was slow after lunch; eventually recovered.
+Turn 428: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 429: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 430: The cache eviction counter looked off by one; traced it to labels.
+Turn 431: Pair-reviewed a trivial formatting change.
+Turn 432: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 433: Talked about read replicas for the reporting workload.
+Turn 434: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 435: Talked about the release train schedule, no action items.
+Turn 436: Renamed a few role constants for readability, no behavior change.
+Turn 437: Discussed partitioning options for the events table, deferred.
+Turn 438: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 439: Filed a docs ticket for the onboarding guide.
+Turn 440: Benchmarked password hashing cost and left the parameters as they are.
+Turn 441: Talked about read replicas for the reporting workload.
+Turn 442: Talked about cache stampede mitigation for a shared key.
+Turn 443: The build cache got cleared to fix a flaky stage.
+Turn 444: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 445: Talked about read replicas for the reporting workload.
+Turn 446: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 447: Updated the on-call runbook with a couple of small clarifications.
+Turn 448: Benchmarked password hashing cost and left the parameters as they are.
+Turn 449: One slow join showed up in the query log; added it to the tuning list.
+Turn 450: Discussed key naming conventions for the cache namespace.
+Turn 451: The CI runner was slow after lunch; eventually recovered.
+Turn 452: Investigated a logout race; added it to the backlog for later.
+Turn 453: One slow join showed up in the query log; added it to the tuning list.
+Correction to an earlier note: An unknown line-item code keeps its original code string and no fallback display name is applied to it during normalization.
+Turn 455: Filed a docs ticket for the onboarding guide.
+Turn 456: Wrote a small script to dump active sessions for support.
+Turn 457: The ORM generated a nested select again; replaced it in one spot.
+Turn 458: Saw a memory spike in the cache process during the load test.
+Turn 459: Updated the on-call runbook with a couple of small clarifications.
+Turn 460: Cleaned up the permissions matrix doc after the access review.
+Turn 461: Talked about read replicas for the reporting workload.
+Turn 462: Compared two serialization formats for the cache values, no decision.
+Turn 463: The lint config got reordered; no rule changes.
+Turn 464: Reviewed the session revocation PR; left comments about token naming.
+Turn 465: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 466: The cache eviction counter looked off by one; traced it to labels.
+Turn 467: Discussed the offsite logistics for a few minutes.
+Turn 468: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 469: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 470: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 471: The build cache got cleared to fix a flaky stage.
+Turn 472: Wrote a small script to dump active sessions for support.
+Turn 473: Cleaned up unused columns from a scratch table.
+Turn 474: The cache eviction counter looked off by one; traced it to labels.
+Turn 475: The CI runner was slow after lunch; eventually recovered.
+Turn 476: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 477: The schema diff tool produced noise again, ignored it.
+Turn 478: Compared two serialization formats for the cache values, no decision.
+Turn 479: Updated the on-call runbook with a couple of small clarifications.
+Turn 480: Cleaned up the permissions matrix doc after the access review.
+Turn 481: One slow join showed up in the query log; added it to the tuning list.
+Turn 482: Discussed key naming conventions for the cache namespace.
+Turn 483: The build cache got cleared to fix a flaky stage.
+Turn 484: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 485: Discussed partitioning options for the events table, deferred.
+Turn 486: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 487: Standup ran long today; mostly status updates.
+Turn 488: The identity provider had a brief outage; nothing we can do about it.
+Turn 489: Vacuumed the analytics replica and watched the query plans settle.
+Turn 490: Discussed key naming conventions for the cache namespace.
+Turn 491: The lint config got reordered; no rule changes.
+Turn 492: Investigated a logout race; added it to the backlog for later.
+Turn 493: Reviewed backup retention with the ops team; policy unchanged.
+Turn 494: Talked about cache stampede mitigation for a shared key.
+Turn 495: The CI runner was slow after lunch; eventually recovered.
+Turn 496: Renamed a few role constants for readability, no behavior change.
+Turn 497: A deadlock showed up under synthetic load; noted the transaction shape.
+Correction to an earlier note: Unknown line-item codes survive normalization unchanged so forward consumers can see exactly the original code that the vendor sent on the invoice.
+Turn 499: The CI runner was slow after lunch; eventually recovered.
+Turn 500: Renamed a few role constants for readability, no behavior change.
+Turn 501: The ORM generated a nested select again; replaced it in one spot.
+Turn 502: Talked about cache stampede mitigation for a shared key.
+Turn 503: Cleaned up a pile of stale branches in the repo.
+Turn 504: Reviewed the session revocation PR; left comments about token naming.
+Turn 505: Discussed the migration ordering for the next release; no change yet.
+Turn 506: Saw a memory spike in the cache process during the load test.
+Turn 507: Discussed the offsite logistics for a few minutes.
+Turn 508: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 509: Discussed partitioning options for the events table, deferred.
+Turn 510: Fixed a typo in the cache client docstring.
+Turn 511: Talked about the release train schedule, no action items.
+Turn 512: Talked through MFA enrollment edge cases with the platform team.
+Turn 513: Discussed the migration ordering for the next release; no change yet.
+Turn 514: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 515: Cleaned up a pile of stale branches in the repo.
+Turn 516: Renamed a few role constants for readability, no behavior change.
+Turn 517: Discussed partitioning options for the events table, deferred.
+Turn 518: Compared two serialization formats for the cache values, no decision.
+Turn 519: The lint config got reordered; no rule changes.
+Turn 520: Wrote a small script to dump active sessions for support.
+Turn 521: The ORM generated a nested select again; replaced it in one spot.
+Turn 522: Fixed a typo in the cache client docstring.
+Turn 523: Coffee machine broke again; work continued regardless.
+Turn 524: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 525: The schema diff tool produced noise again, ignored it.
+Turn 526: Talked about cache stampede mitigation for a shared key.
+Turn 527: Discussed the offsite logistics for a few minutes.
+Turn 528: Cleaned up the permissions matrix doc after the access review.
+Turn 529: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 530: Talked about cache stampede mitigation for a shared key.
+Turn 531: Standup ran long today; mostly status updates.
+Turn 532: Refactored the auth middleware test to use fixtures instead of mocks.
+Turn 533: The ORM generated a nested select again; replaced it in one spot.
+Turn 534: The cache metrics dashboard is missing a panel; filed a ticket.
+Turn 535: Discussed the offsite logistics for a few minutes.
+Turn 536: Debugged a flaky login test that turned out to be a clock skew issue.
+Turn 537: The ORM generated a nested select again; replaced it in one spot.
+Turn 538: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 539: Reopened and re-closed an old issue that was already fixed.
+Correction to an earlier note: The MISCELLANEOUS mapping was removed from the contract and the adapter never rewrites an unrecognised code to it.
+Turn 541: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 542: Discussed key naming conventions for the cache namespace.
+Turn 543: The build cache got cleared to fix a flaky stage.
+Turn 544: Investigated a logout race; added it to the backlog for later.
+Turn 545: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 546: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 547: Standup ran long today; mostly status updates.
+Turn 548: Cleaned up the permissions matrix doc after the access review.
+Turn 549: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 550: Talked about cache stampede mitigation for a shared key.
+Turn 551: Discussed the offsite logistics for a few minutes.
+Turn 552: Investigated a logout race; added it to the backlog for later.
+Turn 553: Vacuumed the analytics replica and watched the query plans settle.
+Turn 554: Talked about whether to persist cache entries across restarts.
+Turn 555: Reopened and re-closed an old issue that was already fixed.
+Turn 556: Wrote a small script to dump active sessions for support.
+Turn 557: Vacuumed the analytics replica and watched the query plans settle.
+Turn 558: Compared two serialization formats for the cache values, no decision.
+Turn 559: Coffee machine broke again; work continued regardless.
+Turn 560: Benchmarked password hashing cost and left the parameters as they are.
+Team note: The vendor code registry is refreshed from a vendor feed each night and the cached display names are held in memory for fast lookups.
+Turn 562: The cache eviction counter looked off by one; traced it to labels.
+Turn 563: Cleaned up a pile of stale branches in the repo.
+Turn 564: Wrote a small script to dump active sessions for support.
+Turn 565: Discussed the migration ordering for the next release; no change yet.
+Turn 566: Talked about cache stampede mitigation for a shared key.
+Turn 567: Discussed the offsite logistics for a few minutes.
+Turn 568: Talked through MFA enrollment edge cases with the platform team.
+Turn 569: Added an index on a lookup column in dev to see if it helps.
+Turn 570: The cache eviction counter looked off by one; traced it to labels.
+Turn 571: Reopened and re-closed an old issue that was already fixed.
+Turn 572: Reviewed the session revocation PR; left comments about token naming.
+Turn 573: Cleaned up unused columns from a scratch table.
+Turn 574: A stale entry caused a confusing test failure; cleared it and moved on.
+Turn 575: Updated the on-call runbook with a couple of small clarifications.
+Turn 576: Investigated a logout race; added it to the backlog for later.
+Turn 577: Vacuumed the analytics replica and watched the query plans settle.
+Turn 578: Talked about cache stampede mitigation for a shared key.
+Turn 579: The build cache got cleared to fix a flaky stage.
+Turn 580: Benchmarked password hashing cost and left the parameters as they are.
+Turn 581: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 582: Talked about whether to persist cache entries across restarts.
+Turn 583: Pair-reviewed a trivial formatting change.
+Turn 584: The identity provider had a brief outage; nothing we can do about it.
+Turn 585: The ORM generated a nested select again; replaced it in one spot.
+Turn 586: Cleared a stale namespace on staging to reproduce a bug.
+Turn 587: Updated the on-call runbook with a couple of small clarifications.
+Turn 588: The OAuth callback handler swallowed an error code last week; fixed now.
+Turn 589: A deadlock showed up under synthetic load; noted the transaction shape.
+Turn 590: Someone asked about cache warming on deploy; deferred the discussion.
+Turn 591: Filed a docs ticket for the onboarding guide.
+Turn 592: Investigated a logout race; added it to the backlog for later.
+Turn 593: The schema diff tool produced noise again, ignored it.
+Turn 594: Cleared a stale namespace on staging to reproduce a bug.
+Turn 595: Reopened and re-closed an old issue that was already fixed.
+Turn 596: Benchmarked password hashing cost and left the parameters as they are.
+Turn 597: A batch job ran long overnight; scheduling it later solved nothing.
+Turn 598: The cache eviction counter looked off by one; traced it to labels.
+Turn 599: Coffee machine broke again; work continued regardless.
+Turn 600: The identity provider had a brief outage; nothing we can do about it.

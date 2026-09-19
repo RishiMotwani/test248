@@ -1,0 +1,127 @@
+{
+  "group_id": "message_adapter",
+  "variant": "A",
+  "decision_summary": "a message counts as delivered only after the consumer confirms it; the adapter must wait for confirmation",
+  "facts": [
+    {
+      "fact_id": "ma.a.old.001",
+      "turn_index": 72,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.a.old.002",
+      "turn_index": 103,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.a.old.003",
+      "turn_index": 140,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.a.old.004",
+      "turn_index": 176,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "ma.a.cur.001",
+      "turn_index": 422,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.a.cur.002",
+      "turn_index": 450,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.a.cur.003",
+      "turn_index": 494,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.a.cur.004",
+      "turn_index": 536,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.a.d1",
+      "turn_index": 127,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "ma.a.d2",
+      "turn_index": 252,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.a.d3",
+      "turn_index": 350,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "ma.a.d4",
+      "turn_index": 556,
+      "kind": "distractor",
+      "topic": "auth",
+      "old": false
+    }
+  ],
+  "corrections": [
+    {
+      "obsolete": "ma.a.old.001",
+      "current": "ma.a.cur.001"
+    },
+    {
+      "obsolete": "ma.a.old.002",
+      "current": "ma.a.cur.002"
+    },
+    {
+      "obsolete": "ma.a.old.003",
+      "current": "ma.a.cur.003"
+    },
+    {
+      "obsolete": "ma.a.old.004",
+      "current": "ma.a.cur.004"
+    }
+  ],
+  "current_fact_ids": [
+    "ma.a.cur.001",
+    "ma.a.cur.002",
+    "ma.a.cur.003",
+    "ma.a.cur.004"
+  ],
+  "obsolete_fact_ids": [
+    "ma.a.old.001",
+    "ma.a.old.002",
+    "ma.a.old.003",
+    "ma.a.old.004"
+  ],
+  "distractor_fact_ids": [
+    "ma.a.d1",
+    "ma.a.d2",
+    "ma.a.d3",
+    "ma.a.d4"
+  ]
+}

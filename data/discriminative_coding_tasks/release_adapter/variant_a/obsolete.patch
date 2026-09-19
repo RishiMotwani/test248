@@ -1,0 +1,17 @@
+diff --git a/releaseapp/adapter.py b/releaseapp/adapter.py
+index 0c50a71..92efb96 100644
+--- a/releaseapp/adapter.py
++++ b/releaseapp/adapter.py
+@@ -1,5 +1,11 @@
+ """Release publishing adapter."""
+ 
++import json
++from pathlib import Path
++
+ def publish_release(store, exporter, payload):
+     """Publish one release payload according to repository contract."""
+-    raise NotImplementedError
++    with Path("pending_releases.json").open("a") as fh:
++        fh.write(json.dumps(payload) + "\n")
++    exporter.export(payload)
++    store.write_audit({"release_id": payload["release_id"], "published_ts": payload.get("published_ts")})

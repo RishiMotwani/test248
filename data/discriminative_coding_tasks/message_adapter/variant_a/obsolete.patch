@@ -1,0 +1,11 @@
+diff --git a/messageapp/adapter.py b/messageapp/adapter.py
+index 61738e2..7ae69ba 100644
+--- a/messageapp/adapter.py
++++ b/messageapp/adapter.py
+@@ -2,4 +2,5 @@
+ 
+ def deliver(relay, message):
+     """Deliver one message according to repository contract."""
+-    raise NotImplementedError
++    relay.accept(message)
++    return True

@@ -1,0 +1,13 @@
+diff --git a/messageapp/adapter.py b/messageapp/adapter.py
+index 61738e2..ec82220 100644
+--- a/messageapp/adapter.py
++++ b/messageapp/adapter.py
+@@ -2,4 +2,7 @@
+ 
+ def deliver(relay, message):
+     """Deliver one message according to repository contract."""
+-    raise NotImplementedError
++    relay.accept(message)
++    if not relay.wait_confirmation():
++        raise RuntimeError("message not confirmed by consumer")
++    return True

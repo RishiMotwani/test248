@@ -1,0 +1,11 @@
+diff --git a/releaseapp/adapter.py b/releaseapp/adapter.py
+index 0c50a71..1d9ef3b 100644
+--- a/releaseapp/adapter.py
++++ b/releaseapp/adapter.py
+@@ -2,4 +2,5 @@
+ 
+ def publish_release(store, exporter, payload):
+     """Publish one release payload according to repository contract."""
+-    raise NotImplementedError
++    exporter.export(payload)
++    store.write_audit({"release_id": payload["release_id"], "published_ts": payload.get("published_ts")})

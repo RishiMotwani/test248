@@ -1,0 +1,1 @@
+Implement `deliver(relay, message)` in `messageapp/adapter.py` according to the repository's established contract. Keep the existing public name and signature. Do not modify the hidden tests.
