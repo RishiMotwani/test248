@@ -1,0 +1,67 @@
+{
+  "group_id": "retry_contract",
+  "variant": "A",
+  "decision_summary": "submit makes a single write call and propagates any UpstreamError to the caller without retrying",
+  "facts": [
+    {
+      "fact_id": "retry.a.old.001",
+      "turn_index": 116,
+      "kind": "decision",
+      "topic": "auth",
+      "old": true
+    },
+    {
+      "fact_id": "retry.a.cur.001",
+      "turn_index": 519,
+      "kind": "correction",
+      "topic": "auth",
+      "old": false
+    },
+    {
+      "fact_id": "retry.d1",
+      "turn_index": 130,
+      "kind": "distractor",
+      "topic": "auth",
+      "old": false
+    },
+    {
+      "fact_id": "retry.d2",
+      "turn_index": 248,
+      "kind": "distractor",
+      "topic": "auth",
+      "old": false
+    },
+    {
+      "fact_id": "retry.d3",
+      "turn_index": 356,
+      "kind": "distractor",
+      "topic": "auth",
+      "old": false
+    },
+    {
+      "fact_id": "retry.d4",
+      "turn_index": 557,
+      "kind": "distractor",
+      "topic": "auth",
+      "old": false
+    }
+  ],
+  "corrections": [
+    {
+      "obsolete": "retry.a.old.001",
+      "current": "retry.a.cur.001"
+    }
+  ],
+  "current_fact_ids": [
+    "retry.a.cur.001"
+  ],
+  "obsolete_fact_ids": [
+    "retry.a.old.001"
+  ],
+  "distractor_fact_ids": [
+    "retry.d1",
+    "retry.d2",
+    "retry.d3",
+    "retry.d4"
+  ]
+}

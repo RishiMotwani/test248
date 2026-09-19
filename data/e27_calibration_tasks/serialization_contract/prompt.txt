@@ -1,0 +1,1 @@
+Implement `normalize(config)` in `configapp/codec.py` according to the repository's established configuration contract. Keep the existing public name and signature. Do not modify the hidden tests.

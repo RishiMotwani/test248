@@ -1,0 +1,67 @@
+{
+  "group_id": "serialization_contract",
+  "variant": "A",
+  "decision_summary": "normalization preserves unrecognized keys exactly as supplied",
+  "facts": [
+    {
+      "fact_id": "serial.a.old.001",
+      "turn_index": 121,
+      "kind": "decision",
+      "topic": "database",
+      "old": true
+    },
+    {
+      "fact_id": "serial.a.cur.001",
+      "turn_index": 514,
+      "kind": "correction",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "serial.d1",
+      "turn_index": 134,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "serial.d2",
+      "turn_index": 253,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "serial.d3",
+      "turn_index": 358,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    },
+    {
+      "fact_id": "serial.d4",
+      "turn_index": 561,
+      "kind": "distractor",
+      "topic": "database",
+      "old": false
+    }
+  ],
+  "corrections": [
+    {
+      "obsolete": "serial.a.old.001",
+      "current": "serial.a.cur.001"
+    }
+  ],
+  "current_fact_ids": [
+    "serial.a.cur.001"
+  ],
+  "obsolete_fact_ids": [
+    "serial.a.old.001"
+  ],
+  "distractor_fact_ids": [
+    "serial.d1",
+    "serial.d2",
+    "serial.d3",
+    "serial.d4"
+  ]
+}

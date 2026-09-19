@@ -1,0 +1,15 @@
+diff --git a/configapp/codec.py b/configapp/codec.py
+index 02aaa7a..4a7629a 100644
+--- a/configapp/codec.py
++++ b/configapp/codec.py
+@@ -1,5 +1,8 @@
+ """Configuration normalization codec."""
+ 
++_KNOWN_KEYS = frozenset({"known"})
++
++
+ def normalize(config):
+-    """Normalize one configuration dict."""
+-    raise NotImplementedError
++    """Normalize one configuration dict, keeping only known keys."""
++    return {key: value for key, value in config.items() if key in _KNOWN_KEYS}

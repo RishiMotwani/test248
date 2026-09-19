@@ -1,0 +1,1 @@
+Implement `submit(client, payload)` in `writeapp/writer.py` according to the repository's established submission contract. Keep the existing public name and signature. Do not modify the hidden tests.

@@ -1,0 +1,19 @@
+diff --git a/routeapp/router.py b/routeapp/router.py
+index 1ba6128..45e4b54 100644
+--- a/routeapp/router.py
++++ b/routeapp/router.py
+@@ -1,5 +1,13 @@
+ """Operation-to-lane routing helper."""
+ 
++OP_TO_LANE = {
++    "op-17": "lane-a",
++    "op-23": "lane-b",
++    "op-41": "lane-b",
++    "op-52": "lane-a",
++}
++
++
+ def choose_lane(code):
+     """Return the destination lane for an operation code."""
+-    raise NotImplementedError
++    return OP_TO_LANE[code]

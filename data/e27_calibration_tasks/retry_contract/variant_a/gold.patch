@@ -1,0 +1,12 @@
+diff --git a/writeapp/writer.py b/writeapp/writer.py
+index 1a18b06..97f6dc8 100644
+--- a/writeapp/writer.py
++++ b/writeapp/writer.py
+@@ -2,5 +2,5 @@
+ 
+ 
+ def submit(client, payload):
+-    """Submit a payload through the client according to the repository contract."""
+-    raise NotImplementedError
++    """Submit the payload once and propagate any upstream error."""
++    client.write(payload)

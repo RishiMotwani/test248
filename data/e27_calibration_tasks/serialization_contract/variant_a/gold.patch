@@ -1,0 +1,13 @@
+diff --git a/configapp/codec.py b/configapp/codec.py
+index 02aaa7a..c7d971a 100644
+--- a/configapp/codec.py
++++ b/configapp/codec.py
+@@ -1,5 +1,6 @@
+ """Configuration normalization codec."""
+ 
++
+ def normalize(config):
+-    """Normalize one configuration dict."""
+-    raise NotImplementedError
++    """Normalize one configuration dict, preserving every key."""
++    return dict(config)

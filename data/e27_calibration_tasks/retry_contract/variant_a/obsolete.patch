@@ -1,0 +1,18 @@
+diff --git a/writeapp/writer.py b/writeapp/writer.py
+index 1a18b06..d3087c1 100644
+--- a/writeapp/writer.py
++++ b/writeapp/writer.py
+@@ -1,6 +1,11 @@
+ """Submission entry point."""
+ 
++from writeapp.client import UpstreamError
++
+ 
+ def submit(client, payload):
+-    """Submit a payload through the client according to the repository contract."""
+-    raise NotImplementedError
++    """Submit the payload and retry exactly once after an upstream error."""
++    try:
++        client.write(payload)
++    except UpstreamError:
++        client.write(payload)

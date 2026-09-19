@@ -1,0 +1,1 @@
+Implement `choose_lane(code)` in `routeapp/router.py` according to the repository's established routing contract. Keep the existing public name and signature. Do not modify the hidden tests.

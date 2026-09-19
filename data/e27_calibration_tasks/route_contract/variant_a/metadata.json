@@ -1,0 +1,67 @@
+{
+  "group_id": "route_contract",
+  "variant": "A",
+  "decision_summary": "the routing contract sends op-17 to lane-b, op-23 to lane-a, op-41 to lane-a and op-52 to lane-b",
+  "facts": [
+    {
+      "fact_id": "route.a.old.001",
+      "turn_index": 118,
+      "kind": "decision",
+      "topic": "caching",
+      "old": true
+    },
+    {
+      "fact_id": "route.a.cur.001",
+      "turn_index": 508,
+      "kind": "correction",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "route.d1",
+      "turn_index": 132,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "route.d2",
+      "turn_index": 251,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "route.d3",
+      "turn_index": 363,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    },
+    {
+      "fact_id": "route.d4",
+      "turn_index": 559,
+      "kind": "distractor",
+      "topic": "caching",
+      "old": false
+    }
+  ],
+  "corrections": [
+    {
+      "obsolete": "route.a.old.001",
+      "current": "route.a.cur.001"
+    }
+  ],
+  "current_fact_ids": [
+    "route.a.cur.001"
+  ],
+  "obsolete_fact_ids": [
+    "route.a.old.001"
+  ],
+  "distractor_fact_ids": [
+    "route.d1",
+    "route.d2",
+    "route.d3",
+    "route.d4"
+  ]
+}
