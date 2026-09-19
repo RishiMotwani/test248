@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 16** — E20 counterfactual-history benchmark calibration (INVALID: identifier_policy solvable without history) · commit `d331243` (+docs `5c073cc`)
 - **Phase 17** — E20 counterfactual fixture repair + revalidation (routing_policy replaces identifier_policy; strict offline base gate; VALID, E19 full grid eligible) · commit (this milestone)
 - **Phase 18** — E19 aligned to the E20-validated benchmark + full 225-cell grid (9/10 gates, correction-identity FAIL → adaptive_advances False; E20-certified Gate C) · commit `6181f01`
-- **Phase 19** — E19 correction-identity adapter repair + full-grid re-run + missing-cell recovery (correction_identity = 27/27 PASS, embedding_consistency = 27/27 PASS, primary = 135/135, adaptive = 27/27, vanilla_rag = 26/27, adaptive_advances = false; one negative-control cell recovered separately) · commit `a79be6c`
+- **Phase 19** — E19 correction-identity adapter repair + full-grid re-run + missing-cell recovery (correction_identity = 27/27 PASS, embedding_consistency = 27/27 PASS, primary = 135/135, adaptive = 27/27, vanilla_rag = 26/27, adaptive_advances = false; one negative-control cell recovered separately) · commit `0354c5e`
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 

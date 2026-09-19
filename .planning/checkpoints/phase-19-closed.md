@@ -1,17 +1,18 @@
 # Phase-19 Closed Immutable Checkpoint
 
-Checkpoint SHA: a79be6cd78cf38c6d663f360834613cc29bd9df4
-Checkpoint short SHA: a79be6c
+Checkpoint SHA: 0354c5e40edf9047237bf8404d85cee1d6293027
+Checkpoint short SHA: 0354c5e
 Current branch: master
 Checkpoint branch: checkpoint/phase-19-closed
-Checkpoint tag: checkpoint-phase-19-closed-a79be6c
+Checkpoint tag: checkpoint-phase-19-closed-0354c5e
 
 Phase: 19
-Experiment: E19 coding generalization, correction-identity adapter repair + full-grid re-run
+Experiment: E19 coding generalization, correction-identity adapter repair + full-grid re-run + missing-cell recovery
 Status: COMPLETED
 
-Starting HEAD: 37d1a32
-Final HEAD: a79be6c
+Phase-19 starting HEAD: 37d1a32 (Phase-18 checkpoint commit)
+Phase-19 closure commits: a96b978, 0354c5e
+Current HEAD: 0354c5e40edf9047237bf8404d85cee1d6293027
 
 Objective:
 Repair the counterfactual benchmark adapter so existing correction metadata
@@ -38,13 +39,20 @@ Historical full artifact:
 Recovered missing negative-control:
 write_retry / seed=3 / budget=256 / llm_summarization
 
+Recovery outcome:
+final_success = false
+
 Recovered artifact:
 experiments/results/e24_missing_negative_control.json
-sha256: 9f8c2e4a7b3d1f6e8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
+
+Combined accounting:
+225/225 expected cells
 
 adaptive = 27/27
 vanilla_rag = 26/27
-adaptive_advances = false
+
+Adaptive advances:
+false
 
 Immutable historical artifacts:
 PRESERVED — all Phase-17/18 E20 and E19 artifacts byte-identical
@@ -53,7 +61,7 @@ Tests:
 py_compile: PASS (e24, test_phase19_closure)
 counterfactual self-test: PASS
 targeted tests: PASS (63 tests)
-full pytest: PASS (189 tests)
+full pytest: PASS (200 tests)
 
 Preflight (e23 --preflight):
 embedding_consistency: 27/27 PASS
@@ -77,7 +85,7 @@ gold_passes: PASS
 budget_pressure: PASS
 real_summarization: PASS
 adaptive_production_path: PASS
-unit_tests_pass: PASS (189)
+unit_tests_pass: PASS (200)
 all_passed: True
 
 Paired comparisons:
@@ -97,12 +105,12 @@ e19_coding_generalization_full_repaired.json sha256
 e19_coding_generalization_full_repaired_report.md sha256
 03ddf8a04277d56bcb9eed6ec8bec218d34b1de982f908dfd66ef2b374d59792
 e24_missing_negative_control.json sha256
-9f8c2e4a7b3d1f6e8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
+a162b050f3cd749bb4b68c83b849b573e1c1835b7115760aada1ca63e37effa0
 
 Production defaults:
 UNCHANGED (config.yaml, memory_optimizer/, server.py untouched)
 
-Commit: a79be6c
+Commit: 0354c5e40edf9047237bf8404d85cee1d6293027
 Push: OK
 
 Final worktree: clean (except pre-existing tmp_* scratch files)

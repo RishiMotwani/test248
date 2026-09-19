@@ -63,7 +63,7 @@ python experiments/e24_missing_negative_control.py --run
 | G budget_pressure | PASS | history > max budget; raw grows; fills 60% |
 | H real_summarization | PASS | 324 summary_update_calls |
 | I adaptive_production_path | PASS | 27 adaptive runs |
-| J unit_tests_pass | PASS | 189 passed |
+| J unit_tests_pass | PASS | 200 passed |
 
 `gates_all_passed = True` → `adaptive_advances = False` (adaptive ties vanilla_rag).
 
@@ -121,7 +121,7 @@ vanilla_rag = 26/27
 - Gates: 10/10 pass; Gate B now passes with explicit `supersedes_turn` metadata.
 - `gates_all_passed = True`, `adaptive_advances = False` (adaptive ties vanilla_rag).
 - E20 certification (`check_e20_calibration()`) `passed: True`, groups == PRIMARY_TASKS.
-- Tests: 189 passing (+4 in `tests/test_phase19_closure.py`).
+- Tests: 200 passing (+4 in `tests/test_phase19_closure.py`).
 
 ## Next decision (reviewer)
 
