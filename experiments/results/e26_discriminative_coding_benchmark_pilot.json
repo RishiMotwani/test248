@@ -1,0 +1,3125 @@
+{
+  "experiment": "e26_discriminative_coding_benchmark",
+  "partial": false,
+  "mode": "pilot",
+  "config": {
+    "mode": "pilot",
+    "groups": [
+      "release_adapter",
+      "invoice_adapter",
+      "message_adapter"
+    ],
+    "variants": [
+      "A",
+      "B"
+    ],
+    "seeds": [
+      1,
+      2
+    ],
+    "budgets": [
+      96
+    ],
+    "methods": [
+      "no_history",
+      "direct_history",
+      "vanilla_rag",
+      "adaptive"
+    ],
+    "grid_cells": 48,
+    "model": "llama3.1:8b",
+    "endpoint": "http://localhost:11434",
+    "embedding_model": "nomic-embed-text",
+    "temperature": 0.1,
+    "tokenizer": "shared_word_count",
+    "ingestion": "oracle_pre_extracted",
+    "adaptive": {
+      "retention_mode": "dual_score",
+      "protect_corrections": true
+    },
+    "generated_at": 1789829263.4595413
+  },
+  "fixture_gates": {
+    "variants": {
+      "release_adapter:A": {
+        "group_id": "release_adapter",
+        "variant": "A",
+        "checks": [
+          {
+            "check": "shared_workspace_identity",
+            "passed": true,
+            "detail": "4d2432aa39b4e7600acebd8d3807e076c73e811dd7f9e414f4ba477763439455 vs 4d2432aa39b4e7600acebd8d3807e076c73e811dd7f9e414f4ba477763439455"
+          },
+          {
+            "check": "shared_prompt_identity",
+            "passed": true,
+            "detail": "9ced1685caec08dd908ed07c98c0f7596008f090a5859668333b81f5bde1b585 vs 9ced1685caec08dd908ed07c98c0f7596008f090a5859668333b81f5bde1b585"
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": "feb6913dc19f17f9adb1d21843a19df0798cd50a036774af89df51921eaa2a18 vs b684065c1a7245efbc373c90f521913803053f07085e08fb81080a37450bcd6f"
+          },
+          {
+            "check": "hidden_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_current_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_obsolete_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_distractors",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_corrections",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_fact_placement_420_540",
+            "passed": true,
+            "detail": "current turns=[424, 452, 496, 538]"
+          },
+          {
+            "check": "obsolete_fact_placement_70_180",
+            "passed": true,
+            "detail": "obsolete turns=[74, 105, 142, 178]"
+          },
+          {
+            "check": "obsolete_facts_more_than_300_turns_old",
+            "passed": true,
+            "detail": "ages=[422, 458, 495, 526]"
+          },
+          {
+            "check": "history_is_600_turns",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "facts_spread_across_history",
+            "passed": true,
+            "detail": "span 74..538"
+          },
+          {
+            "check": "fact_sizes_18_to_28",
+            "passed": true,
+            "detail": "bad={}"
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_pairs_consistent",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_ids_unique",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "distractor_category_transient",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "release_adapter:B": {
+        "group_id": "release_adapter",
+        "variant": "B",
+        "checks": [
+          {
+            "check": "shared_workspace_identity",
+            "passed": true,
+            "detail": "4d2432aa39b4e7600acebd8d3807e076c73e811dd7f9e414f4ba477763439455 vs 4d2432aa39b4e7600acebd8d3807e076c73e811dd7f9e414f4ba477763439455"
+          },
+          {
+            "check": "shared_prompt_identity",
+            "passed": true,
+            "detail": "9ced1685caec08dd908ed07c98c0f7596008f090a5859668333b81f5bde1b585 vs 9ced1685caec08dd908ed07c98c0f7596008f090a5859668333b81f5bde1b585"
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": "b684065c1a7245efbc373c90f521913803053f07085e08fb81080a37450bcd6f vs feb6913dc19f17f9adb1d21843a19df0798cd50a036774af89df51921eaa2a18"
+          },
+          {
+            "check": "hidden_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_current_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_obsolete_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_distractors",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_corrections",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_fact_placement_420_540",
+            "passed": true,
+            "detail": "current turns=[427, 458, 502, 538]"
+          },
+          {
+            "check": "obsolete_fact_placement_70_180",
+            "passed": true,
+            "detail": "obsolete turns=[78, 109, 146, 178]"
+          },
+          {
+            "check": "obsolete_facts_more_than_300_turns_old",
+            "passed": true,
+            "detail": "ages=[422, 454, 491, 522]"
+          },
+          {
+            "check": "history_is_600_turns",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "facts_spread_across_history",
+            "passed": true,
+            "detail": "span 78..538"
+          },
+          {
+            "check": "fact_sizes_18_to_28",
+            "passed": true,
+            "detail": "bad={}"
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_pairs_consistent",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_ids_unique",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "distractor_category_transient",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "invoice_adapter:A": {
+        "group_id": "invoice_adapter",
+        "variant": "A",
+        "checks": [
+          {
+            "check": "shared_workspace_identity",
+            "passed": true,
+            "detail": "74756df9b29e72d39ecf43377e6bf3dafc2cf4ece93854a1c64d809140f36f98 vs 74756df9b29e72d39ecf43377e6bf3dafc2cf4ece93854a1c64d809140f36f98"
+          },
+          {
+            "check": "shared_prompt_identity",
+            "passed": true,
+            "detail": "b5b448d9583ed5cb7abdb13b57b9032b63b147af63e23a2b6c60beb1f320f7f2 vs b5b448d9583ed5cb7abdb13b57b9032b63b147af63e23a2b6c60beb1f320f7f2"
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": "cabe9a3a30705ff4eff07722f5d54cebc836a8485b88240d7551de4284152835 vs 3eabf5da4ddd33b359c89a8b4b1b8aa670eaed7d2f4ef40d9ddc163fdf076494"
+          },
+          {
+            "check": "hidden_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_current_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_obsolete_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_distractors",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_corrections",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_fact_placement_420_540",
+            "passed": true,
+            "detail": "current turns=[426, 454, 498, 540]"
+          },
+          {
+            "check": "obsolete_fact_placement_70_180",
+            "passed": true,
+            "detail": "obsolete turns=[76, 107, 144, 180]"
+          },
+          {
+            "check": "obsolete_facts_more_than_300_turns_old",
+            "passed": true,
+            "detail": "ages=[420, 456, 493, 524]"
+          },
+          {
+            "check": "history_is_600_turns",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "facts_spread_across_history",
+            "passed": true,
+            "detail": "span 76..540"
+          },
+          {
+            "check": "fact_sizes_18_to_28",
+            "passed": true,
+            "detail": "bad={}"
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_pairs_consistent",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_ids_unique",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "distractor_category_transient",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "invoice_adapter:B": {
+        "group_id": "invoice_adapter",
+        "variant": "B",
+        "checks": [
+          {
+            "check": "shared_workspace_identity",
+            "passed": true,
+            "detail": "74756df9b29e72d39ecf43377e6bf3dafc2cf4ece93854a1c64d809140f36f98 vs 74756df9b29e72d39ecf43377e6bf3dafc2cf4ece93854a1c64d809140f36f98"
+          },
+          {
+            "check": "shared_prompt_identity",
+            "passed": true,
+            "detail": "b5b448d9583ed5cb7abdb13b57b9032b63b147af63e23a2b6c60beb1f320f7f2 vs b5b448d9583ed5cb7abdb13b57b9032b63b147af63e23a2b6c60beb1f320f7f2"
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": "3eabf5da4ddd33b359c89a8b4b1b8aa670eaed7d2f4ef40d9ddc163fdf076494 vs cabe9a3a30705ff4eff07722f5d54cebc836a8485b88240d7551de4284152835"
+          },
+          {
+            "check": "hidden_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_current_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_obsolete_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_distractors",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_corrections",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_fact_placement_420_540",
+            "passed": true,
+            "detail": "current turns=[429, 460, 504, 538]"
+          },
+          {
+            "check": "obsolete_fact_placement_70_180",
+            "passed": true,
+            "detail": "obsolete turns=[80, 111, 148, 178]"
+          },
+          {
+            "check": "obsolete_facts_more_than_300_turns_old",
+            "passed": true,
+            "detail": "ages=[422, 452, 489, 520]"
+          },
+          {
+            "check": "history_is_600_turns",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "facts_spread_across_history",
+            "passed": true,
+            "detail": "span 80..538"
+          },
+          {
+            "check": "fact_sizes_18_to_28",
+            "passed": true,
+            "detail": "bad={}"
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_pairs_consistent",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_ids_unique",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "distractor_category_transient",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "message_adapter:A": {
+        "group_id": "message_adapter",
+        "variant": "A",
+        "checks": [
+          {
+            "check": "shared_workspace_identity",
+            "passed": true,
+            "detail": "a5d0062ef884a60dce37a2ca728b8e77961acbad3acad644234896c20304d636 vs a5d0062ef884a60dce37a2ca728b8e77961acbad3acad644234896c20304d636"
+          },
+          {
+            "check": "shared_prompt_identity",
+            "passed": true,
+            "detail": "b7ccc2dfc6b34415babd1f97c4fed7ad4a9f9411740a6cfe94c01b3886f138fc vs b7ccc2dfc6b34415babd1f97c4fed7ad4a9f9411740a6cfe94c01b3886f138fc"
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": "a36367b4c25a5682762af35c9596a37402a8a06020391ec07aa11eb538452633 vs 474f594860eb790162e195cf69cffef8830c233bbb6b2b453ff945b1a718ea11"
+          },
+          {
+            "check": "hidden_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_current_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_obsolete_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_distractors",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_corrections",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_fact_placement_420_540",
+            "passed": true,
+            "detail": "current turns=[422, 450, 494, 536]"
+          },
+          {
+            "check": "obsolete_fact_placement_70_180",
+            "passed": true,
+            "detail": "obsolete turns=[72, 103, 140, 176]"
+          },
+          {
+            "check": "obsolete_facts_more_than_300_turns_old",
+            "passed": true,
+            "detail": "ages=[424, 460, 497, 528]"
+          },
+          {
+            "check": "history_is_600_turns",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "facts_spread_across_history",
+            "passed": true,
+            "detail": "span 72..536"
+          },
+          {
+            "check": "fact_sizes_18_to_28",
+            "passed": true,
+            "detail": "bad={}"
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_pairs_consistent",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_ids_unique",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "distractor_category_transient",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "message_adapter:B": {
+        "group_id": "message_adapter",
+        "variant": "B",
+        "checks": [
+          {
+            "check": "shared_workspace_identity",
+            "passed": true,
+            "detail": "a5d0062ef884a60dce37a2ca728b8e77961acbad3acad644234896c20304d636 vs a5d0062ef884a60dce37a2ca728b8e77961acbad3acad644234896c20304d636"
+          },
+          {
+            "check": "shared_prompt_identity",
+            "passed": true,
+            "detail": "b7ccc2dfc6b34415babd1f97c4fed7ad4a9f9411740a6cfe94c01b3886f138fc vs b7ccc2dfc6b34415babd1f97c4fed7ad4a9f9411740a6cfe94c01b3886f138fc"
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": "474f594860eb790162e195cf69cffef8830c233bbb6b2b453ff945b1a718ea11 vs a36367b4c25a5682762af35c9596a37402a8a06020391ec07aa11eb538452633"
+          },
+          {
+            "check": "hidden_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_current_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_obsolete_policy_facts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_distractors",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "four_corrections",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_fact_placement_420_540",
+            "passed": true,
+            "detail": "current turns=[425, 453, 497, 539]"
+          },
+          {
+            "check": "obsolete_fact_placement_70_180",
+            "passed": true,
+            "detail": "obsolete turns=[75, 106, 143, 179]"
+          },
+          {
+            "check": "obsolete_facts_more_than_300_turns_old",
+            "passed": true,
+            "detail": "ages=[421, 457, 494, 525]"
+          },
+          {
+            "check": "history_is_600_turns",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "facts_spread_across_history",
+            "passed": true,
+            "detail": "span 75..539"
+          },
+          {
+            "check": "fact_sizes_18_to_28",
+            "passed": true,
+            "detail": "bad={}"
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_pairs_consistent",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_ids_unique",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "distractor_category_transient",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "records": [
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 80,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 231,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.833,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ia.a.cur.001",
+        "ia.a.cur.002",
+        "ia.a.cur.003",
+        "ia.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "b1de21fa93def590",
+      "patch_sha": "d01d1a65a6b491e7",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 3690.0,
+        "prepare_total": 3700.2,
+        "retrieval": 10.3,
+        "coding": 4699.1,
+        "total": 8409.6
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 80,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 231,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.833,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ia.a.cur.001",
+        "ia.a.cur.002",
+        "ia.a.cur.003",
+        "ia.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "dcd457efc016877e",
+      "patch_sha": "055ab7b8f5a8a34c",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 2222.9,
+        "total": 2222.9
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 153,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "da0c61ea12538840",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 12490.0,
+        "total": 12490.1
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 80,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 231,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.5,
+      "correction_recall": 0.25,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.833,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 2
+      },
+      "correction_current_ids": [
+        "ia.a.cur.001",
+        "ia.a.cur.003"
+      ],
+      "correction_obsolete_ids": [
+        "ia.a.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "21367602d379d8d4",
+      "patch_sha": "4fdbeb8d8c9ed915",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.2,
+        "retrieval": 0.3,
+        "coding": 10333.8,
+        "total": 10334.4
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 86,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 237,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.75,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.896,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 3,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ia.a.cur.001",
+        "ia.a.cur.002",
+        "ia.a.cur.003"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "5edb24c592073a16",
+      "patch_sha": "10caf672e120843b",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 9729.5,
+        "prepare_total": 9732.4,
+        "retrieval": 0.3,
+        "coding": 2832.9,
+        "total": 12565.5
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 80,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 231,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.833,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ia.a.cur.001",
+        "ia.a.cur.002",
+        "ia.a.cur.003",
+        "ia.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "dcd457efc016877e",
+      "patch_sha": "961ccaa59375ad18",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 2100.4,
+        "total": 2100.4
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 153,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "d7a01a74d76a044a",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6487.1,
+        "total": 6487.1
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_A",
+      "group": "invoice_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 80,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 231,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.5,
+      "correction_recall": 0.25,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.833,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 2
+      },
+      "correction_current_ids": [
+        "ia.a.cur.001",
+        "ia.a.cur.003"
+      ],
+      "correction_obsolete_ids": [
+        "ia.a.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "21367602d379d8d4",
+      "patch_sha": "1084bee6fcd8db52",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.2,
+        "prepare_total": 0.2,
+        "retrieval": 0.4,
+        "coding": 4739.7,
+        "total": 4740.3
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 234,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ia.b.cur.001",
+        "ia.b.cur.002",
+        "ia.b.cur.003",
+        "ia.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "3108af714866c9ac",
+      "patch_sha": "c881b05bc77b4078",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 920.0,
+        "prepare_total": 923.1,
+        "retrieval": 0.3,
+        "coding": 6073.5,
+        "total": 6996.9
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 234,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ia.b.cur.001",
+        "ia.b.cur.002",
+        "ia.b.cur.003",
+        "ia.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "210ea749b651d406",
+      "patch_sha": "388c1e9eebbdb1a6",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3289.8,
+        "total": 3289.8
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 153,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "fe57238a23756259",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 12270.7,
+        "total": 12270.8
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 81,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 232,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.5,
+      "correction_recall": 0.25,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.844,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 2
+      },
+      "correction_current_ids": [
+        "ia.b.cur.001",
+        "ia.b.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ia.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "7ce9477636d12a75",
+      "patch_sha": "3d6788e698cb27d0",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.2,
+        "prepare_total": 0.2,
+        "retrieval": 1.7,
+        "coding": 4883.5,
+        "total": 4885.4
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 234,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ia.b.cur.001",
+        "ia.b.cur.002",
+        "ia.b.cur.003",
+        "ia.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "3108af714866c9ac",
+      "patch_sha": "e4540fe1d6894a44",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 759.6,
+        "prepare_total": 761.4,
+        "retrieval": 0.2,
+        "coding": 5241.9,
+        "total": 6003.5
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 234,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ia.b.cur.001",
+        "ia.b.cur.002",
+        "ia.b.cur.003",
+        "ia.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "210ea749b651d406",
+      "patch_sha": "945eee7db425cb01",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6562.9,
+        "total": 6562.9
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 153,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "0e65f972d952dcdd",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5682.2,
+        "total": 5682.2
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "invoice_adapter_B",
+      "group": "invoice_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 81,
+      "workspace_context_tokens": 48,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 232,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.5,
+      "correction_recall": 0.25,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.844,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 2
+      },
+      "correction_current_ids": [
+        "ia.b.cur.001",
+        "ia.b.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ia.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "7ce9477636d12a75",
+      "patch_sha": "a383e5d1c60856cd",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.4,
+        "coding": 4467.9,
+        "total": 4468.3
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 79,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 229,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.823,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.a.cur.001",
+        "ma.a.cur.002",
+        "ma.a.cur.003",
+        "ma.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "871e2106bedec8df",
+      "patch_sha": "06ff9fc4b364bf5a",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 1108.4,
+        "prepare_total": 1110.0,
+        "retrieval": 15.2,
+        "coding": 7699.9,
+        "total": 8825.1
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 79,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 229,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.823,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.a.cur.001",
+        "ma.a.cur.002",
+        "ma.a.cur.003",
+        "ma.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "88fed31621f5bd0f",
+      "patch_sha": "88f729c4910627b9",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 7676.7,
+        "total": 7676.7
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 152,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "f464f2133eb23a1d",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5464.2,
+        "total": 5464.2
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 79,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 229,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.5,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.823,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 2,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ma.a.cur.001",
+        "ma.a.cur.002",
+        "ma.a.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ma.a.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "c84ed7dafe45cea7",
+      "patch_sha": "6d1113b38073d39f",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.2,
+        "prepare_total": 0.2,
+        "retrieval": 0.8,
+        "coding": 6736.8,
+        "total": 6737.7
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 79,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 229,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.823,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.a.cur.001",
+        "ma.a.cur.002",
+        "ma.a.cur.003",
+        "ma.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "871e2106bedec8df",
+      "patch_sha": "c6f70bb2a7593ff5",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 636.5,
+        "prepare_total": 638.3,
+        "retrieval": 0.3,
+        "coding": 5975.1,
+        "total": 6613.7
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 79,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 229,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.823,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.a.cur.001",
+        "ma.a.cur.002",
+        "ma.a.cur.003",
+        "ma.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "88fed31621f5bd0f",
+      "patch_sha": "f01dda8eda2af4bd",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 7493.4,
+        "total": 7493.5
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 152,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "f889d4258fd987ca",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5501.9,
+        "total": 5501.9
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_A",
+      "group": "message_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 79,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 229,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.5,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.823,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 2,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ma.a.cur.001",
+        "ma.a.cur.002",
+        "ma.a.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ma.a.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "c84ed7dafe45cea7",
+      "patch_sha": "b248b7386579267a",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.4,
+        "coding": 7845.4,
+        "total": 7845.9
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 82,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 232,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.854,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.b.cur.001",
+        "ma.b.cur.002",
+        "ma.b.cur.003",
+        "ma.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "0489e5a16f948162",
+      "patch_sha": "fe98731391c8dce0",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 399.7,
+        "prepare_total": 401.6,
+        "retrieval": 0.3,
+        "coding": 1248.1,
+        "total": 1650.0
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 82,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 232,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.854,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.b.cur.001",
+        "ma.b.cur.002",
+        "ma.b.cur.003",
+        "ma.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "793c2559c6aeddd8",
+      "patch_sha": "2622cfef8ba284c7",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1509.2,
+        "total": 1509.2
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 152,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "173e76e60b94babf",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 11151.2,
+        "total": 11151.2
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 80,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 230,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.5,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.833,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 2,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ma.b.cur.001",
+        "ma.b.cur.003",
+        "ma.b.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ma.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "078c340dba72af61",
+      "patch_sha": "ec3acdfc441d6f17",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.2,
+        "prepare_total": 0.2,
+        "retrieval": 0.8,
+        "coding": 4854.2,
+        "total": 4855.2
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 82,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 232,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.854,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.b.cur.001",
+        "ma.b.cur.002",
+        "ma.b.cur.003",
+        "ma.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "0489e5a16f948162",
+      "patch_sha": "8e8b0a34e26a2262",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 117.3,
+        "prepare_total": 119.5,
+        "retrieval": 0.6,
+        "coding": 1152.8,
+        "total": 1272.9
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 82,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 232,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.854,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ma.b.cur.001",
+        "ma.b.cur.002",
+        "ma.b.cur.003",
+        "ma.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "793c2559c6aeddd8",
+      "patch_sha": "2622cfef8ba284c7",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1540.0,
+        "total": 1540.0
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 152,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "ecfd95a2dbfcfbab",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3756.5,
+        "total": 3756.5
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "message_adapter_B",
+      "group": "message_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 80,
+      "workspace_context_tokens": 47,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 230,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.5,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.833,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 2,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ma.b.cur.001",
+        "ma.b.cur.003",
+        "ma.b.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ma.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "078c340dba72af61",
+      "patch_sha": "ec3acdfc441d6f17",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.9,
+        "coding": 3506.3,
+        "total": 3507.3
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 88,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 241,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.75,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.917,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 3,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ra.a.cur.001",
+        "ra.a.cur.002",
+        "ra.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "2515f78f7359373c",
+      "patch_sha": "63695f90a31ac705",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 452.8,
+        "prepare_total": 455.3,
+        "retrieval": 17.6,
+        "coding": 10076.7,
+        "total": 10549.6
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 97,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 250,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 1.01,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ra.a.cur.001",
+        "ra.a.cur.002",
+        "ra.a.cur.003",
+        "ra.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "60a8dad6cc4c9091",
+      "patch_sha": null,
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.0
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 155,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "811da620284a7ec0",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5496.1,
+        "total": 5496.1
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 94,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 247,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.5,
+      "correction_recall": 0.25,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.5,
+      "budget_ratio": 0.979,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ra.a.cur.001",
+        "ra.a.cur.002"
+      ],
+      "correction_obsolete_ids": [
+        "ra.a.old.001",
+        "ra.a.old.003"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "6f7349233cdfb6b3",
+      "patch_sha": "363fb44625fb6ff8",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.5,
+        "prepare_total": 0.6,
+        "retrieval": 1.4,
+        "coding": 11913.5,
+        "total": 11915.4
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 88,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 241,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.75,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.917,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 3,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ra.a.cur.001",
+        "ra.a.cur.002",
+        "ra.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "2515f78f7359373c",
+      "patch_sha": "061ec52158e2f864",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 134.4,
+        "prepare_total": 136.6,
+        "retrieval": 0.3,
+        "coding": 11194.0,
+        "total": 11330.9
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 97,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 250,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 1.01,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ra.a.cur.001",
+        "ra.a.cur.002",
+        "ra.a.cur.003",
+        "ra.a.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CONTEXT_OVERFLOW",
+      "context_sha": "60a8dad6cc4c9091",
+      "patch_sha": null,
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 0.0,
+        "total": 0.0
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 155,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "575de903180806a5",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6454.5,
+        "total": 6454.5
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_A",
+      "group": "release_adapter",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 94,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 247,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.5,
+      "correction_recall": 0.25,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.5,
+      "budget_ratio": 0.979,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ra.a.cur.001",
+        "ra.a.cur.002"
+      ],
+      "correction_obsolete_ids": [
+        "ra.a.old.001",
+        "ra.a.old.003"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "6f7349233cdfb6b3",
+      "patch_sha": "07f193ad22c78b3f",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.4,
+        "coding": 11441.7,
+        "total": 11442.2
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 236,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ra.b.cur.001",
+        "ra.b.cur.002",
+        "ra.b.cur.003",
+        "ra.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "0ad988ec989ccd6f",
+      "patch_sha": "100980afd8245c52",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 360.1,
+        "prepare_total": 361.6,
+        "retrieval": 0.2,
+        "coding": 10224.9,
+        "total": 10586.7
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 236,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ra.b.cur.001",
+        "ra.b.cur.002",
+        "ra.b.cur.003",
+        "ra.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "8423d8e972de6e19",
+      "patch_sha": "4a847ab50c5bcf61",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6409.3,
+        "total": 6409.3
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 155,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "56d3624f578fd236",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6316.4,
+        "total": 6316.4
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 86,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 239,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.5,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.896,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 2,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ra.b.cur.001",
+        "ra.b.cur.003",
+        "ra.b.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ra.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "a23e2d4f1bac4998",
+      "patch_sha": "f15a65af850c767a",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.5,
+        "coding": 5967.6,
+        "total": 5968.2
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 236,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ra.b.cur.001",
+        "ra.b.cur.002",
+        "ra.b.cur.003",
+        "ra.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "0ad988ec989ccd6f",
+      "patch_sha": "c7c51ffa631edf04",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 271.5,
+        "prepare_total": 276.3,
+        "retrieval": 0.5,
+        "coding": 7603.6,
+        "total": 7880.3
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 83,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 236,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.865,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "ra.b.cur.001",
+        "ra.b.cur.002",
+        "ra.b.cur.003",
+        "ra.b.cur.004"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "8423d8e972de6e19",
+      "patch_sha": "4a847ab50c5bcf61",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5935.7,
+        "total": 5935.7
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 155,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 4
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "fac2c7b7842d1ebd",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 8648.3,
+        "total": 8648.4
+      }
+    },
+    {
+      "experiment": "E26",
+      "task_id": "release_adapter_B",
+      "group": "release_adapter",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 86,
+      "workspace_context_tokens": 49,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 239,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.75,
+      "correction_recall": 0.5,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.25,
+      "budget_ratio": 0.896,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 2,
+        "CURRENT_PLUS_OBSOLETE": 1,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [
+        "ra.b.cur.001",
+        "ra.b.cur.003",
+        "ra.b.cur.004"
+      ],
+      "correction_obsolete_ids": [
+        "ra.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "a23e2d4f1bac4998",
+      "patch_sha": "901aada916c5674c",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.6,
+        "coding": 6204.3,
+        "total": 6205.0
+      }
+    }
+  ],
+  "pilot_gates": {
+    "gates": {
+      "history_dependence": {
+        "per_group": {
+          "release_adapter": {
+            "cells": 4,
+            "direct_history_success": 0.0,
+            "no_history_success": 0.0,
+            "direct_ok": false,
+            "no_history_ok": true,
+            "diff_cells": 0,
+            "diff_ok": false,
+            "passed": false
+          },
+          "invoice_adapter": {
+            "cells": 4,
+            "direct_history_success": 0.75,
+            "no_history_success": 0.0,
+            "direct_ok": true,
+            "no_history_ok": true,
+            "diff_cells": 3,
+            "diff_ok": true,
+            "passed": true
+          },
+          "message_adapter": {
+            "cells": 4,
+            "direct_history_success": 0.5,
+            "no_history_success": 0.0,
+            "direct_ok": false,
+            "no_history_ok": true,
+            "diff_cells": 2,
+            "diff_ok": true,
+            "passed": false
+          }
+        },
+        "passed": false
+      },
+      "contradiction_state": {
+        "methods": {
+          "vanilla_rag": {
+            "cells": 12,
+            "correction_recall": 0.375,
+            "obsolete_fact_exposure": 0.2917,
+            "passed": false
+          },
+          "adaptive": {
+            "cells": 12,
+            "correction_recall": 0.9375,
+            "obsolete_fact_exposure": 0.0,
+            "passed": true
+          }
+        },
+        "passed": false
+      },
+      "budget_binding": {
+        "methods": {
+          "vanilla_rag": {
+            "cells": 12,
+            "bound_cells": 12,
+            "fraction": 1.0,
+            "passed": true
+          },
+          "adaptive": {
+            "cells": 12,
+            "bound_cells": 12,
+            "fraction": 1.0,
+            "passed": true
+          }
+        },
+        "passed": true
+      },
+      "context_difference": {
+        "pairs": 12,
+        "differ": 12,
+        "fraction": 1.0,
+        "passed": true
+      },
+      "no_leakage": {
+        "leaked_cells": 0,
+        "passed": true,
+        "leaked": []
+      }
+    },
+    "passed": false
+  },
+  "aggregate": {
+    "adaptive": {
+      "runs": 12,
+      "success_rate": 0.5,
+      "first_pass_rate": 0.3333,
+      "mean_context_tokens": 83.0,
+      "mean_budget_ratio": 0.8648,
+      "correction_recall": 0.9375,
+      "obsolete_fact_exposure": 0.0,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 45,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 3
+      },
+      "contexts": 7
+    },
+    "direct_history": {
+      "runs": 12,
+      "success_rate": 0.4167,
+      "first_pass_rate": 0.4167,
+      "mean_context_tokens": 84.0,
+      "mean_budget_ratio": 0.875,
+      "correction_recall": 1.0,
+      "obsolete_fact_exposure": 0.0,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 48,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "contexts": 6
+    },
+    "no_history": {
+      "runs": 12,
+      "success_rate": 0.0,
+      "first_pass_rate": 0.0,
+      "mean_context_tokens": 0.0,
+      "mean_budget_ratio": 0.0,
+      "correction_recall": 0.0,
+      "obsolete_fact_exposure": 0.0,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 48
+      },
+      "contexts": 1
+    },
+    "vanilla_rag": {
+      "runs": 12,
+      "success_rate": 0.0,
+      "first_pass_rate": 0.0,
+      "mean_context_tokens": 83.3333,
+      "mean_budget_ratio": 0.868,
+      "correction_recall": 0.375,
+      "obsolete_fact_exposure": 0.2917,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 18,
+        "CURRENT_PLUS_OBSOLETE": 12,
+        "OBSOLETE_ONLY": 2,
+        "NEITHER": 16
+      },
+      "contexts": 6
+    }
+  }
+}

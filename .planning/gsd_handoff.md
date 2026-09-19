@@ -1,39 +1,47 @@
-# GSD Handoff — Phase 20 (E25 E19 baseline-ceiling + budget-geometry audit)
+# GSD Handoff — Phase 21 (E26 discriminative adaptive-vs-vanilla benchmark)
 
-Generated: after committing the Phase-20 closure (offline audit).
+Generated: after committing the Phase-21 closure (pilot ran, gates failed, hard stop).
 
 This doc is the single reviewer-readable artifact for the phase. Kept docs:
 ROADMAP.md, STATE.md, PROJECT.md, config.json, codebase.
 
 ## Where we are
 
-Phase 19 (commit `0354c5e`) closed the E19 experiment: after the counterfactual
-adapter repair (explicit `supersedes_turn` + current-correction metadata),
-`correction_identity` = 27/27 PASS, `embedding_consistency` = 27/27, primary
-grid = 135/135, and **`adaptive_advances = false`** (adaptive 27/27, vanilla_rag
-26/27, llm_summarization 14/27, raw_clipped 13/27, sliding_window 9/27). One
-negative-control cell was recovered separately (`write_retry / seed=3 /
-budget=256 / llm_summarization`), giving combined 225/225 accounting.
+Phase 19 (commit `0354c5e`) closed the E19 experiment with a locked verdict:
+after the counterfactual adapter repair (explicit `supersedes_turn` +
+current-correction metadata), `correction_identity` = 27/27 PASS,
+`embedding_consistency` = 27/27, primary grid = 135/135, and
+**`adaptive_advances = false`** (adaptive = 27/27, vanilla_rag = 26/27,
+llm_summarization 14/27, raw_clipped 13/27, sliding_window 9/27). One
+negative-control cell was recovered separately (`write_retry / seed=3 / budget=256 / llm_summarization`), giving combined 225/225 accounting.
 
-**Phase 20 runs E25** — a deterministic, offline audit of that locked artifact.
-It re-derives the budget geometry (how each method used the 256/512/1024
-historical-token budgets), the correction states behind the success counts, the
-single vanilla_rag failure, the adaptive-vs-vanilla context-hash relationship,
-and four diagnostic flags that constrain any next benchmark. E25 makes **zero
-LLM/embedding calls**, imports no production memory code, declares **no winner**,
-changes **no ranking**, and leaves every E19/E20/E24 artifact byte-identical.
+Phase 20 (E25) audited that locked artifact offline and set four constraints
+for any next benchmark (D42): obsolete-only evidence must be materially unsafe
+for the hidden test, budgets must actually bind both recall methods below the
+observed ~84–116-token range, discrimination must be possible above the 96.3%
+vanilla ceiling, and E19 must not be read as adaptive superiority.
+
+**Phase 21 builds E26** — the first benchmark built to those constraints. A
+D42-aligned discriminative suite (3 groups × 2 variants; contradiction-unsafe
+hidden tests; budgets 64/96/128) was certified offline on all 6 variants, and
+the 48-cell pilot ran at llama3.1:8b with the predeclared five gates. **The
+pilot failed two gates → hard stop. The 54-cell full grid was NOT run, and
+`adaptive_beats_vanilla = False`.**
 
 ## How it was run
 
 ```bash
-python experiments/e25_e19_baseline_ceiling_audit.py
-python -m pytest -q tests/            # 218 passing (18 new E25 tests)
+python -m data.discriminative_coding_suite --force        # write fixtures
+python -m experiments.e26_discriminative_coding_benchmark --validate # offline gates
+python -m experiments.e26_discriminative_coding_benchmark --pilot      # 48 cells + gates
+python -m pytest tests/ -q                                # 279 passing (62 new E26)
 ```
 
-Outputs written (new, force-added):
-`experiments/results/e25_e19_baseline_ceiling_audit.json` +
-`_report.md`; plus `experiments/e25_e19_baseline_ceiling_audit.py` and
-`tests/test_e25_baseline_ceiling_audit.py`.
+Outputs written (new, force-added): `data/discriminative_coding_suite.py` +
+`data/discriminative_coding_tasks/*`; `experiments/e26_discriminative_coding_benchmark.py`;
+`tests/test_discriminative_coding_suite.py` + `tests/test_e26_discriminative_coding_benchmark.py`;
+`experiments/results/e26_discriminative_coding_benchmark_pilot.json` +
+`_pilot_report.md`.
 
 ## Locked Phase-19 result (re-verified by E25, never modified)
 
@@ -49,93 +57,117 @@ Outputs written (new, force-added):
 vanilla_rag failure: `serialization_policy / seed=2 / budget=1024 /
 OBSOLETE_INFORMATION_USED` (102 tokens, context SHA `50c96fd1d0bf2f96`).
 
-## E25 budget geometry (means; binding = tokens >= 0.90·budget)
+## E26 suite (offline fixture gates — all 6 variants PASS)
 
-| method | 256 | 512 | 1024 | binding |
-| --- | --- | --- | --- | --- |
-| raw_clipped | 244 tok (0.95) | 509 (0.99) | 1018 (0.99) | 100% at every budget |
-| sliding_window | 116 (0.45) | 116 (0.23) | 116 (0.11) | 0% |
-| llm_summarization | 184 (0.72) | 318 (0.62) | 412 (0.40) | 0% |
-| vanilla_rag | 109 (0.43) | 109 (0.21) | 109 (0.11) | 0% |
-| adaptive | 92 (0.36) | 92 (0.18) | 92 (0.09) | 0% |
+- Groups `release_adapter` / `invoice_adapter` / `message_adapter`, variants A
+  and B per group; A/B differ ONLY by history contract (workspace and prompt
+  byte-identical within a pair; hidden tests and gold patches differ).
+- Facts: 4 current corrections (turns 420–540, `supersedes_turn`,
+  `is_correction_target`, `is_current_correction`, `superseded_fact`,
+  `superseded_prior_fact_id`), 4 obsolete policy facts (turns 70–180, >300
+  turns old, `superseded_by`), 4 distractors; 18–28 shared-word tokens each;
+  probe strings are substrings of their fact texts.
+- Offline gate per variant (StaticCoder, 0 LLM): base workspace FAILS hidden,
+  `gold.patch` PASSES, `obsolete.patch` FAILS. Forbidden contract terms
+  (`pending_releases`, `journal`, `MISCELLANEOUS`, `confirmation`, ...) absent
+  from workspace/prompt; `history.txt` seed-1 deterministic; no leakage.
 
-- Adaptive and vanilla_rag are **context-stable across 256/512/1024 on all 9
-  tracks** each (SHA-identical), i.e. budget had no effect on their context.
-- Raw_clipped and llm_summarization are budget-sensitive (context changes with
-  budget). Adaptive/vanilla contexts **never share a context_sha** with each
-  other at any budget/track.
-- Observed context threshold range: adaptive 84–99 tokens; vanilla_rag 102–116.
+## E26 pilot (48 cells, llama3.1:8b @ localhost:11434, budget 96, seeds 1–2)
 
-## E25 diagnostic flags (all four True)
+Predeclared gates, spec-locked (never retuned):
 
-| flag | finding | next-benchmark constraint |
+| gate | threshold | result |
 | --- | --- | --- |
-| A | vanilla OBSOLETE_ONLY succeeds 26/27 (0.963 >= 0.80) | obsolete-only evidence must become materially unsafe for the hidden test |
-| B | adaptive/vanilla mean utilization @256 = 0.359/0.427 (< 0.50), 9/9 stable tracks each | budget range must actually bind both recall methods (below ~84–116 tokens) |
-| C | vanilla primary success 0.963 >= 0.90 (near ceiling) | more discrimination above the vanilla ceiling |
-| D | `adaptive_advances` = false (locked) | do not treat E19 as evidence of adaptive superiority |
+| history_dependence | per group dh≥3/4, nh≤1/4, diff≥2 | **FAIL** |
+| contradiction_state | adaptive corr_recall≥0.75 ∧ obs≤0.25; vanilla obs≥0.75 | **FAIL** |
+| budget_binding | ≥75% of each recall method's cells ≥0.8×96 tokens | PASS (1.0 / 1.0) |
+| context_difference | ≥80% of 12 paired adaptive-vs-vanilla cells differ | PASS |
+| no_leakage | 0 leakage detections | PASS (0) |
 
-E25 reports the observed threshold range only; it does **not** choose final
-numerical budgets for a future benchmark.
+Why the two failures are findings, not measurement noise:
 
-## Three remaining questions (for any next phase)
+- **history_dependence:** even the full current-policy oracle history
+  (`direct_history`) fails to clear the hidden tests on two of three families —
+  `release_adapter` 0.0/4, `message_adapter` 0.5/4 (only `invoice_adapter`
+  0.75/4). `no_history` is 0.0 everywhere. The workspace + gold contract is
+  internally inconsistent with what llama3.1:8b will produce on those two
+  families, so the benchmark cannot separate history-aware methods at this
+  model tier.
+- **contradiction_state:** the adaptive side is clean (correction_recall 0.9375,
+  obsolete_fact_exposure 0.0), but vanilla_rag reached obsolete_fact_exposure
+  only 0.2917 (< 0.75 required) with correction_recall 0.375: at 96 tokens the
+  recency-weighted vanilla retriever dropped the superseded facts instead of
+  drowning the current contract in them — the intended obsolete-only signal
+  never formed. Per-method pilot success: adaptive 6/12 (0.50), direct_history
+  5/12 (0.42), vanilla_rag 0/12, no_history 0/12.
 
-1. **Contradiction sensitivity:** at which budget/task does obsolete-only
-   evidence (vanilla_rag's state on all 27 primary cells) actually change the
-   hidden-test outcome, so correction-aware vs correction-unaware retrieval can
-   be separated?
-2. **Binding threshold:** exactly where does the budget start to bind adaptive
-   and vanilla_rag (locate the ceiling below the current 256 low end, given the
-   observed 84–116-token range)?
-3. **Task design:** which task family (new hidden-test contract or sharper
-   counterfactual pair) makes the final-behavior decision underivable from the
-   workspace while still penalizing the obsolete alternative at the tested model
-   tier (llama3.1:8b)?
+## Verdict (predeclared, phase 21)
 
-## New artifacts (Phase 20, force-added)
+- `adaptive_beats_vanilla = pilot_gates_passed AND full_grid_complete AND
+  fixture_gates_passed AND bootstrap_ci_lower_bound > 0` (CI = paired
+  `bootstrap_ci_mean_diff` over 27 group/seed/budget-paired cells).
+- **Pilot gates did NOT pass → hard stop. The 54-cell full grid was not run.
+  `adaptive_beats_vanilla = False`.** The verdict is a locked, negative result —
+  no retuning, no gate weakening, no production change.
 
-- `experiments/e25_e19_baseline_ceiling_audit.py` (offline audit script)
-- `tests/test_e25_baseline_ceiling_audit.py` (18 offline tests)
-- `experiments/results/e25_e19_baseline_ceiling_audit.json` + `_report.md`
+## Remaining questions (for any next phase)
 
-## Immutable (Phase-20 contract)
+1. **Ceiling effect:** at llama3.1:8b, two of three E26 families are unsolvable
+   even with the full current-policy oracle history. Which task families are
+   within the model tier's solve capability yet still punish obsolete-only
+   evidence? (E16-style calibration of family difficulty must precede any
+   claim.)
+2. **Contradiction formation:** vanilla_rag at 96 tokens did not surface the
+   superseded facts (obs_exposure 0.29). Should the contract require
+   *recency-penalized* baseline retrieval to actually inject the obsolete
+   facts, or is a different baseline the right comparator?
+3. **Budget geometry:** with both recall methods bound at 96 (1.0 fraction),
+   D42's binding constraint is satisfied — but only for the two recall arms;
+   the failure is upstream (task solvability + contradiction signal), not the
+   budget range.
 
-- All E19/E20/E24 results and reports (incl. `e19_coding_generalization_full_repaired.json`,
-  `e20_counterfactual_history_repair.json`, `e24_missing_negative_control.json`)
-  are byte-for-byte unchanged (git diff empty).
-- `config.yaml`, `memory_optimizer/`, `server.py` — untouched.
+## Immutable (Phase-21 contract)
+
+- All E19/E20/E24/E25 results and reports (incl.
+  `e19_coding_generalization_full_repaired.json`,
+  `e20_counterfactual_history_repair.json`, `e24_missing_negative_control.json`,
+  `e25_e19_baseline_ceiling_audit.json`) are byte-for-byte unchanged
+  (git diff empty).
+- `config.yaml`, `memory_optimizer/`, `baselines/`, `server.py` — untouched.
 
 ## Honest verdict (reviewer-confirmable)
 
-- Primary grid re-verified as exactly 135/135 unique, complete cells.
-- The audit is diagnostic: 0 LLM calls, 0 embedding calls, no production
-  pipeline import, no winner declared, no ranking changed.
-- `adaptive_advances` remains `false`; E19 is **not** evidence of adaptive
-  superiority over vanilla_rag at the tested budgets.
+- The E26 suite is offline-certified (all 6 variants: base fails / gold passes /
+  obsolete.patch fails) and the pilot is complete (48/48 cells).
+- The pilot stopped the phase: three gates passed, two failed for structural
+  reasons (task solvability at the model tier; vanilla recency dropping the
+  obsolete facts). No adaptive advantage appeared anyway (6/12).
+- `adaptive_beats_vanilla = False`; no winner; no ranking change; PPF artifacts
+  byte-identical.
 
 ## Next decision (reviewer)
 
-Phase 20 deliberately does not start a Phase 21. Any next benchmark must
-satisfy the four constraints above before it can claim to separate adaptive
-from vanilla_rag — decide whether to run such a benchmark, extend E25's
-diagnostics, or stop the benchmark line.
+Decide whether to recalibrate E26 families to the llama3.1:8b constraint set
+(families that the model can solve from the oracle history but that still make
+obsolete-only evidence unsafe), run a different baseline, or stop the
+benchmark line.
 
 ## Cryptographic checkpoint
 
-- Checkpoint branch: `checkpoint/phase-20-e25-audit-complete`
-- Checkpoint SHA: the Phase-20 closure commit on master.
+- Checkpoint branch: `checkpoint/phase-21-e26-discriminative-benchmark-complete`
+- Checkpoint SHA: the Phase-21 closure commit on master.
 
 ## Restore
 
 ```bash
-git checkout checkpoint/phase-20-e25-audit-complete
+git checkout checkpoint/phase-21-e26-discriminative-benchmark-complete
 ```
 
 ## Do-not-regress (locked)
 
 1. Do not tune `config.yaml` (dual_score, retention, decay, thresholds, top_k,
    embedding model, task affinity all frozen).
-2. Original E19/E20/E24 JSON/report artifacts immutable.
+2. Original E19/E20/E24/E25 JSON/report artifacts immutable.
 3. Any new coding fixture must pass the offline base-hidden-test gate BEFORE it
    may claim history dependence.
 4. History dependence of a coding benchmark requires a reproducible
@@ -145,3 +177,5 @@ git checkout checkpoint/phase-20-e25-audit-complete
 6. Benchmark separation requires BOTH contradiction sensitivity AND
    method-specific budget pressure (D42) — one without the other cannot
    discriminate adaptive from vanilla_rag above the ceiling.
+7. E26 hard-stop rule stays locked: no 54-cell full grid unless a pilot records
+   all five gates passed; no retuning of the pilot gates to pass.

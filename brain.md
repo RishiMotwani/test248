@@ -1505,6 +1505,49 @@ changes no ranking, selects no final budgets, and leaves `config.yaml`,
 
 ---
 
+### D43 ★ E26 discriminative adaptive-vs-vanilla benchmark pilot failed its gates — full grid not legal
+
+**DECISION (locked contract, Phase 21):** build the E26 discriminative coding
+benchmark that meets the D42 constraints — obsolete-only evidence must be
+materially unsafe for the hidden test (A), the historical-context budget must
+bind both recall methods below ~84–116 tokens (B), and discrimination must be
+possible above the vanilla ceiling (C). Grid is spec-locked: pilot = 3 groups ×
+2 variants × seeds 1,2 × methods `no_history`/`direct_history`/`vanilla_rag`/
+`adaptive` at budget 96 (48 cells) first, with five gates; **any pilot gate
+failure is a hard stop — the 54-cell full grid (3 groups × variant A × seeds
+1–3 × budgets 64/96/128 × `vanilla_rag`/`adaptive`) is only legal after an
+all-gates-pass pilot.** Predeclared verdict: `adaptive_beats_vanilla =
+pilot_gates_passed AND full_grid_complete AND fixture_gates_passed AND
+bootstrap_ci_lower_bound > 0` over 27 adaptive-vs-vanilla pairs
+(`statistics.bootstrap_ci_mean_diff`, paired by group/seed/budget).
+
+**OBSERVED (E26, Phase 21 — the pilot ran at llama3.1:8b, budget 96, seeds
+1–2):** offline fixture gates PASS on all 6 variants (base workspace fails
+hidden, `gold.patch` passes, `obsolete.patch` fails, StaticCoder, 0 LLM calls);
+forbidden contract terms absent from workspace/prompt; obsolete facts sit
+>300 turns old and current correction facts at turns 420–540 with explicit
+`supersedes_turn` metadata; 48/48 pilot cells completed deterministically.
+Three of five gates PASS — budget_binding (vanilla_rag and adaptive both 1.0
+fraction bound at 96 tokens), context_difference (adaptive-vs-vanilla contexts
+never identical), no_leakage (0). **Gate `history_dependence` FAIL**
+(direct_history gold-context injection vs no_history: release_adapter 0.0/4,
+message_adapter 0.5/4, invoice_adapter 0.75/4; no_history 0.0 everywhere —
+even the full current-policy oracle history does not clear the hidden tests on
+two of three task families at this model tier), and **Gate `contradiction_state`
+FAIL** (adaptive correction_recall 0.9375 with obsolete_fact_exposure 0.0 on
+its side, but vanilla_rag obsolete_fact_exposure only 0.2917 — the recency-
+weighted vanilla retriever dropped the superseded facts at 96 tokens instead of
+drowning the contract in them, so the intended obsolete-only contradiction
+signal never formed). adaptive solved only 6/12 pilot cells (0.50); no adaptive
+advantage appeared even before the gates.
+
+**STATUS:** Phase 21 stopped at the pilot per the hard-stop rule. The 54-cell
+full grid was **NOT run**; the predeclared verdict is `adaptive_beats_vanilla =
+False` (`pilot_gates_passed` is False). No retuning, no gate weakening, no
+production change. `experiments/results/e26_discriminative_coding_benchmark_pilot.json`
++ `_pilot_report.md` force-added; `memory_optimizer/`, `baselines/`, `config.yaml`,
+`server.py` and every E19/E20/E24/E25 artifact byte-identical.
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.
