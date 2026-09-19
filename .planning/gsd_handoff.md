@@ -85,6 +85,9 @@ fires correctly. Verified on the raw `build_variant` fixture:
 | llm_summarization | 27/27 | 14/27 | +0.48 |
 | vanilla_rag | 27/27 | 26/27 | +0.04 |
 
+adaptive = 27/27
+vanilla_rag = 26/27
+
 ## Completeness accounting
 
 | artifact | records | note |

@@ -42,14 +42,9 @@ Recovered artifact:
 experiments/results/e24_missing_negative_control.json
 sha256: 9f8c2e4a7b3d1f6e8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
 
-Adaptive:
-27/27 (1.000)
-
-Vanilla RAG:
-26/27 (0.963)
-
-Adaptive advances:
-false (adaptive ties vanilla_rag at 27/27 vs 26/27)
+adaptive = 27/27
+vanilla_rag = 26/27
+adaptive_advances = false
 
 Immutable historical artifacts:
 PRESERVED — all Phase-17/18 E20 and E19 artifacts byte-identical
