@@ -1548,12 +1548,58 @@ production change. `experiments/results/e26_discriminative_coding_benchmark_pilo
 + `_pilot_report.md` force-added; `memory_optimizer/`, `baselines/`, `config.yaml`,
 `server.py` and every E19/E20/E24/E25 artifact byte-identical.
 
+### D44 ★ E27 single-policy counterfactual calibration pilot failed its gates — calibration surface INVALID for a head-to-head at this model tier
+
+**DECISION (locked contract, Phase 22):** repair the E26 surface (D43) by
+reducing every task to exactly ONE decisive obsolete policy fact vs ONE current
+correction with four distractors per variant, at a single 96-token budget, so
+the obsolete+current pair (ratio 103–110) can never both fit and the
+obsolete-only contradiction is small enough for the model to carry. Grid is
+spec-locked: pilot = 3 groups × 2 variants × seeds 1,2 × methods
+`no_history`/`direct_history`/`vanilla_rag`/`adaptive` at budget 96 (48 cells),
+with five gates; **any pilot gate failure invalidates the calibration —
+`calibration_valid = grid_complete AND fixture_gates AND pilot_gates`,
+`full_head_to_head_eligible = calibration_valid`.** E27 never runs a head-to-
+head grid and never declares a winner: a head-to-head is a separate future
+phase that must be explicitly commissioned.
+
+**OBSERVED (E27, Phase 22 — the pilot ran at llama3.1:8b, budget 96, seeds
+1–2):** offline fixture gates PASS on all 6 variants (base workspace fails
+hidden, `gold.patch` passes, `obsolete.patch` fails, StaticCoder, 0 LLM calls);
+forbidden contract terms absent from workspace/prompt; obsolete facts sit at
+turns 80–150 (>300 turns old) and the single current correction at turns
+470–530 with explicit `supersedes_turn` metadata; 48/48 pilot cells completed.
+Three of five gates PASS — budget_binding (vanilla_rag and adaptive both 1.0
+fraction bound at 96 tokens), context_difference (adaptive-vs-vanilla contexts
+12/12 distinct), no_leakage (0). **Gate `history_dependence` FAIL on all three
+groups** (route_contract and serialization_contract: direct_history 1.0 but
+no_history 0.75 — exactly at the 0.25 cap, so diff collapses to 1; retry_
+contract: direct_history 0.0/4 — a single decisive obsolete-vs-current fact is
+still not enough for llama3.1:8b to derive the record-then-ignore-a-retry
+behavior), and **Gate `contradiction_state` FAIL** (adaptive correction_recall
+1.0 with obsolete_fact_exposure 0.0 on its side, but vanilla_rag
+obsolete_fact_exposure 0.6667 < 0.75 — vanilla retrieved the current correction
+on 4/12 cells, serialization_variant_A 2 + retry_variant_A 2, so the obsolete-
+only contradiction signal is not consistent across the grid). Per-method pilot
+success: adaptive 0.67, direct_history 0.67, no_history 0.50, vanilla_rag 0.17.
+
+**STATUS:** Phase 22 stopped at the pilot per the locked stop rule.
+`calibration_valid = False`, `full_head_to_head_eligible = False`. E27 declares
+no winner and claims no adaptive-vs-RAG result; no retuning, no gate weakening,
+no production change. `experiments/results/e27_calibration.json` +
+`_calibration_report.md` force-added; `memory_optimizer/`, `baselines/`,
+`config.yaml`, `server.py` and every E26/E19/E20/E24/E25 artifact
+byte-identical.
+
+---
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.
 2. **D4 reinforcement semantics**: refresh + recompute base_score ★ / clock-refresh only / capped signal.
 3. **D4/D1 demo controls**: `planted_count` cap — 50 leaving ≥20 filler turns ★ vs up to `turns/2`; and the exact meaning of the density control (re-mention rate of planted facts — user's 10-Sep mental model — vs "% of turns that carry a planted fact" which the current UI tooltip claims but the code ignores).
 4. **D7 fill-mode**: when relevance candidates are scarce, fill the remaining `injection_token_limit` with best remaining by rank ★ vs strict top-k only (conservative, avoids injecting irrelevant context à la §6.3).
+5. **D44 next move (post E27)**: E27 calibrated INVALID at llama3.1:8b. Options — switch to a stronger/cheaper model tier re-certified on the same offline gates; re-specify families with multi-fact decisive policies so `no_history` falls harder while `direct_history` stays solvable; or stop the benchmark line. (E27 itself does none of these.)
 
 ## 9. Benchmark / source index (how we'll verify changes)
 

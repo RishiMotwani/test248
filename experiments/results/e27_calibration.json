@@ -1,0 +1,2841 @@
+{
+  "experiment": "e27_calibration",
+  "partial": false,
+  "config": {
+    "mode": "pilot",
+    "groups": [
+      "route_contract",
+      "serialization_contract",
+      "retry_contract"
+    ],
+    "variants": [
+      "A",
+      "B"
+    ],
+    "seeds": [
+      1,
+      2
+    ],
+    "budgets": [
+      96
+    ],
+    "methods": [
+      "no_history",
+      "direct_history",
+      "vanilla_rag",
+      "adaptive"
+    ],
+    "grid_cells": 48,
+    "model": "llama3.1:8b",
+    "endpoint": "http://localhost:11434",
+    "embedding_model": "nomic-embed-text",
+    "temperature": 0.1,
+    "tokenizer": "shared_word_count",
+    "ingestion": "oracle_pre_extracted",
+    "adaptive": {
+      "retention_mode": "dual_score"
+    },
+    "generated_at": 1789834681.9814112
+  },
+  "fixture_gates": {
+    "variants": {
+      "route_contract:A": {
+        "group_id": "route_contract",
+        "variant": "A",
+        "checks": [
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "workspace_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "prompt_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_token_geometry",
+            "passed": true,
+            "detail": "obs=55 cur=51 dist=[18, 19, 18, 19] sum=106 (>96: True)"
+          },
+          {
+            "check": "fact_placement_and_history_depth",
+            "passed": true,
+            "detail": "obs_turn=118 cur_turn=508 dist_turns=[132, 251, 363, 559]"
+          },
+          {
+            "check": "single_policy_counts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "no_hidden_test_language_in_history",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "probe_terms_in_fact_text",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_not_duplicate_of_obsolete",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "route_contract:B": {
+        "group_id": "route_contract",
+        "variant": "B",
+        "checks": [
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "workspace_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "prompt_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_token_geometry",
+            "passed": true,
+            "detail": "obs=55 cur=51 dist=[18, 19, 18, 19] sum=106 (>96: True)"
+          },
+          {
+            "check": "fact_placement_and_history_depth",
+            "passed": true,
+            "detail": "obs_turn=118 cur_turn=508 dist_turns=[132, 251, 363, 559]"
+          },
+          {
+            "check": "single_policy_counts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "no_hidden_test_language_in_history",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "probe_terms_in_fact_text",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_not_duplicate_of_obsolete",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "serialization_contract:A": {
+        "group_id": "serialization_contract",
+        "variant": "A",
+        "checks": [
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "workspace_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "prompt_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_token_geometry",
+            "passed": true,
+            "detail": "obs=55 cur=53 dist=[18, 18, 20, 19] sum=108 (>96: True)"
+          },
+          {
+            "check": "fact_placement_and_history_depth",
+            "passed": true,
+            "detail": "obs_turn=121 cur_turn=514 dist_turns=[134, 253, 358, 561]"
+          },
+          {
+            "check": "single_policy_counts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "no_hidden_test_language_in_history",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "probe_terms_in_fact_text",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_not_duplicate_of_obsolete",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "serialization_contract:B": {
+        "group_id": "serialization_contract",
+        "variant": "B",
+        "checks": [
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "workspace_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "prompt_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_token_geometry",
+            "passed": true,
+            "detail": "obs=50 cur=53 dist=[18, 18, 20, 19] sum=103 (>96: True)"
+          },
+          {
+            "check": "fact_placement_and_history_depth",
+            "passed": true,
+            "detail": "obs_turn=121 cur_turn=514 dist_turns=[134, 253, 358, 561]"
+          },
+          {
+            "check": "single_policy_counts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "no_hidden_test_language_in_history",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "probe_terms_in_fact_text",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_not_duplicate_of_obsolete",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "retry_contract:A": {
+        "group_id": "retry_contract",
+        "variant": "A",
+        "checks": [
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "workspace_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "prompt_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_token_geometry",
+            "passed": true,
+            "detail": "obs=55 cur=55 dist=[19, 20, 18, 19] sum=110 (>96: True)"
+          },
+          {
+            "check": "fact_placement_and_history_depth",
+            "passed": true,
+            "detail": "obs_turn=116 cur_turn=519 dist_turns=[130, 248, 356, 557]"
+          },
+          {
+            "check": "single_policy_counts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "no_hidden_test_language_in_history",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "probe_terms_in_fact_text",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_not_duplicate_of_obsolete",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      },
+      "retry_contract:B": {
+        "group_id": "retry_contract",
+        "variant": "B",
+        "checks": [
+          {
+            "check": "base_workspace_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "gold_patch_passes_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "obsolete_patch_fails_hidden",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "workspace_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "prompt_identical_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "history_differs_across_variants",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "fact_token_geometry",
+            "passed": true,
+            "detail": "obs=55 cur=53 dist=[19, 20, 18, 19] sum=108 (>96: True)"
+          },
+          {
+            "check": "fact_placement_and_history_depth",
+            "passed": true,
+            "detail": "obs_turn=116 cur_turn=519 dist_turns=[130, 248, 356, 557]"
+          },
+          {
+            "check": "single_policy_counts",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "correction_metadata_structured",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "no_policy_mapping_in_visible_workspace",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "no_hidden_test_language_in_history",
+            "passed": true,
+            "detail": "hits=[]"
+          },
+          {
+            "check": "probe_terms_in_fact_text",
+            "passed": true,
+            "detail": ""
+          },
+          {
+            "check": "current_not_duplicate_of_obsolete",
+            "passed": true,
+            "detail": ""
+          }
+        ],
+        "failing": [],
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "pilot_gates": {
+    "gates": {
+      "history_dependence": {
+        "per_group": {
+          "route_contract": {
+            "cells": 4,
+            "direct_history_success": 1.0,
+            "no_history_success": 0.75,
+            "direct_ok": true,
+            "no_history_ok": false,
+            "diff_cells": 1,
+            "diff_ok": false,
+            "passed": false
+          },
+          "serialization_contract": {
+            "cells": 4,
+            "direct_history_success": 1.0,
+            "no_history_success": 0.75,
+            "direct_ok": true,
+            "no_history_ok": false,
+            "diff_cells": 1,
+            "diff_ok": false,
+            "passed": false
+          },
+          "retry_contract": {
+            "cells": 4,
+            "direct_history_success": 0.0,
+            "no_history_success": 0.0,
+            "direct_ok": false,
+            "no_history_ok": true,
+            "diff_cells": 0,
+            "diff_ok": false,
+            "passed": false
+          }
+        },
+        "passed": false
+      },
+      "contradiction_state": {
+        "methods": {
+          "vanilla_rag": {
+            "cells": 12,
+            "correction_recall": 0.3333,
+            "obsolete_fact_exposure": 0.6667,
+            "passed": false
+          },
+          "adaptive": {
+            "cells": 12,
+            "correction_recall": 1.0,
+            "obsolete_fact_exposure": 0.0,
+            "passed": true
+          }
+        },
+        "passed": false
+      },
+      "budget_binding": {
+        "methods": {
+          "vanilla_rag": {
+            "cells": 12,
+            "bound_cells": 12,
+            "fraction": 1.0,
+            "passed": true
+          },
+          "adaptive": {
+            "cells": 12,
+            "bound_cells": 12,
+            "fraction": 1.0,
+            "passed": true
+          }
+        },
+        "passed": true
+      },
+      "context_difference": {
+        "pairs": 12,
+        "differ": 12,
+        "fraction": 1.0,
+        "passed": true
+      },
+      "no_leakage": {
+        "leaked_cells": 0,
+        "passed": true,
+        "leaked": []
+      }
+    },
+    "passed": false
+  },
+  "records": [
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 94,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 306,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.979,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "70c54739e622f0c0",
+      "patch_sha": "6c3063c9283bf6d5",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 11975.6,
+        "prepare_total": 11984.4,
+        "retrieval": 15.7,
+        "coding": 6900.8,
+        "total": 18900.9
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 55,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 267,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.573,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "469926972fddea90",
+      "patch_sha": "85cf618912bfd1ab",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5669.2,
+        "total": 5669.2
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 214,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "a1a29719cd22c454",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6282.6,
+        "total": 6282.6
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 305,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "473f7a4cc83c2cfd",
+      "patch_sha": "d8bde4f6dd78d82b",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.2,
+        "retrieval": 0.2,
+        "coding": 6582.0,
+        "total": 6582.4
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 94,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 306,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.979,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "70c54739e622f0c0",
+      "patch_sha": "bea82d39007b3a2d",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 10200.8,
+        "prepare_total": 10202.9,
+        "retrieval": 0.2,
+        "coding": 6715.0,
+        "total": 16918.1
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 55,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 267,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.573,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "469926972fddea90",
+      "patch_sha": "3eb16833cf076da6",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5222.1,
+        "total": 5222.1
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 214,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "5776cd2869d067ed",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6947.2,
+        "total": 6947.2
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_A",
+      "group": "retry_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 305,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "473f7a4cc83c2cfd",
+      "patch_sha": "ca6a7de0688ed80d",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.2,
+        "coding": 6539.0,
+        "total": 6539.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 92,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 304,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.958,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "ec5a2ae93661ccd2",
+      "patch_sha": "0e8fa525a4350c22",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 144.8,
+        "prepare_total": 146.9,
+        "retrieval": 0.3,
+        "coding": 6192.3,
+        "total": 6339.4
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 53,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 265,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.552,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "ec70f513d66b5332",
+      "patch_sha": "a791caefec044e17",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5603.7,
+        "total": 5603.7
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 214,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "30a7a5c719a3fb3c",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 6946.1,
+        "total": 6946.1
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 305,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "retry.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "3966f4085c573318",
+      "patch_sha": "3a0685b460c331bf",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.4,
+        "coding": 10012.5,
+        "total": 10013.0
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 92,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 304,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.958,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "ec5a2ae93661ccd2",
+      "patch_sha": "00d2230bf1d91983",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 45.0,
+        "prepare_total": 46.3,
+        "retrieval": 0.1,
+        "coding": 7760.3,
+        "total": 7806.7
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 53,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 265,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.552,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "retry.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": "CODING_ERROR",
+      "context_sha": "ec70f513d66b5332",
+      "patch_sha": "88daa941a3f51d12",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5080.7,
+        "total": 5080.8
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 214,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "30a7a5c719a3fb3c",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 8471.3,
+        "total": 8471.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "retry_contract_B",
+      "group": "retry_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 108,
+      "task_prompt_tokens": 25,
+      "total_prompt_tokens": 305,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "retry.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "3966f4085c573318",
+      "patch_sha": "ac7ad03dc267e935",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.2,
+        "coding": 7937.8,
+        "total": 7938.0
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 88,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 237,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.917,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "7cea9b3e6a0b5fec",
+      "patch_sha": "6dac4b786f6aea1f",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 716.3,
+        "prepare_total": 717.8,
+        "retrieval": 14.5,
+        "coding": 2048.6,
+        "total": 2780.9
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 51,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 200,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.531,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "f0c98752321251c1",
+      "patch_sha": "7651faf4738a9495",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 2489.7,
+        "total": 2489.7
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 151,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "2ee944bea8b5a4da",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 11411.4,
+        "total": 11411.4
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 242,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "route.a.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "a9292c3d0802beab",
+      "patch_sha": "5a7ae1bcae14b76a",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.2,
+        "prepare_total": 0.3,
+        "retrieval": 0.7,
+        "coding": 5519.1,
+        "total": 5520.1
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 88,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 237,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.917,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "7cea9b3e6a0b5fec",
+      "patch_sha": "6dac4b786f6aea1f",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 546.3,
+        "prepare_total": 549.1,
+        "retrieval": 0.1,
+        "coding": 1853.7,
+        "total": 2402.9
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 51,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 200,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.531,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "f0c98752321251c1",
+      "patch_sha": "cd5dca6c4601bb28",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1945.1,
+        "total": 1945.1
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 151,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "23e0117c23d80832",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 4431.5,
+        "total": 4431.5
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_A",
+      "group": "route_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 242,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "route.a.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "a9292c3d0802beab",
+      "patch_sha": "5a7ae1bcae14b76a",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.2,
+        "coding": 5917.0,
+        "total": 5917.2
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 88,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 237,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.917,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "ccd6790296162c65",
+      "patch_sha": "9e0dcbe7634c1d56",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 136.3,
+        "prepare_total": 138.2,
+        "retrieval": 0.2,
+        "coding": 2040.1,
+        "total": 2178.5
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 51,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 200,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.531,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "9adace268250fc53",
+      "patch_sha": "2beb80f149ac12f3",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 2036.2,
+        "total": 2036.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 151,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "8bc4d23635a4fcfe",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5685.6,
+        "total": 5685.6
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 242,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "route.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "65d78619e76d1b56",
+      "patch_sha": "88c4ec9f6b758f70",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.8,
+        "coding": 5696.5,
+        "total": 5697.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 88,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 237,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.917,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "ccd6790296162c65",
+      "patch_sha": "9e0dcbe7634c1d56",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 83.4,
+        "prepare_total": 84.9,
+        "retrieval": 0.2,
+        "coding": 2042.5,
+        "total": 2127.6
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 51,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 200,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.531,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "route.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "9adace268250fc53",
+      "patch_sha": "9e0dcbe7634c1d56",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 1918.8,
+        "total": 1918.8
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 151,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "8bc4d23635a4fcfe",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5005.5,
+        "total": 5005.5
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "route_contract_B",
+      "group": "route_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 93,
+      "workspace_context_tokens": 46,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 242,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.969,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "route.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "65d78619e76d1b56",
+      "patch_sha": "e80bb9c5456069fb",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.4,
+        "coding": 6566.1,
+        "total": 6566.6
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 92,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 238,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.958,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "949d5e275ec92844",
+      "patch_sha": "833a6808348f3ac5",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 439.0,
+        "prepare_total": 440.5,
+        "retrieval": 18.6,
+        "coding": 4040.2,
+        "total": 4499.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 53,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 199,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.552,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "dcf5d55a3fefeec6",
+      "patch_sha": "cf7b673d8fdac36b",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 2203.7,
+        "total": 2203.7
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 148,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "4aa60a4f5f398bca",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3042.4,
+        "total": 3042.4
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 90,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 236,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.938,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "a2796f6471294339",
+      "patch_sha": "b3556f67723f7d8a",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.5,
+        "prepare_total": 0.5,
+        "retrieval": 0.6,
+        "coding": 3590.3,
+        "total": 3591.5
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 90,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 236,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.938,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "48737fd4a897a391",
+      "patch_sha": "170a5bf3b1f7d9a4",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 203.5,
+        "prepare_total": 205.4,
+        "retrieval": 0.1,
+        "coding": 3844.4,
+        "total": 4049.9
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 53,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 199,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.552,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "dcf5d55a3fefeec6",
+      "patch_sha": "cf7b673d8fdac36b",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 2372.3,
+        "total": 2372.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 148,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "59373ee47a41c332",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3414.3,
+        "total": 3414.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_A",
+      "group": "serialization_contract",
+      "variant": "A",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 90,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 236,
+      "first_pass_success": true,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.938,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.a.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "a2796f6471294339",
+      "patch_sha": "b3556f67723f7d8a",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.2,
+        "coding": 3561.6,
+        "total": 3562.0
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 92,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 238,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.958,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "8e0f965b29804391",
+      "patch_sha": "ee4d40ccf94b5ef6",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 95.4,
+        "prepare_total": 96.7,
+        "retrieval": 0.1,
+        "coding": 4459.5,
+        "total": 4556.3
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 53,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 199,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.552,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "bfd5b6790ebb19b8",
+      "patch_sha": "be34b07b863becd0",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3264.0,
+        "total": 3264.0
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 148,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "a0f208e855f4dffc",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5080.5,
+        "total": 5080.5
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 1,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 87,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 233,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.906,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "serial.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "de59f927019e1101",
+      "patch_sha": "614ad43163b8c1eb",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.2,
+        "coding": 5979.5,
+        "total": 5979.8
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "adaptive",
+      "historical_context_tokens": 90,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 236,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.938,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "b53b68a3141a040c",
+      "patch_sha": "be34b07b863becd0",
+      "leakage_detected": false,
+      "uses_production_pipeline": true,
+      "latency_ms": {
+        "memory_build": 92.4,
+        "prepare_total": 94.4,
+        "retrieval": 0.3,
+        "coding": 3615.1,
+        "total": 3709.9
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "direct_history",
+      "historical_context_tokens": 53,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 199,
+      "first_pass_success": false,
+      "final_success": true,
+      "hidden_test_pass": true,
+      "critical_fact_recall": 1.0,
+      "correction_recall": 1.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.552,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 1,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [
+        "serial.b.cur.001"
+      ],
+      "correction_obsolete_ids": [],
+      "failure_class": null,
+      "context_sha": "bfd5b6790ebb19b8",
+      "patch_sha": "be34b07b863becd0",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 3220.5,
+        "total": 3220.5
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "no_history",
+      "historical_context_tokens": 0,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 148,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 0.0,
+      "budget_ratio": 0.0,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 1
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [],
+      "failure_class": "MEMORY_MISS",
+      "context_sha": "e3b0c44298fc1c14",
+      "patch_sha": "a2ec4d5bf3c26e54",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.0,
+        "prepare_total": 0.0,
+        "retrieval": 0.0,
+        "coding": 5448.0,
+        "total": 5448.0
+      }
+    },
+    {
+      "experiment": "E27",
+      "task_id": "serialization_contract_B",
+      "group": "serialization_contract",
+      "variant": "B",
+      "seed": 2,
+      "historical_budget": 96,
+      "method": "vanilla_rag",
+      "historical_context_tokens": 87,
+      "workspace_context_tokens": 43,
+      "task_prompt_tokens": 24,
+      "total_prompt_tokens": 233,
+      "first_pass_success": false,
+      "final_success": false,
+      "hidden_test_pass": false,
+      "critical_fact_recall": 0.0,
+      "correction_recall": 0.0,
+      "long_range_fact_recall": null,
+      "obsolete_fact_exposure": 1.0,
+      "budget_ratio": 0.906,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 1,
+        "NEITHER": 0
+      },
+      "correction_current_ids": [],
+      "correction_obsolete_ids": [
+        "serial.b.old.001"
+      ],
+      "failure_class": "RETRIEVAL_MISS",
+      "context_sha": "de59f927019e1101",
+      "patch_sha": "8a14f17d9f2743e8",
+      "leakage_detected": false,
+      "uses_production_pipeline": false,
+      "latency_ms": {
+        "memory_build": 0.1,
+        "prepare_total": 0.1,
+        "retrieval": 0.2,
+        "coding": 4611.3,
+        "total": 4611.6
+      }
+    }
+  ],
+  "aggregate": {
+    "adaptive": {
+      "runs": 12,
+      "success_rate": 0.6667,
+      "first_pass_rate": 0.5,
+      "mean_context_tokens": 90.6667,
+      "mean_budget_ratio": 0.9445,
+      "correction_recall": 1.0,
+      "obsolete_fact_exposure": 0.0,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 12,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "contexts": 8
+    },
+    "direct_history": {
+      "runs": 12,
+      "success_rate": 0.6667,
+      "first_pass_rate": 0.5,
+      "mean_context_tokens": 52.6667,
+      "mean_budget_ratio": 0.5485,
+      "correction_recall": 1.0,
+      "obsolete_fact_exposure": 0.0,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 12,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 0
+      },
+      "contexts": 6
+    },
+    "no_history": {
+      "runs": 12,
+      "success_rate": 0.5,
+      "first_pass_rate": 0.1667,
+      "mean_context_tokens": 0.0,
+      "mean_budget_ratio": 0.0,
+      "correction_recall": 0.0,
+      "obsolete_fact_exposure": 0.0,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 0,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 0,
+        "NEITHER": 12
+      },
+      "contexts": 1
+    },
+    "vanilla_rag": {
+      "runs": 12,
+      "success_rate": 0.1667,
+      "first_pass_rate": 0.1667,
+      "mean_context_tokens": 91.5,
+      "mean_budget_ratio": 0.9533,
+      "correction_recall": 0.3333,
+      "obsolete_fact_exposure": 0.6667,
+      "long_range_fact_recall": null,
+      "correction_state_counts": {
+        "CLEAN_CURRENT": 4,
+        "CURRENT_PLUS_OBSOLETE": 0,
+        "OBSOLETE_ONLY": 8,
+        "NEITHER": 0
+      },
+      "contexts": 6
+    }
+  },
+  "diagnostics": {
+    "gold_checks": [
+      {
+        "group": "route_contract",
+        "variant": "A",
+        "seed": 1,
+        "final_success": true
+      },
+      {
+        "group": "route_contract",
+        "variant": "B",
+        "seed": 1,
+        "final_success": true
+      },
+      {
+        "group": "serialization_contract",
+        "variant": "A",
+        "seed": 1,
+        "final_success": true
+      },
+      {
+        "group": "serialization_contract",
+        "variant": "B",
+        "seed": 1,
+        "final_success": true
+      },
+      {
+        "group": "retry_contract",
+        "variant": "A",
+        "seed": 1,
+        "final_success": true
+      },
+      {
+        "group": "retry_contract",
+        "variant": "B",
+        "seed": 1,
+        "final_success": true
+      }
+    ],
+    "grid_completeness": {
+      "expected": 48,
+      "present": 48,
+      "missing": [],
+      "complete": true
+    },
+    "methods": {
+      "adaptive": {
+        "runs": 12,
+        "success_rate": 0.6667,
+        "first_pass_rate": 0.5,
+        "mean_context_tokens": 90.6667,
+        "mean_budget_ratio": 0.9445,
+        "correction_recall": 1.0,
+        "obsolete_fact_exposure": 0.0,
+        "long_range_fact_recall": null,
+        "correction_state_counts": {
+          "CLEAN_CURRENT": 12,
+          "CURRENT_PLUS_OBSOLETE": 0,
+          "OBSOLETE_ONLY": 0,
+          "NEITHER": 0
+        },
+        "contexts": 8
+      },
+      "direct_history": {
+        "runs": 12,
+        "success_rate": 0.6667,
+        "first_pass_rate": 0.5,
+        "mean_context_tokens": 52.6667,
+        "mean_budget_ratio": 0.5485,
+        "correction_recall": 1.0,
+        "obsolete_fact_exposure": 0.0,
+        "long_range_fact_recall": null,
+        "correction_state_counts": {
+          "CLEAN_CURRENT": 12,
+          "CURRENT_PLUS_OBSOLETE": 0,
+          "OBSOLETE_ONLY": 0,
+          "NEITHER": 0
+        },
+        "contexts": 6
+      },
+      "no_history": {
+        "runs": 12,
+        "success_rate": 0.5,
+        "first_pass_rate": 0.1667,
+        "mean_context_tokens": 0.0,
+        "mean_budget_ratio": 0.0,
+        "correction_recall": 0.0,
+        "obsolete_fact_exposure": 0.0,
+        "long_range_fact_recall": null,
+        "correction_state_counts": {
+          "CLEAN_CURRENT": 0,
+          "CURRENT_PLUS_OBSOLETE": 0,
+          "OBSOLETE_ONLY": 0,
+          "NEITHER": 12
+        },
+        "contexts": 1
+      },
+      "vanilla_rag": {
+        "runs": 12,
+        "success_rate": 0.1667,
+        "first_pass_rate": 0.1667,
+        "mean_context_tokens": 91.5,
+        "mean_budget_ratio": 0.9533,
+        "correction_recall": 0.3333,
+        "obsolete_fact_exposure": 0.6667,
+        "long_range_fact_recall": null,
+        "correction_state_counts": {
+          "CLEAN_CURRENT": 4,
+          "CURRENT_PLUS_OBSOLETE": 0,
+          "OBSOLETE_ONLY": 8,
+          "NEITHER": 0
+        },
+        "contexts": 6
+      }
+    }
+  },
+  "verdict": {
+    "calibration_valid": false,
+    "history_dependence_passed": false,
+    "contradiction_state_passed": false,
+    "budget_binding_passed": true,
+    "context_difference_passed": true,
+    "no_leakage_passed": true,
+    "full_head_to_head_eligible": false,
+    "grid_complete": true,
+    "fixture_gates_passed": true,
+    "pilot_gates_passed": false,
+    "rationale": [
+      "pilot gates did not pass"
+    ]
+  }
+}
