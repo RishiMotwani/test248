@@ -839,6 +839,40 @@ def build_variant(group_id: str, variant: str, seed: int = 1,
         {"task_id": f"{group_id}_{variant}", "critical": vspec.critical,
          "distractors": vspec.distractors},
         seed=1, turns=history_turns)
+
+    # Counterfactual fixtures are oracle-pre-extracted structured histories.
+    # Preserve the explicit correction relation used by the existing coding
+    # workloads so the production consolidation path can target the obsolete
+    # source turn directly. This enriches only structured fact metadata; the
+    # committed history text remains byte-identical.
+    facts_by_id = {
+        fact["fact_id"]: (entry["turn_id"], fact)
+        for entry in hist
+        for fact in entry.get("facts", [])
+    }
+
+    for obsolete_fact_id, current_fact_id in vspec.corrections:
+        if obsolete_fact_id not in facts_by_id:
+            raise RuntimeError(
+                f"{group_id}/{variant}: obsolete correction fact "
+                f"{obsolete_fact_id!r} missing from generated history"
+            )
+        if current_fact_id not in facts_by_id:
+            raise RuntimeError(
+                f"{group_id}/{variant}: current correction fact "
+                f"{current_fact_id!r} missing from generated history"
+            )
+
+        obsolete_turn, obsolete_fact = facts_by_id[obsolete_fact_id]
+        current_turn, current_fact = facts_by_id[current_fact_id]
+
+        current_fact["is_correction_target"] = True
+        current_fact["is_current_correction"] = True
+        current_fact["supersedes_turn"] = obsolete_turn
+        current_fact["superseded_fact"] = obsolete_fact["fact"]
+        current_fact["superseded_prior_fact_id"] = obsolete_fact_id
+        obsolete_fact["superseded_by"] = current_turn
+
     if hist_text != committed:
         raise RuntimeError(
             f"{group_id}/{variant}: committed history.txt is out of sync with "
@@ -912,11 +946,30 @@ def self_test() -> None:
             assert len(task.history) == HISTORY_TURNS_DEFAULT
             assert any((task.history_turns - f.turn_index) > 300
                        for f in task.gold_facts), \
-                f"{group_id}/{variant}: no critical fact older than 300 turns"
+                 f"{group_id}/{variant}: no critical fact older than 300 turns"
             assert task.gold_patch_path.is_file(), f"gold missing: {group_id}/{variant}"
             assert task.hidden_test_path.is_file(), f"hidden missing: {group_id}/{variant}"
             for f in task.gold_facts:
                 assert f.probe.lower() in f.text.lower()
+
+            # Verify counterfactual correction metadata enrichment
+            by_id = {
+                fact["fact_id"]: fact
+                for entry in task.history
+                for fact in entry.get("facts", [])
+            }
+            for correction in task.corrections:
+                obsolete = by_id[correction.obsolete_fact_id]
+                current = by_id[correction.current_fact_id]
+
+                assert current["is_correction_target"] is True
+                assert current["is_current_correction"] is True
+                assert current["supersedes_turn"] == obsolete["source_turn_id"]
+                assert current["superseded_fact"] == obsolete["fact"]
+                assert current["superseded_prior_fact_id"] == (
+                    correction.obsolete_fact_id
+                )
+                assert obsolete["superseded_by"] == current["source_turn_id"]
     a, b = list_variants("routing_policy")
     assert prompt_bytes("routing_policy") == prompt_bytes("routing_policy")
     assert no_history_prompt("routing_policy", a) == \

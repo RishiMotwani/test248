@@ -1067,6 +1067,29 @@ def generate_report(result: Dict) -> str:
         L.append("At least one pilot gate failed; findings are directional only.")
     L.append("")
 
+    # Phase-19 Repair Provenance (only present in repaired results)
+    prov = result.get("repair_provenance")
+    if prov:
+        L.append("## Phase-19 Repair Provenance")
+        L.append("")
+        L.append(
+            "Phase 18 exposed a benchmark-adapter defect: the counterfactual "
+            "oracle-pre-extracted history represented correction identity in "
+            "`CodingTask.corrections` but did not propagate the explicit correction "
+            "metadata (`supersedes_turn`, `is_correction_target`, "
+            "`is_current_correction`, `superseded_fact`, and "
+            "`superseded_prior_fact_id`) into the structured history facts consumed by "
+            "the production consolidation path."
+        )
+        L.append("")
+        L.append(
+            "Phase 19 restores that existing correction metadata without changing the "
+            "history text, workspace, task prompt, hidden tests, gold patches, E20 "
+            "history-dependence certification, or production memory implementation. "
+            "The E19 225-cell grid is rerun from fresh state after the repair."
+        )
+        L.append("")
+
     L.append("## 25. Reproduction / Artifacts / Provenance")
     L.append("")
     L.append(f"- JSON: `{OUT_JSON.name}` (every record is the E19 schema with "

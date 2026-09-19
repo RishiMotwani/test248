@@ -433,3 +433,108 @@ def test_e20_and_e19_results_artifacts_compatible():
     assert e20.GRID_CELLS == 54
     assert (e20.BUDGET,) == (1024,)
     assert e20.SEEDS == [1, 2, 3]
+
+
+# ---------------------------------------------------------------------------
+# Phase 19: counterfactual correction metadata regression tests
+# ---------------------------------------------------------------------------
+
+def test_counterfactual_correction_metadata_matches_oracle_contract():
+    for group_id in cf.list_group_ids():
+        for variant in cf.list_variants(group_id):
+            task = cf.build_variant(group_id, variant, seed=1)
+
+            facts_by_id = {
+                fact["fact_id"]: (entry["turn_id"], fact)
+                for entry in task.history
+                for fact in entry.get("facts", [])
+            }
+
+            assert task.corrections
+
+            for correction in task.corrections:
+                obsolete_turn, obsolete = facts_by_id[
+                    correction.obsolete_fact_id
+                ]
+                current_turn, current = facts_by_id[
+                    correction.current_fact_id
+                ]
+
+                assert current["is_correction_target"] is True
+                assert current["is_current_correction"] is True
+                assert current["supersedes_turn"] == obsolete_turn
+                assert current["superseded_fact"] == obsolete["fact"]
+                assert current["superseded_prior_fact_id"] == (
+                    correction.obsolete_fact_id
+                )
+                assert obsolete["superseded_by"] == current_turn
+
+
+def test_counterfactual_correction_metadata_does_not_change_history_text():
+    for group_id in cf.list_group_ids():
+        for variant in cf.list_variants(group_id):
+            task = cf.build_variant(group_id, variant, seed=1)
+
+            committed = cf.history_path(
+                group_id, variant
+            ).read_text(encoding="utf-8").splitlines()
+
+            assert task.history_text == committed
+
+
+def test_counterfactual_workspace_prompt_and_history_bytes_remain_stable():
+    for group_id in cf.list_group_ids():
+        for variant in cf.list_variants(group_id):
+            task = cf.build_variant(group_id, variant, seed=1)
+
+            assert cf.workspace_sha(group_id) == cf.workspace_sha(group_id)
+            assert cf.prompt_bytes(group_id) == task.task_prompt
+            assert cf.history_sha(group_id, variant) == cf.history_sha(
+                group_id, variant
+            )
+
+
+# ---------------------------------------------------------------------------
+# Production-path regression: targeted supersession with explicit metadata
+# ---------------------------------------------------------------------------
+
+def test_counterfactual_metadata_enables_existing_targeted_supersession():
+    from memory_optimizer.compression import MemoryCompressor
+
+    compressor = MemoryCompressor()
+
+    existing = [{
+        "fact_id": "old.fact",
+        "fact": "The repository uses the old routing contract.",
+        "category": "database",
+        "source_turn_id": 40,
+        "confidence": 0.8,
+        "base_score": 0.8,
+    }]
+
+    current = [{
+        "fact_id": "new.fact",
+        "fact": "The repository uses the new routing contract.",
+        "category": "database",
+        "source_turn_id": 470,
+        "supersedes_turn": 40,
+        "is_correction_target": True,
+        "is_current_correction": True,
+        "superseded_fact": "The repository uses the old routing contract.",
+        "superseded_prior_fact_id": "old.fact",
+        "confidence": 0.9,
+        "base_score": 0.9,
+    }]
+
+    result = compressor.dedupe_incremental(
+        existing,
+        current,
+        embed_fn=None,
+    )
+
+    assert len(result) == 1
+    assert result[0]["fact_id"] == "new.fact"
+    assert result[0]["fact"] == (
+        "The repository uses the new routing contract."
+    )
+    assert result[0]["superseded_prior_fact_id"] == "old.fact"
