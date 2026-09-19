@@ -1,0 +1,1850 @@
+{
+  "budget_geometry": {
+    "adaptive": {
+      "observed_token_max": 99.0,
+      "observed_token_mean": 92.0,
+      "observed_token_min": 84.0
+    },
+    "budget_binding_threshold": 0.9,
+    "by_method_budget": {
+      "adaptive": {
+        "256": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 99.0,
+          "mean_budget_headroom": 0.6406,
+          "mean_context_tokens": 92.0,
+          "mean_utilization": 0.3594,
+          "median_context_tokens": 93.0,
+          "min_context_tokens": 84.0
+        },
+        "512": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 99.0,
+          "mean_budget_headroom": 0.8203,
+          "mean_context_tokens": 92.0,
+          "mean_utilization": 0.1797,
+          "median_context_tokens": 93.0,
+          "min_context_tokens": 84.0
+        },
+        "1024": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 99.0,
+          "mean_budget_headroom": 0.9102,
+          "mean_context_tokens": 92.0,
+          "mean_utilization": 0.0898,
+          "median_context_tokens": 93.0,
+          "min_context_tokens": 84.0
+        }
+      },
+      "llm_summarization": {
+        "256": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 209.0,
+          "mean_budget_headroom": 0.2808,
+          "mean_context_tokens": 184.1111,
+          "mean_utilization": 0.7192,
+          "median_context_tokens": 183.0,
+          "min_context_tokens": 168.0
+        },
+        "512": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 379.0,
+          "mean_budget_headroom": 0.3783,
+          "mean_context_tokens": 318.3333,
+          "mean_utilization": 0.6217,
+          "median_context_tokens": 307.0,
+          "min_context_tokens": 281.0
+        },
+        "1024": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 557.0,
+          "mean_budget_headroom": 0.5972,
+          "mean_context_tokens": 412.4444,
+          "mean_utilization": 0.4028,
+          "median_context_tokens": 409.0,
+          "min_context_tokens": 286.0
+        }
+      },
+      "raw_clipped": {
+        "256": {
+          "cells": 9,
+          "fraction_budget_binding": 1.0,
+          "max_context_tokens": 244.0,
+          "mean_budget_headroom": 0.0469,
+          "mean_context_tokens": 244.0,
+          "mean_utilization": 0.9531,
+          "median_context_tokens": 244.0,
+          "min_context_tokens": 244.0
+        },
+        "512": {
+          "cells": 9,
+          "fraction_budget_binding": 1.0,
+          "max_context_tokens": 509.0,
+          "mean_budget_headroom": 0.0059,
+          "mean_context_tokens": 509.0,
+          "mean_utilization": 0.9941,
+          "median_context_tokens": 509.0,
+          "min_context_tokens": 509.0
+        },
+        "1024": {
+          "cells": 9,
+          "fraction_budget_binding": 1.0,
+          "max_context_tokens": 1021.0,
+          "mean_budget_headroom": 0.0062,
+          "mean_context_tokens": 1017.6667,
+          "mean_utilization": 0.9938,
+          "median_context_tokens": 1016.0,
+          "min_context_tokens": 1016.0
+        }
+      },
+      "sliding_window": {
+        "256": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 116.0,
+          "mean_budget_headroom": 0.5469,
+          "mean_context_tokens": 116.0,
+          "mean_utilization": 0.4531,
+          "median_context_tokens": 116.0,
+          "min_context_tokens": 116.0
+        },
+        "512": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 116.0,
+          "mean_budget_headroom": 0.7734,
+          "mean_context_tokens": 116.0,
+          "mean_utilization": 0.2266,
+          "median_context_tokens": 116.0,
+          "min_context_tokens": 116.0
+        },
+        "1024": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 116.0,
+          "mean_budget_headroom": 0.8867,
+          "mean_context_tokens": 116.0,
+          "mean_utilization": 0.1133,
+          "median_context_tokens": 116.0,
+          "min_context_tokens": 116.0
+        }
+      },
+      "vanilla_rag": {
+        "256": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 116.0,
+          "mean_budget_headroom": 0.5729,
+          "mean_context_tokens": 109.3333,
+          "mean_utilization": 0.4271,
+          "median_context_tokens": 110.0,
+          "min_context_tokens": 102.0
+        },
+        "512": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 116.0,
+          "mean_budget_headroom": 0.7865,
+          "mean_context_tokens": 109.3333,
+          "mean_utilization": 0.2135,
+          "median_context_tokens": 110.0,
+          "min_context_tokens": 102.0
+        },
+        "1024": {
+          "cells": 9,
+          "fraction_budget_binding": 0.0,
+          "max_context_tokens": 116.0,
+          "mean_budget_headroom": 0.8932,
+          "mean_context_tokens": 109.3333,
+          "mean_utilization": 0.1068,
+          "median_context_tokens": 110.0,
+          "min_context_tokens": 102.0
+        }
+      }
+    },
+    "llm_summarization": {
+      "observed_token_max": 557.0,
+      "observed_token_mean": 304.963,
+      "observed_token_min": 168.0
+    },
+    "method_binding": {
+      "adaptive": {
+        "by_budget": {
+          "256": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 99.0,
+            "mean_context_tokens": 92.0,
+            "mean_utilization": 0.3594,
+            "median_context_tokens": 93.0,
+            "tokens": [
+              99,
+              99,
+              99,
+              93,
+              93,
+              93,
+              84,
+              84,
+              84
+            ]
+          },
+          "512": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 99.0,
+            "mean_context_tokens": 92.0,
+            "mean_utilization": 0.1797,
+            "median_context_tokens": 93.0,
+            "tokens": [
+              99,
+              99,
+              99,
+              93,
+              93,
+              93,
+              84,
+              84,
+              84
+            ]
+          },
+          "1024": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 99.0,
+            "mean_context_tokens": 92.0,
+            "mean_utilization": 0.0898,
+            "median_context_tokens": 93.0,
+            "tokens": [
+              99,
+              99,
+              99,
+              93,
+              93,
+              93,
+              84,
+              84,
+              84
+            ]
+          }
+        },
+        "cross_budget_stable_tracks": 9,
+        "cross_budget_token_stable_tracks": 9,
+        "mean_utilization_across_all_budgets": 0.2096,
+        "mean_utilization_at_256": 0.3594,
+        "tracks_total": 9
+      },
+      "llm_summarization": {
+        "by_budget": {
+          "256": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 209.0,
+            "mean_context_tokens": 184.1111,
+            "mean_utilization": 0.7192,
+            "median_context_tokens": 183.0,
+            "tokens": [
+              209,
+              178,
+              191,
+              183,
+              168,
+              196,
+              183,
+              168,
+              181
+            ]
+          },
+          "512": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 379.0,
+            "mean_context_tokens": 318.3333,
+            "mean_utilization": 0.6217,
+            "median_context_tokens": 307.0,
+            "tokens": [
+              298,
+              315,
+              291,
+              285,
+              377,
+              307,
+              379,
+              332,
+              281
+            ]
+          },
+          "1024": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 557.0,
+            "mean_context_tokens": 412.4444,
+            "mean_utilization": 0.4028,
+            "median_context_tokens": 409.0,
+            "tokens": [
+              432,
+              407,
+              557,
+              473,
+              451,
+              387,
+              286,
+              310,
+              409
+            ]
+          }
+        },
+        "cross_budget_stable_tracks": 0,
+        "cross_budget_token_stable_tracks": 0,
+        "mean_utilization_across_all_budgets": 0.5812,
+        "mean_utilization_at_256": 0.7192,
+        "tracks_total": 9
+      },
+      "raw_clipped": {
+        "by_budget": {
+          "256": {
+            "fraction_budget_binding": 1.0,
+            "max_context_tokens": 244.0,
+            "mean_context_tokens": 244.0,
+            "mean_utilization": 0.9531,
+            "median_context_tokens": 244.0,
+            "tokens": [
+              244,
+              244,
+              244,
+              244,
+              244,
+              244,
+              244,
+              244,
+              244
+            ]
+          },
+          "512": {
+            "fraction_budget_binding": 1.0,
+            "max_context_tokens": 509.0,
+            "mean_context_tokens": 509.0,
+            "mean_utilization": 0.9941,
+            "median_context_tokens": 509.0,
+            "tokens": [
+              509,
+              509,
+              509,
+              509,
+              509,
+              509,
+              509,
+              509,
+              509
+            ]
+          },
+          "1024": {
+            "fraction_budget_binding": 1.0,
+            "max_context_tokens": 1021.0,
+            "mean_context_tokens": 1017.6667,
+            "mean_utilization": 0.9938,
+            "median_context_tokens": 1016.0,
+            "tokens": [
+              1021,
+              1021,
+              1021,
+              1016,
+              1016,
+              1016,
+              1016,
+              1016,
+              1016
+            ]
+          }
+        },
+        "cross_budget_stable_tracks": 0,
+        "cross_budget_token_stable_tracks": 0,
+        "mean_utilization_across_all_budgets": 0.9804,
+        "mean_utilization_at_256": 0.9531,
+        "tracks_total": 9
+      },
+      "sliding_window": {
+        "by_budget": {
+          "256": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 116.0,
+            "mean_context_tokens": 116.0,
+            "mean_utilization": 0.4531,
+            "median_context_tokens": 116.0,
+            "tokens": [
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116
+            ]
+          },
+          "512": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 116.0,
+            "mean_context_tokens": 116.0,
+            "mean_utilization": 0.2266,
+            "median_context_tokens": 116.0,
+            "tokens": [
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116
+            ]
+          },
+          "1024": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 116.0,
+            "mean_context_tokens": 116.0,
+            "mean_utilization": 0.1133,
+            "median_context_tokens": 116.0,
+            "tokens": [
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116,
+              116
+            ]
+          }
+        },
+        "cross_budget_stable_tracks": 9,
+        "cross_budget_token_stable_tracks": 9,
+        "mean_utilization_across_all_budgets": 0.2643,
+        "mean_utilization_at_256": 0.4531,
+        "tracks_total": 9
+      },
+      "vanilla_rag": {
+        "by_budget": {
+          "256": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 116.0,
+            "mean_context_tokens": 109.3333,
+            "mean_utilization": 0.4271,
+            "median_context_tokens": 110.0,
+            "tokens": [
+              116,
+              116,
+              116,
+              110,
+              110,
+              110,
+              102,
+              102,
+              102
+            ]
+          },
+          "512": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 116.0,
+            "mean_context_tokens": 109.3333,
+            "mean_utilization": 0.2135,
+            "median_context_tokens": 110.0,
+            "tokens": [
+              116,
+              116,
+              116,
+              110,
+              110,
+              110,
+              102,
+              102,
+              102
+            ]
+          },
+          "1024": {
+            "fraction_budget_binding": 0.0,
+            "max_context_tokens": 116.0,
+            "mean_context_tokens": 109.3333,
+            "mean_utilization": 0.1068,
+            "median_context_tokens": 110.0,
+            "tokens": [
+              116,
+              116,
+              116,
+              110,
+              110,
+              110,
+              102,
+              102,
+              102
+            ]
+          }
+        },
+        "cross_budget_stable_tracks": 9,
+        "cross_budget_token_stable_tracks": 9,
+        "mean_utilization_across_all_budgets": 0.2491,
+        "mean_utilization_at_256": 0.4271,
+        "tracks_total": 9
+      }
+    },
+    "primary_cells": 135,
+    "raw_clipped": {
+      "observed_token_max": 1021.0,
+      "observed_token_mean": 590.2222,
+      "observed_token_min": 244.0
+    },
+    "sliding_window": {
+      "observed_token_max": 116.0,
+      "observed_token_mean": 116.0,
+      "observed_token_min": 116.0
+    },
+    "tracks": {
+      "retry_policy:1:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 1,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 93.0,
+        "token_min": 93.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 93,
+          "512": 93,
+          "1024": 93
+        }
+      },
+      "retry_policy:1:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 1,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 290.0,
+        "token_max": 473.0,
+        "token_min": 183.0,
+        "token_range": 290.0,
+        "tokens_by_budget": {
+          "256": 183,
+          "512": 285,
+          "1024": 473
+        }
+      },
+      "retry_policy:1:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 1,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 772.0,
+        "token_max": 1016.0,
+        "token_min": 244.0,
+        "token_range": 772.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1016
+        }
+      },
+      "retry_policy:1:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 1,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "retry_policy:1:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 1,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 110.0,
+        "token_min": 110.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 110,
+          "512": 110,
+          "1024": 110
+        }
+      },
+      "retry_policy:2:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 2,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 93.0,
+        "token_min": 93.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 93,
+          "512": 93,
+          "1024": 93
+        }
+      },
+      "retry_policy:2:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 2,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 283.0,
+        "token_max": 451.0,
+        "token_min": 168.0,
+        "token_range": 283.0,
+        "tokens_by_budget": {
+          "256": 168,
+          "512": 377,
+          "1024": 451
+        }
+      },
+      "retry_policy:2:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 2,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 772.0,
+        "token_max": 1016.0,
+        "token_min": 244.0,
+        "token_range": 772.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1016
+        }
+      },
+      "retry_policy:2:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 2,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "retry_policy:2:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 2,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 110.0,
+        "token_min": 110.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 110,
+          "512": 110,
+          "1024": 110
+        }
+      },
+      "retry_policy:3:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 3,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 93.0,
+        "token_min": 93.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 93,
+          "512": 93,
+          "1024": 93
+        }
+      },
+      "retry_policy:3:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 3,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 191.0,
+        "token_max": 387.0,
+        "token_min": 196.0,
+        "token_range": 191.0,
+        "tokens_by_budget": {
+          "256": 196,
+          "512": 307,
+          "1024": 387
+        }
+      },
+      "retry_policy:3:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 3,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 772.0,
+        "token_max": 1016.0,
+        "token_min": 244.0,
+        "token_range": 772.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1016
+        }
+      },
+      "retry_policy:3:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 3,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "retry_policy:3:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 3,
+        "task": "retry_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 110.0,
+        "token_min": 110.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 110,
+          "512": 110,
+          "1024": 110
+        }
+      },
+      "routing_policy:1:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 1,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 99.0,
+        "token_min": 99.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 99,
+          "512": 99,
+          "1024": 99
+        }
+      },
+      "routing_policy:1:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 1,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 223.0,
+        "token_max": 432.0,
+        "token_min": 209.0,
+        "token_range": 223.0,
+        "tokens_by_budget": {
+          "256": 209,
+          "512": 298,
+          "1024": 432
+        }
+      },
+      "routing_policy:1:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 1,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 777.0,
+        "token_max": 1021.0,
+        "token_min": 244.0,
+        "token_range": 777.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1021
+        }
+      },
+      "routing_policy:1:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 1,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "routing_policy:1:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 1,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "routing_policy:2:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 2,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 99.0,
+        "token_min": 99.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 99,
+          "512": 99,
+          "1024": 99
+        }
+      },
+      "routing_policy:2:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 2,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 229.0,
+        "token_max": 407.0,
+        "token_min": 178.0,
+        "token_range": 229.0,
+        "tokens_by_budget": {
+          "256": 178,
+          "512": 315,
+          "1024": 407
+        }
+      },
+      "routing_policy:2:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 2,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 777.0,
+        "token_max": 1021.0,
+        "token_min": 244.0,
+        "token_range": 777.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1021
+        }
+      },
+      "routing_policy:2:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 2,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "routing_policy:2:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 2,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "routing_policy:3:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 3,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 99.0,
+        "token_min": 99.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 99,
+          "512": 99,
+          "1024": 99
+        }
+      },
+      "routing_policy:3:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 3,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 366.0,
+        "token_max": 557.0,
+        "token_min": 191.0,
+        "token_range": 366.0,
+        "tokens_by_budget": {
+          "256": 191,
+          "512": 291,
+          "1024": 557
+        }
+      },
+      "routing_policy:3:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 3,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 777.0,
+        "token_max": 1021.0,
+        "token_min": 244.0,
+        "token_range": 777.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1021
+        }
+      },
+      "routing_policy:3:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 3,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "routing_policy:3:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 3,
+        "task": "routing_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "serialization_policy:1:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 1,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 84.0,
+        "token_min": 84.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 84,
+          "512": 84,
+          "1024": 84
+        }
+      },
+      "serialization_policy:1:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 1,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 103.0,
+        "token_max": 379.0,
+        "token_min": 183.0,
+        "token_range": 196.0,
+        "tokens_by_budget": {
+          "256": 183,
+          "512": 379,
+          "1024": 286
+        }
+      },
+      "serialization_policy:1:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 1,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 772.0,
+        "token_max": 1016.0,
+        "token_min": 244.0,
+        "token_range": 772.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1016
+        }
+      },
+      "serialization_policy:1:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 1,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "serialization_policy:1:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 1,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 102.0,
+        "token_min": 102.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 102,
+          "512": 102,
+          "1024": 102
+        }
+      },
+      "serialization_policy:2:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 2,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 84.0,
+        "token_min": 84.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 84,
+          "512": 84,
+          "1024": 84
+        }
+      },
+      "serialization_policy:2:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 2,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 142.0,
+        "token_max": 332.0,
+        "token_min": 168.0,
+        "token_range": 164.0,
+        "tokens_by_budget": {
+          "256": 168,
+          "512": 332,
+          "1024": 310
+        }
+      },
+      "serialization_policy:2:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 2,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 772.0,
+        "token_max": 1016.0,
+        "token_min": 244.0,
+        "token_range": 772.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1016
+        }
+      },
+      "serialization_policy:2:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 2,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "serialization_policy:2:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 2,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 102.0,
+        "token_min": 102.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 102,
+          "512": 102,
+          "1024": 102
+        }
+      },
+      "serialization_policy:3:adaptive": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "adaptive",
+        "seed": 3,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 84.0,
+        "token_min": 84.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 84,
+          "512": 84,
+          "1024": 84
+        }
+      },
+      "serialization_policy:3:llm_summarization": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "llm_summarization",
+        "seed": 3,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 228.0,
+        "token_max": 409.0,
+        "token_min": 181.0,
+        "token_range": 228.0,
+        "tokens_by_budget": {
+          "256": 181,
+          "512": 281,
+          "1024": 409
+        }
+      },
+      "serialization_policy:3:raw_clipped": {
+        "budget_context_stable": false,
+        "budget_token_stable": false,
+        "distinct_contexts_across_budgets": 3,
+        "method": "raw_clipped",
+        "seed": 3,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 772.0,
+        "token_max": 1016.0,
+        "token_min": 244.0,
+        "token_range": 772.0,
+        "tokens_by_budget": {
+          "256": 244,
+          "512": 509,
+          "1024": 1016
+        }
+      },
+      "serialization_policy:3:sliding_window": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "sliding_window",
+        "seed": 3,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 116.0,
+        "token_min": 116.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 116,
+          "512": 116,
+          "1024": 116
+        }
+      },
+      "serialization_policy:3:vanilla_rag": {
+        "budget_context_stable": true,
+        "budget_token_stable": true,
+        "distinct_contexts_across_budgets": 1,
+        "method": "vanilla_rag",
+        "seed": 3,
+        "task": "serialization_policy",
+        "token_growth_256_to_1024": 0.0,
+        "token_max": 102.0,
+        "token_min": 102.0,
+        "token_range": 0.0,
+        "tokens_by_budget": {
+          "256": 102,
+          "512": 102,
+          "1024": 102
+        }
+      }
+    },
+    "tracks_total": 45,
+    "vanilla_rag": {
+      "observed_token_max": 116.0,
+      "observed_token_mean": 109.3333,
+      "observed_token_min": 102.0
+    }
+  },
+  "conclusion": {
+    "adaptive_advances_unchanged": false,
+    "e19_artifacts_modified": false,
+    "embedding_calls": 0,
+    "llm_calls": 0,
+    "method_success": {
+      "adaptive": {
+        "cells": 27,
+        "success_rate": 1.0,
+        "successes": 27
+      },
+      "llm_summarization": {
+        "cells": 27,
+        "success_rate": 0.5185,
+        "successes": 14
+      },
+      "raw_clipped": {
+        "cells": 27,
+        "success_rate": 0.4815,
+        "successes": 13
+      },
+      "sliding_window": {
+        "cells": 27,
+        "success_rate": 0.3333,
+        "successes": 9
+      },
+      "vanilla_rag": {
+        "cells": 27,
+        "success_rate": 0.963,
+        "successes": 26
+      }
+    },
+    "offline": true,
+    "production_pipeline_imported": false,
+    "ranking_changed": false,
+    "scope": {
+      "budgets": [
+        256,
+        512,
+        1024
+      ],
+      "grid": "135 cells",
+      "grid_cells": 135,
+      "methods": [
+        "raw_clipped",
+        "sliding_window",
+        "llm_summarization",
+        "vanilla_rag",
+        "adaptive"
+      ],
+      "primary_tasks": [
+        "routing_policy",
+        "retry_policy",
+        "serialization_policy"
+      ],
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "source_artifact": "/home/goku/prototype/prototype3/experiments/results/e19_coding_generalization_full_repaired.json"
+    },
+    "summary": "E25 is an offline, deterministic audit of the locked E19 primary grid. It re-verified 135/135 primary cells, the per-method success rates behind the E19 verdict, and the budget geometry. adaptive and vanilla_rag both operated far below the 256 budget (adaptive mean utilization < 0.5, vanilla_rag likewise) with context stable across every track; vanilla_rag's obsolete-only correction state still succeeded >= 0.80 of the time, including its single OBSOLETE_INFORMATION_USED failure; and the E19 verdict adaptive_advances remains false. These four diagnostics set input requirements for any next benchmark, but this audit declares no winner and changes no ranking.",
+    "winner_declared": false
+  },
+  "context_hash_analysis": {
+    "adaptive_vanilla_same_sha_at_256_tracks": 0,
+    "adaptive_vanilla_same_token_count_at_256_tracks": 0,
+    "adaptive_vs_vanilla_context_equality_by_budget": {
+      "1024": {
+        "differs": 9,
+        "equals": 0
+      },
+      "256": {
+        "differs": 9,
+        "equals": 0
+      },
+      "512": {
+        "differs": 9,
+        "equals": 0
+      }
+    },
+    "cross_budget_context_stability": {
+      "adaptive": {
+        "budget_sensitive_tracks": 0,
+        "stable_tracks_context": 9,
+        "stable_tracks_tokens": 9,
+        "tracks_total": 9
+      },
+      "llm_summarization": {
+        "budget_sensitive_tracks": 9,
+        "stable_tracks_context": 0,
+        "stable_tracks_tokens": 0,
+        "tracks_total": 9
+      },
+      "raw_clipped": {
+        "budget_sensitive_tracks": 9,
+        "stable_tracks_context": 0,
+        "stable_tracks_tokens": 0,
+        "tracks_total": 9
+      },
+      "sliding_window": {
+        "budget_sensitive_tracks": 0,
+        "stable_tracks_context": 9,
+        "stable_tracks_tokens": 9,
+        "tracks_total": 9
+      },
+      "vanilla_rag": {
+        "budget_sensitive_tracks": 0,
+        "stable_tracks_context": 9,
+        "stable_tracks_tokens": 9,
+        "tracks_total": 9
+      }
+    },
+    "note": "SHA-equality measures identical serialized historical context; token-count equality alone is never used as the stability test."
+  },
+  "correction_state_analysis": {
+    "correction_pairs_from_fixtures": {
+      "retry_policy": [
+        [
+          "rp.a.inter.001",
+          "rp.a.corr.001"
+        ]
+      ],
+      "routing_policy": [
+        [
+          "rp.a.inter.001",
+          "rp.a.corr.001"
+        ]
+      ],
+      "serialization_policy": [
+        [
+          "sp.a.inter.001",
+          "sp.a.corr.001"
+        ]
+      ]
+    },
+    "correction_pairs_per_task": {
+      "retry_policy": 1,
+      "routing_policy": 1,
+      "serialization_policy": 1
+    },
+    "per_method_correction_state_distribution": {
+      "adaptive": {
+        "CLEAN_CURRENT": 27
+      },
+      "llm_summarization": {
+        "CLEAN_CURRENT": 5,
+        "NEITHER": 6,
+        "OBSOLETE_ONLY": 16
+      },
+      "raw_clipped": {
+        "NEITHER": 27
+      },
+      "sliding_window": {
+        "NEITHER": 27
+      },
+      "vanilla_rag": {
+        "OBSOLETE_ONLY": 27
+      }
+    },
+    "per_method_state_success": {
+      "adaptive": {
+        "CLEAN_CURRENT": {
+          "cells": 27,
+          "success_rate": 1.0,
+          "successes": 27
+        }
+      },
+      "llm_summarization": {
+        "CLEAN_CURRENT": {
+          "cells": 5,
+          "success_rate": 0.6,
+          "successes": 3
+        },
+        "NEITHER": {
+          "cells": 6,
+          "success_rate": 0.6667,
+          "successes": 4
+        },
+        "OBSOLETE_ONLY": {
+          "cells": 16,
+          "success_rate": 0.4375,
+          "successes": 7
+        }
+      },
+      "raw_clipped": {
+        "NEITHER": {
+          "cells": 27,
+          "success_rate": 0.4815,
+          "successes": 13
+        }
+      },
+      "sliding_window": {
+        "NEITHER": {
+          "cells": 27,
+          "success_rate": 0.3333,
+          "successes": 9
+        }
+      },
+      "vanilla_rag": {
+        "OBSOLETE_ONLY": {
+          "cells": 27,
+          "success_rate": 0.963,
+          "successes": 26
+        }
+      }
+    },
+    "task_metadata_note": "verified from data.counterfactual_task_suite variant A fixtures and cross-checked against the E19 artifact offline gate cells"
+  },
+  "diagnostic_flags": {
+    "flag_a_vanilla_obsolete_only_success_rate": true,
+    "flag_a_vanilla_obsolete_only_support": {
+      "obsolete_only_cells": 27,
+      "obsolete_only_success_rate": 0.963,
+      "obsolete_only_successes": 26,
+      "threshold": 0.8
+    },
+    "flag_b_budget_non_binding": true,
+    "flag_b_support": {
+      "adaptive_cross_budget_stable_tracks": 9,
+      "adaptive_mean_utilization_at_256": 0.3594,
+      "required_stable_tracks": 9,
+      "threshold": 0.5,
+      "vanilla_cross_budget_stable_tracks": 9,
+      "vanilla_mean_utilization_at_256": 0.4271
+    },
+    "flag_c_support": {
+      "threshold": 0.9,
+      "vanilla_cells": 27,
+      "vanilla_success_rate": 0.963,
+      "vanilla_successes": 26
+    },
+    "flag_c_vanilla_near_ceiling": true,
+    "flag_d_adaptive_advances_false": true,
+    "flag_d_support": {
+      "adaptive_advances": false
+    },
+    "matched_expectations": true
+  },
+  "experiment": "E25",
+  "next_benchmark_requirements": {
+    "bind_both_adaptive_and_vanilla_at_low_budget": true,
+    "budgets_not_reselected": true,
+    "observed_context_threshold_range": {
+      "adaptive_tokens_high": 99.0,
+      "adaptive_tokens_low": 84.0,
+      "note": "any next low-end budget below the max context size of the recall methods will start to bind them; E25 does not choose the final numbers",
+      "vanilla_tokens_high": 116.0,
+      "vanilla_tokens_low": 102.0
+    },
+    "requirements": [
+      "the next benchmark must make obsolete-only historical evidence materially unsafe for the hidden test",
+      "the next benchmark must use a budget range that actually binds both adaptive and vanilla retrieval",
+      "the next benchmark needs more discrimination against strong retrieval than E19 currently provides",
+      "do not treat E19 as evidence of adaptive superiority; adaptive_advances remains false"
+    ]
+  },
+  "phase": "Phase 20",
+  "scope": {
+    "budgets": [
+      256,
+      512,
+      1024
+    ],
+    "grid": "135 cells",
+    "grid_cells": 135,
+    "methods": [
+      "raw_clipped",
+      "sliding_window",
+      "llm_summarization",
+      "vanilla_rag",
+      "adaptive"
+    ],
+    "primary_tasks": [
+      "routing_policy",
+      "retry_policy",
+      "serialization_policy"
+    ],
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "source_artifact": "/home/goku/prototype/prototype3/experiments/results/e19_coding_generalization_full_repaired.json"
+  },
+  "source_artifact": "/home/goku/prototype/prototype3/experiments/results/e19_coding_generalization_full_repaired.json",
+  "source_primary_cells": 135,
+  "task_budget_analysis": {
+    "retry_policy": {
+      "adaptive": {
+        "256": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        }
+      },
+      "llm_summarization": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.3333,
+          "successes": 1
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        }
+      },
+      "raw_clipped": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        }
+      },
+      "sliding_window": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 0.3333,
+          "successes": 1
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.3333,
+          "successes": 1
+        }
+      },
+      "vanilla_rag": {
+        "256": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        }
+      }
+    },
+    "routing_policy": {
+      "adaptive": {
+        "256": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        }
+      },
+      "llm_summarization": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        }
+      },
+      "raw_clipped": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        }
+      },
+      "sliding_window": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.0,
+          "successes": 0
+        }
+      },
+      "vanilla_rag": {
+        "256": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        }
+      }
+    },
+    "serialization_policy": {
+      "adaptive": {
+        "256": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        }
+      },
+      "llm_summarization": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        }
+      },
+      "raw_clipped": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.3333,
+          "successes": 1
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        }
+      },
+      "sliding_window": {
+        "256": {
+          "cells": 3,
+          "success_rate": 0.3333,
+          "successes": 1
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.3333,
+          "successes": 1
+        }
+      },
+      "vanilla_rag": {
+        "256": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "512": {
+          "cells": 3,
+          "success_rate": 1.0,
+          "successes": 3
+        },
+        "1024": {
+          "cells": 3,
+          "success_rate": 0.6667,
+          "successes": 2
+        }
+      }
+    }
+  },
+  "vanilla_failures": {
+    "cells": 27,
+    "failed_cells": 1,
+    "failures": [
+      {
+        "cell": "serialization_policy:2:1024",
+        "context_sha": "50c96fd1d0bf2f96",
+        "context_utilization": 0.0996,
+        "correction_recall": 0.0,
+        "correction_state": "OBSOLETE_ONLY",
+        "failure_class": "OBSOLETE_INFORMATION_USED",
+        "historical_budget": 1024,
+        "historical_context_tokens": 102,
+        "obsolete_fact_exposure": 1.0,
+        "seed": 2,
+        "task_id": "serialization_policy"
+      }
+    ],
+    "success_rate": 0.963,
+    "successes": 26
+  }
+}

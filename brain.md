@@ -1471,6 +1471,40 @@ rather than silently ignored.
 
 ---
 
+### D42 ★ Benchmark separation requires both contradiction sensitivity and method-specific budget pressure
+
+**DECISION (locked contract, Phase 20):** A coding benchmark can only claim to
+separate adaptive memory from retrieval baselines when it satisfies BOTH
+conditions: (1) **contradiction sensitivity** — historical evidence that
+contradicts the final behavior is materially unsafe for the hidden test, and
+(2) **method-specific budget pressure** — the historical-context budget range
+actually binds each recall method (it must bite below each method's observed
+context size). Either condition alone is insufficient: a contradiction-unsafe
+benchmark inflates every arm that tolerates obsolete-only evidence, and a
+non-binding budget lets all arms run far below the ceiling so the benchmark
+measures nothing about budget allocation.
+
+**OBSERVED (E25, offline artifact audit of the Phase-19 locked E19 grid —
+deterministic, 0 LLM/embedding calls):** primary grid re-verified exactly
+135/135; adaptive/vanilla_rag mean utilization @256 = 0.359 / 0.427 (< 0.50)
+with contexts SHA-stable across 256/512/1024 on all 9 tracks each — i.e. the
+budget never bound either recall method (raw_clipped was the only arm binding
+at 100%); vanilla_rag carried OBSOLETE_ONLY correction state on all 27 primary
+cells yet succeeded 26/27 (single failure: serialization_policy/seed=2/
+budget=1024, OBSOLETE_INFORMATION_USED), so obsolete-only evidence was not
+materially unsafe at these budgets/this tier; adaptive and vanilla_rag never
+shared a context_sha. Diagnostic flags A–D all true → next benchmark must (a)
+make obsolete-only evidence unsafe, (b) bind both recall methods at the low
+end (observed thresholds ~84–99 adaptive, ~102–116 vanilla tokens), (c)
+discriminate above the 96.3% vanilla ceiling, and (d) not read E19 as evidence
+of adaptive superiority.
+
+**Status:** Phase 20 complete. E25 is diagnostic only — it declares no winner,
+changes no ranking, selects no final budgets, and leaves `config.yaml`,
+`memory_optimizer/`, `server.py` and all E19/E20/E24 artifacts untouched.
+
+---
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.

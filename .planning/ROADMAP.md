@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 19
+**Phases:** 20
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -228,3 +228,14 @@
 4. `tests/test_phase19_closure.py` (new, 10 offline tests): grid dimensions, missing cell identity, recovery artifact schema, historical artifact immutability, primary grid completeness, GSD handoff/checkpoint verification
 5. Full grid: 225/225 cells (135 primary + 90 negative); 10/10 gates PASS; offline correction_identity = 27/27 PASS (explicit `supersedes_turn` enables production supersession); E20-certified Gate C PASS; **gates_all_passed = True → adaptive_advances = False** (adaptive ties vanilla_rag at 27/27; locked verdict logic; no gate weakening, no tuning)
 6. Original E19/E20 artifacts + `config.yaml`/`memory_optimizer/`/`server.py` untouched; new artifacts `e19_coding_generalization_full_repaired.json` + `_full_report.md` + `e24_missing_negative_control.json` force-committed; all 189 tests pass; commit `research: close phase 19 experiment accounting`
+
+### Phase 20: E25 E19 Baseline Ceiling and Budget-Geometry Audit
+**Goal:** Run a deterministic, offline audit of the locked E19 result artifact that separates *why* `adaptive_advances = false` (budget pressure not binding the recall methods vs. contamination/saturation) and sets input requirements for any next benchmark. No LLM, no embedding calls, no production memory code, no winner, no ranking change.
+**Mode:** standard
+**Success Criteria:**
+1. `experiments/e25_e19_baseline_ceiling_audit.py` (new): pure artifact analysis of `experiments/results/e19_coding_generalization_full_repaired.json` + in-repo counterfactual fixtures; validates the primary grid is exactly 135 unique, complete cells with non-null `context_sha` (STOP/hard error, write nothing, if not); budget geometry (tokens/utilization/headroom/binding per method x budget, 0.90 binding threshold diagnostic), per-track budget elasticity (SHA-based, never token-count), correction-state classification of every cell (`(corr_recall, obsolete_exposure)` exact mapping, unknown pair → hard error), correction-pair verification from fixtures + offline gate cells, task x budget success table, context-hash analysis (adaptive vs vanilla equality + cross-budget SHA stability), 4 diagnostic flags, next-benchmark requirement constraints, conclusion; sems deterministic with only `pathlib`/`json`/`collections.defaultdict`/`statistics.{mean,median}`
+2. Outputs `experiments/results/e25_e19_baseline_ceiling_audit.json` + `_report.md` (new, force-added); E19/E20/E24 artifacts byte-identical after the run
+3. `tests/test_e25_baseline_ceiling_audit.py` (new, offline-only): never imports `memory_optimizer`/`OllamaCoder`, no requests/ollama, E19 artifact never written; 135-cell grid validation incl. rejection paths; classification mapping + unknown-pair error; SHA-based stability (adaptive/vanilla 9/9 stable, raw/llm budget-sensitive); binding uses 0.90 threshold; correction-state distribution matches locked E19 (adaptive 27x CLEAN_CURRENT, vanilla 27x OBSOLETE_ONLY); the single vanilla failure = serialization_policy/seed2/1024/OBSOLETE_INFORMATION_USED; flags all boolean and all four True; report sections/tables rendered; JSON top-level keys present
+4. All flags found True (observations, not claims to fix E19): vanilla OBSOLETE_ONLY success 0.963 >= 0.80; adaptive/vanilla mean utilization @256 (0.359/0.427) < 0.50 with 9/9 SHA-stable tracks each; vanilla primary success 0.963 >= 0.90; `adaptive_advances` false → next benchmark must make obsolete-only evidence unsafe, bind both recall methods at the low end (observed thresholds ~84-99 adaptive, ~102-116 vanilla tokens), add discrimination above the vanilla ceiling, and must not read E19 as adaptive superiority
+5. Reports exactly the observed threshold range and does NOT choose final numerical budgets; declares no winner, changes no ranking, runs zero LLM/embedding calls, imports no production pipeline
+6. GSD docs updated (STATE.md Phase 20 block + D42 in Notes + known issue #22, ROADMAP Phase 20, gsd_handoff self-contained with locked result + 3 remaining questions, brain.md decision D42 after D41b); `.planning/checkpoints/phase-20-e25-audit-complete.md` created; original E19/E20/E24 + `memory_optimizer/**` + `config.yaml` + `server.py` untouched; all tests pass (218 via `python -m pytest -q tests/`); commit `research: audit E19 baseline ceiling and budget geometry`

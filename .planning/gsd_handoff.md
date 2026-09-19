@@ -1,158 +1,147 @@
-# GSD Handoff — Phase 19 (E19 correction-identity repair + full-grid re-run)
+# GSD Handoff — Phase 20 (E25 E19 baseline-ceiling + budget-geometry audit)
 
-Generated: after committing the Phase-19 closure (missing-cell recovery).
+Generated: after committing the Phase-20 closure (offline audit).
 
 This doc is the single reviewer-readable artifact for the phase. Kept docs:
 ROADMAP.md, STATE.md, PROJECT.md, config.json, codebase.
 
 ## Where we are
 
-Phase 18 ran the E19 full grid aligned to the E20-validated benchmark, but
-Gate B (`correction_identity`) failed 0/27 because the counterfactual benchmark
-adapter did not propagate explicit correction metadata into the structured
-history facts. The production `_is_supersession` heuristic therefore never fired.
+Phase 19 (commit `0354c5e`) closed the E19 experiment: after the counterfactual
+adapter repair (explicit `supersedes_turn` + current-correction metadata),
+`correction_identity` = 27/27 PASS, `embedding_consistency` = 27/27, primary
+grid = 135/135, and **`adaptive_advances = false`** (adaptive 27/27, vanilla_rag
+26/27, llm_summarization 14/27, raw_clipped 13/27, sliding_window 9/27). One
+negative-control cell was recovered separately (`write_retry / seed=3 /
+budget=256 / llm_summarization`), giving combined 225/225 accounting.
 
-**Phase 19 repairs that adapter defect** and re-runs the full grid from fresh
-state:
-
-- E19's primary tasks remain fixed Variant-A instances of the three E20
-  counterfactual families: `routing_policy`, `retry_policy`,
-  `serialization_policy` (each ≥600-turn, history-gated, E20-certified).
-- **Gate C (`history_dependence`)** remains the frozen E20 counterfactual
-  history calibration (via `check_e20_calibration()`), not stochastic E19
-  no-history draws.
-- **Adapter repair** in `data/counterfactual_task_suite.py:build_variant()`:
-  enriches `history[*]["facts"]` with explicit correction metadata
-  (`supersedes_turn`, `is_correction_target`, `is_current_correction`,
-  `superseded_fact`, `superseded_prior_fact_id`, `superseded_by`) without
-  changing history text, workspace, prompts, hidden tests, or gold patches.
-- Full 225-cell grid re-run from fresh state:
-  135 primary (3 × 3 seeds × 3 budgets × 5 methods) + 90 negative-control,
-  seeds [1,2,3], budgets [256,512,1024], methods [raw_clipped, sliding_window,
-  llm_summarization, vanilla_rag, adaptive] at llama3.1:8b @ localhost:11434.
+**Phase 20 runs E25** — a deterministic, offline audit of that locked artifact.
+It re-derives the budget geometry (how each method used the 256/512/1024
+historical-token budgets), the correction states behind the success counts, the
+single vanilla_rag failure, the adaptive-vs-vanilla context-hash relationship,
+and four diagnostic flags that constrain any next benchmark. E25 makes **zero
+LLM/embedding calls**, imports no production memory code, declares **no winner**,
+changes **no ranking**, and leaves every E19/E20/E24 artifact byte-identical.
 
 ## How it was run
 
 ```bash
-# Preflight (offline correction/embedding gates)
-python experiments/e23_e19_correction_identity_repair.py --preflight
-
-# Full 225-cell grid from fresh state
-python experiments/e23_e19_correction_identity_repair.py --full --force
+python experiments/e25_e19_baseline_ceiling_audit.py
+python -m pytest -q tests/            # 218 passing (18 new E25 tests)
 ```
 
-One negative-control cell timed out during the Phase-19 full grid
-(`write_retry / seed=3 / budget=256 / llm_summarization`). It was recovered
-separately using the narrow closure utility:
+Outputs written (new, force-added):
+`experiments/results/e25_e19_baseline_ceiling_audit.json` +
+`_report.md`; plus `experiments/e25_e19_baseline_ceiling_audit.py` and
+`tests/test_e25_baseline_ceiling_audit.py`.
 
-```bash
-python experiments/e24_missing_negative_control.py --identify
-python experiments/e24_missing_negative_control.py --run
-```
+## Locked Phase-19 result (re-verified by E25, never modified)
 
-## Gate results (10 gates)
-
-| gate | result | note |
+| method | primary success | correction state |
 | --- | --- | --- |
-| A embedding_consistency | PASS | 27/27 cells consistent |
-| B correction_identity | **PASS** | 27/27 identity-ok; explicit supersedes_turn now enables production supersession |
-| C history_dependence | PASS | E20 counterfactual history calibration |
-| D method_separation | PASS | max distinct contexts 4 |
-| E no_leakage | PASS | 0 leaking runs |
-| F gold_passes | PASS | 5/5 (3 primary + 2 negative) |
-| G budget_pressure | PASS | history > max budget; raw grows; fills 60% |
-| H real_summarization | PASS | 324 summary_update_calls |
-| I adaptive_production_path | PASS | 27 adaptive runs |
-| J unit_tests_pass | PASS | 200 passed |
+| adaptive | 27/27 | 27x CLEAN_CURRENT |
+| vanilla_rag | 26/27 | 27x OBSOLETE_ONLY (26/27 succeed) |
+| llm_summarization | 14/27 | 16 OBSOLETE_ONLY / 6 NEITHER / 5 CLEAN_CURRENT |
+| raw_clipped | 13/27 | 27x NEITHER |
+| sliding_window | 9/27 | 27x NEITHER |
 
-`gates_all_passed = True` → `adaptive_advances = False` (adaptive ties vanilla_rag).
+`gates_all_passed = true`; `verdict.adaptive_advances = false`. Single
+vanilla_rag failure: `serialization_policy / seed=2 / budget=1024 /
+OBSOLETE_INFORMATION_USED` (102 tokens, context SHA `50c96fd1d0bf2f96`).
 
-## Why Gate B now passes (measured, not a change)
+## E25 budget geometry (means; binding = tokens >= 0.90·budget)
 
-The counterfactual histories' correction facts now carry explicit
-`supersedes_turn` and current-correction metadata, so the unchanged
-`_is_supersession` consolidation heuristic in `memory_optimizer/compression.py`
-fires correctly. Verified on the raw `build_variant` fixture:
-`_is_supersession` still requires full word coverage, but the new
-`supersedes_turn` bypasses that check entirely in the production path.
+| method | 256 | 512 | 1024 | binding |
+| --- | --- | --- | --- | --- |
+| raw_clipped | 244 tok (0.95) | 509 (0.99) | 1018 (0.99) | 100% at every budget |
+| sliding_window | 116 (0.45) | 116 (0.23) | 116 (0.11) | 0% |
+| llm_summarization | 184 (0.72) | 318 (0.62) | 412 (0.40) | 0% |
+| vanilla_rag | 109 (0.43) | 109 (0.21) | 109 (0.11) | 0% |
+| adaptive | 92 (0.36) | 92 (0.18) | 92 (0.09) | 0% |
 
-## Paired numbers (primary only, 27 cells per baseline)
+- Adaptive and vanilla_rag are **context-stable across 256/512/1024 on all 9
+  tracks** each (SHA-identical), i.e. budget had no effect on their context.
+- Raw_clipped and llm_summarization are budget-sensitive (context changes with
+  budget). Adaptive/vanilla contexts **never share a context_sha** with each
+  other at any budget/track.
+- Observed context threshold range: adaptive 84–99 tokens; vanilla_rag 102–116.
 
-| vs | adaptive | baseline | mean diff |
-| --- | --- | --- | --- |
-| raw_clipped | 27/27 | 13/27 | +0.52 |
-| sliding_window | 27/27 | 9/27 | +0.67 |
-| llm_summarization | 27/27 | 14/27 | +0.48 |
-| vanilla_rag | 27/27 | 26/27 | +0.04 |
+## E25 diagnostic flags (all four True)
 
-adaptive = 27/27
-vanilla_rag = 26/27
-
-## Completeness accounting
-
-| artifact | records | note |
+| flag | finding | next-benchmark constraint |
 | --- | --- | --- |
-| Phase-18 full grid (`e19_coding_generalization_full.json`) | 225/225 | original run, Gate B failed |
-| Phase-19 repaired full grid (`e19_coding_generalization_full_repaired.json`) | 224 | one negative-control cell timed out |
-| Missing cell recovery (`e24_missing_negative_control.json`) | 1 | `write_retry / seed=3 / budget=256 / llm_summarization` |
-| **Combined accounting** | **225/225** | **complete experiment** |
+| A | vanilla OBSOLETE_ONLY succeeds 26/27 (0.963 >= 0.80) | obsolete-only evidence must become materially unsafe for the hidden test |
+| B | adaptive/vanilla mean utilization @256 = 0.359/0.427 (< 0.50), 9/9 stable tracks each | budget range must actually bind both recall methods (below ~84–116 tokens) |
+| C | vanilla primary success 0.963 >= 0.90 (near ceiling) | more discrimination above the vanilla ceiling |
+| D | `adaptive_advances` = false (locked) | do not treat E19 as evidence of adaptive superiority |
 
-## New artifacts (Phase 19, force-added)
+E25 reports the observed threshold range only; it does **not** choose final
+numerical budgets for a future benchmark.
 
-- `experiments/results/e19_coding_generalization_full_repaired.json` sha256
-  `5d1f58c27c88679c01a1c0ae93ed9b3b5fd8bcf89cc9bbd25cd152a110ac3962`
-- `experiments/results/e19_coding_generalization_full_repaired_report.md` sha256
-  `03ddf8a04277d56bcb9eed6ec8bec218d34b1de982f908dfd66ef2b374d59792`
-- `experiments/results/e24_missing_negative_control.json` (recovery artifact)
-- `experiments/e23_e19_correction_identity_repair.py` (thin repair runner with preflight)
-- `experiments/e24_missing_negative_control.py` (single-cell closure utility)
+## Three remaining questions (for any next phase)
 
-## Immutable (Phase-19 contract)
+1. **Contradiction sensitivity:** at which budget/task does obsolete-only
+   evidence (vanilla_rag's state on all 27 primary cells) actually change the
+   hidden-test outcome, so correction-aware vs correction-unaware retrieval can
+   be separated?
+2. **Binding threshold:** exactly where does the budget start to bind adaptive
+   and vanilla_rag (locate the ceiling below the current 256 low end, given the
+   observed 84–116-token range)?
+3. **Task design:** which task family (new hidden-test contract or sharper
+   counterfactual pair) makes the final-behavior decision underivable from the
+   workspace while still penalizing the obsolete alternative at the tested model
+   tier (llama3.1:8b)?
 
-- `e19_coding_generalization.json` + `_report.md`, `e20_counterfactual_history.json`,
-  `e20_counterfactual_history_repair.json` + `_repair_report.md` — byte-for-byte
-  unchanged (git diff empty).
+## New artifacts (Phase 20, force-added)
+
+- `experiments/e25_e19_baseline_ceiling_audit.py` (offline audit script)
+- `tests/test_e25_baseline_ceiling_audit.py` (18 offline tests)
+- `experiments/results/e25_e19_baseline_ceiling_audit.json` + `_report.md`
+
+## Immutable (Phase-20 contract)
+
+- All E19/E20/E24 results and reports (incl. `e19_coding_generalization_full_repaired.json`,
+  `e20_counterfactual_history_repair.json`, `e24_missing_negative_control.json`)
+  are byte-for-byte unchanged (git diff empty).
 - `config.yaml`, `memory_optimizer/`, `server.py` — untouched.
-- Phase-18 artifacts: `e19_coding_generalization_full.json` + `_report.md` — unchanged.
 
 ## Honest verdict (reviewer-confirmable)
 
-- Grid: primary 135/135 complete; negative 89/90 in historical artifact, 90/90 with recovery.
-- Gates: 10/10 pass; Gate B now passes with explicit `supersedes_turn` metadata.
-- `gates_all_passed = True`, `adaptive_advances = False` (adaptive ties vanilla_rag).
-- E20 certification (`check_e20_calibration()`) `passed: True`, groups == PRIMARY_TASKS.
-- Tests: 200 passing (+4 in `tests/test_phase19_closure.py`).
+- Primary grid re-verified as exactly 135/135 unique, complete cells.
+- The audit is diagnostic: 0 LLM calls, 0 embedding calls, no production
+  pipeline import, no winner declared, no ranking changed.
+- `adaptive_advances` remains `false`; E19 is **not** evidence of adaptive
+  superiority over vanilla_rag at the tested budgets.
 
 ## Next decision (reviewer)
 
-The benchmark is now history-valid (Gate C PASS, Gate B PASS), but adaptive
-does not exceed vanilla RAG on the primary tasks. The unresolved question is:
-
-> Why does vanilla RAG solve 26/27 primary cells despite zero correction recall
-> in the structured diagnostics?
-
-The next intended phase is an offline baseline-ceiling diagnosis (Phase 20),
-which is **not yet being executed in this phase**.
+Phase 20 deliberately does not start a Phase 21. Any next benchmark must
+satisfy the four constraints above before it can claim to separate adaptive
+from vanilla_rag — decide whether to run such a benchmark, extend E25's
+diagnostics, or stop the benchmark line.
 
 ## Cryptographic checkpoint
 
-- Checkpoint branch: `checkpoint/phase-19-closed`
-- Checkpoint SHA: the Phase-19 closure commit on master.
+- Checkpoint branch: `checkpoint/phase-20-e25-audit-complete`
+- Checkpoint SHA: the Phase-20 closure commit on master.
 
 ## Restore
 
 ```bash
-git checkout checkpoint/phase-19-closed
+git checkout checkpoint/phase-20-e25-audit-complete
 ```
 
 ## Do-not-regress (locked)
 
 1. Do not tune `config.yaml` (dual_score, retention, decay, thresholds, top_k,
    embedding model, task affinity all frozen).
-2. Original E19/E20 JSON/report artifacts immutable.
+2. Original E19/E20/E24 JSON/report artifacts immutable.
 3. Any new coding fixture must pass the offline base-hidden-test gate BEFORE it
    may claim history dependence.
 4. History dependence of a coding benchmark requires a reproducible
    counterfactual pair at the claimed model tier (no_history vs direct_history).
 5. E19 full-grid results are only eligible under the E20-validated families;
    stochastic no-history draws certify nothing.
+6. Benchmark separation requires BOTH contradiction sensitivity AND
+   method-specific budget pressure (D42) — one without the other cannot
+   discriminate adaptive from vanilla_rag above the ceiling.
