@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-09-16)
 
 **Core value:** Correction handling must work; write-time salience must be real; context-pressure experiments validate recall-per-token under genuine budget stress
-**Current phase:** Phase 18 (E19 full grid, aligned to the E20-validated benchmark) complete — E19's primary tasks are now fixed Variant-A instances of the three E20-validated counterfactual families (routing_policy, retry_policy, serialization_policy); Gate C is the E20 counterfactual history calibration (not stochastic E19 no-history draws); full 225-cell grid run (135 primary + 90 negative, seeds 1-3, budgets 256/512/1024, 5 methods) via `experiments/e22_e19_full_grid.py`. 9/10 gates pass; correction_identity (offline Gate B) FAILS in all 27 correction-bearing cells (counterfactual correction facts do not restate the prior text with full word coverage, so the locked `_is_supersession` heuristic does not fire) → all_passed = False → adaptive_advances = False (locked verdict logic; no gate weakening, no tuning). E20_repair certification Gate C PASS. Original E19/E20 artifacts immutable.
+**Current phase:** Phase 19 (E19 correction-identity adapter repair + full-grid re-run + missing-cell recovery) complete — counterfactual benchmark adapter repaired (explicit supersedes_turn + current-correction metadata propagated into history[*]["facts"]); correction_identity = 27/27 PASS (was 0/27 in Phase 18); embedding_consistency = 27/27; primary grid = 135/135; adaptive = 27/27; vanilla_rag = 26/27; llm_summarization = 14/27; raw_clipped = 13/27; sliding_window = 9/27; adaptive_advances = false; one negative-control cell timed out and recovered separately (write_retry / seed=3 / budget=256 / llm_summarization). Original E19/E20 artifacts immutable.
 
 ## Completed Phases
 
@@ -26,7 +26,8 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 - **Phase 15** — E19 coding-generalization pilot (gate C FAILED, full grid NOT run, honest pilot record) · commit `2b15fe4` (+docs `5d7721f`)
 - **Phase 16** — E20 counterfactual-history benchmark calibration (INVALID: identifier_policy solvable without history) · commit `d331243` (+docs `5c073cc`)
 - **Phase 17** — E20 counterfactual fixture repair + revalidation (routing_policy replaces identifier_policy; strict offline base gate; VALID, E19 full grid eligible) · commit (this milestone)
-- **Phase 18** — E19 aligned to the E20-validated benchmark + full 225-cell grid (9/10 gates, correction-identity FAIL → adaptive_advances False; E20-certified Gate C) · commit (this milestone)
+- **Phase 18** — E19 aligned to the E20-validated benchmark + full 225-cell grid (9/10 gates, correction-identity FAIL → adaptive_advances False; E20-certified Gate C) · commit `6181f01`
+- **Phase 19** — E19 correction-identity adapter repair + full-grid re-run + missing-cell recovery (correction_identity = 27/27 PASS, embedding_consistency = 27/27 PASS, primary = 135/135, adaptive = 27/27, vanilla_rag = 26/27, adaptive_advances = false; one negative-control cell recovered separately) · commit `a79be6c`
 
 ## Key Metrics (Post-fix, 3-seed validation — `manifest_h3795b2da.json`)
 
@@ -305,7 +306,7 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 ## Notes
 
 - Codebase map at `.planning/codebase/` — all 7 docs committed
-- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected, D34 Phase 13 long-horizon coding capability / no adaptive advantage, D35 Phase 14 correction-safe memory / retrieval-safe supersession, D38 Phase 16 counterfactual-history benchmark calibration / INVALID at llama3.1:8b — E19 full grid not eligible, D39 Phase 17 fixture repair / VALID — E19 full grid eligible, D40 Phase 18 E19 aligned to the E20-validated benchmark + 225-cell full grid)
+- `brain.md` governs all memory_optimizer/server.py changes (D24 correction supersession, D25 write-time salience, D26 eval/versioning/dashboard/audit, D27 context-pressure probe recall, D28 coding-context usefulness benchmark, D29 separate store/active + query-first retrieval, D30 Phase 9 generalization + causal ablations, D31 Phase 10 retention diagnosis, D32 Phase 11 activation-vs-survival separation, D33 Phase 12 retention selectivity / task_affinity rejected, D34 Phase 13 long-horizon coding capability / no adaptive advantage, D35 Phase 14 correction-safe memory / retrieval-safe supersession, D38 Phase 16 counterfactual-history benchmark calibration / INVALID at llama3.1:8b — E19 full grid not eligible, D39 Phase 17 fixture repair / VALID — E19 full grid eligible, D40 Phase 18 E19 aligned to the E20-validated benchmark + 225-cell full grid, D41 Phase 19 counterfactual correction metadata repair / VALID — correction_identity 27/27, adaptive ties vanilla_rag)
 - Git: fresh repo at RishiMotwani/test248 (public), branch master
 - Session relocated to prototype3
 - Two worktrees removed: `prototype3_0880f1b_wt`, `prototype3_pre_reval_wt`
@@ -342,8 +343,9 @@ See: .planning/PROJECT.md (updated 2026-09-16)
 18. D38: Phase 16 complete — E20 counterfactual calibration INVALID: identifier_policy solvable without history (nh 6/6); retry_policy + serialization_policy DO discriminate (sep 3 and 5); e19_full_grid_eligible = FALSE until identifier_policy-like fixtures are redesigned
 19. D39: Phase 17 complete — identifier_policy REPLACED by routing_policy (opaque op→lane assignment, mapping only in history/gold/hidden tests); strict offline base-hidden-test gate added (all 6 variants: base fails, gold passes); repair grid VALID (routing 6/6 v 0/6 sep 6, retry 5/6 v 3/6 sep 5, serialization 6/6 v 1/6 sep 6) → e19_full_grid_eligible = TRUE (running the E19 full grid remains the reviewer's decision); original E20 artifacts byte-identical
 20. D40: Phase 18 complete — E19 primary tasks rebuilt as Variant-A instances of the E20-validated counterfactual families; Gate C = E20 calibration; full 225-cell grid run; 9/10 gates pass but **correction_identity FAILS (0/27 cells)**: the counterfactual correction facts do not restate the prior fact with full word coverage, so the locked `_is_supersession` heuristic never fires and the obsolete fact survives in the adaptive store → all_passed = False → adaptive_advances = False (adaptive tied with vanilla_rag at 27/27 and above raw/sliding/summary; locked verdict logic, no tuning); no claims made
+21. D41: Phase 19 complete — counterfactual benchmark adapter repaired (explicit supersedes_turn + current-correction metadata propagated into history[*]["facts"]); correction_identity = 27/27 PASS (was 0/27 in Phase 18); embedding_consistency = 27/27; primary grid = 135/135; adaptive = 27/27; vanilla_rag = 26/27; adaptive_advances = false; one negative-control cell timed out and recovered separately (write_retry / seed=3 / budget=256 / llm_summarization); combined accounting 225/225; no tuning, no gate weakening
 
 ---
 
 State initialized: 2026-09-16
-Last updated: 2026-09-18 after Phase 18 — E19 aligned to the E20-validated benchmark, full 225-cell grid complete (9/10 gates; correction-identity FAIL → adaptive_advances False)
+Last updated: 2026-09-19 after Phase 19 — counterfactual correction metadata repair complete, correction_identity 27/27 PASS, adaptive ties vanilla_rag, missing negative-control cell recovered, combined 225/225 accounting

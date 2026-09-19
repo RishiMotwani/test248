@@ -1408,6 +1408,69 @@ sliding_window 9/27, llm_summarization 14/27, vanilla_rag 27/27).
 **Status:** Phase 18 complete; results recorded without claims. `config.yaml`,
 `memory_optimizer/`, `server.py` and all original E19/E20 artifacts untouched.
 
+---
+
+### D41 ★ Phase 19 — Counterfactual correction metadata repair; E19 revalidated
+
+**DECISION (locked contract, Phase 19):** The counterfactual benchmark adapter
+in `data/counterfactual_task_suite.py` is repaired to propagate the existing
+oracle-pre-extracted correction metadata (`supersedes_turn`, `is_correction_target`,
+`is_current_correction`, `superseded_fact`, `superseded_prior_fact_id`,
+`superseded_by`) into the structured `history[*]["facts"]` consumed by the
+production consolidation path. Gate C remains the frozen E20 counterfactual
+history calibration; E19 diagnostics remain descriptive only. `adaptive_advances`
+uses the predeclared paired criterion; nothing is tuned.
+
+**OBSERVED (Phase 19 repaired 225-cell grid, llama3.1:8b @ localhost:11434,
+seeds 1–3, budgets 256/512/1024, 5 methods):** 224/225 records in the
+historical repaired artifact (one negative-control cell timed out); 135/135
+primary complete; 10/10 gates PASS — **correction_identity (B) PASS 27/27**
+(the explicit `supersedes_turn` now enables the production supersession path);
+E20 certification Gate C PASS; `gates_all_passed = True` → `adaptive_advances =
+False` (adaptive 27/27 ties vanilla_rag 26/27; paired: adaptive 27/27 vs
+raw_clipped 13/27, sliding_window 9/27, llm_summarization 14/27, vanilla_rag
+26/27). One negative-control cell timed out (`write_retry / seed=3 / budget=256
+/ llm_summarization`) and was recovered separately via the narrow closure
+utility `experiments/e24_missing_negative_control.py` (recovery artifact:
+`e24_missing_negative_control.json`). Combined accounting: 225/225 expected
+cells accounted for.
+
+**Benchmark lesson (testable claim):** The locked `_is_supersession` heuristic
+(requires all prior words covered) is too strict for naturally-occurring
+correction phrasing in oracle histories. The production path bypasses this
+check when explicit `supersedes_turn` metadata is present — this is the
+intended design. The benchmark adapter must propagate that metadata; it is
+not the production path's responsibility to guess intent from text alone.
+
+**Status:** Phase 19 complete; results recorded without claims. `config.yaml`,
+`memory_optimizer/`, `server.py` and all original E19/E20 artifacts untouched.
+New artifacts: `e19_coding_generalization_full_repaired.json` +
+`_full_report.md`, `e24_missing_negative_control.json`.
+
+---
+
+### D41b ★ Counterfactual oracle histories must propagate explicit correction identity into structured facts
+
+**OBSERVATION:** Phase 18's correction-identity gate failure (0/27) was traced
+to a benchmark-adapter omission: the counterfactual fixture stored correction
+identity in `CodingTask.corrections` but did not propagate the same
+`supersedes_turn` / current-correction metadata already used by the project's
+oracle-pre-extracted workloads into the structured `history[*]["facts"]`
+consumed by the production consolidation path. Phase 19 repairs that adapter
+without changing production memory logic, similarity thresholds, retention
+policy, or retrieval policy.
+
+**DECISION:** Benchmark validity and algorithmic advantage are separate claims.
+Phase 19 established the former for the current primary task suite, but did
+not establish adaptive superiority over vanilla RAG.
+
+**RESEARCH RECORD:** A complete primary grid is necessary for the main paired
+comparison; a missing negative-control cell does not invalidate the
+already-complete primary comparison, but it must be accounted for explicitly
+rather than silently ignored.
+
+---
+
 ## 8. Open questions for the human (blocking decisions)
 
 1. **D1 eviction policy**: lowest-`current_importance` + oldest tiebreak ★ / oldest-first / largest-token-first.

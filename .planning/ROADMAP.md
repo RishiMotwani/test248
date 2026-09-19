@@ -1,7 +1,7 @@
 # Roadmap: Adaptive Memory Manager — Audit Fixes
 
 **Mode:** standard
-**Phases:** 18
+**Phases:** 19
 **Requirements:** 23 mapped
 
 ### Phase 1: Foundation — Dead Code Cleanup + Test Infrastructure
@@ -217,3 +217,14 @@
 4. `tests/test_e19_full_grid_alignment.py` (new, 8 offline tests, no Ollama): exact PRIMARY_TASKS; Variant-A mapping; `check_e20_calibration()["passed"] is True` and groups == PRIMARY_TASKS; `build_e19_task` counterfactual metadata (variant A, group == task_id), gold/hidden exist, 600-turn history, task_id normalised; negative controls not counterfactual; full-grid paths distinct from pilot; 225 dimensions (135 + 90, seeds [1,2,3], budgets [256,512,1024], methods); Gate C is the E20 certification
 5. Full grid: 225/225 records (no user_ids/validation_pure/transaction_atomicity as primary records); 9/10 gates pass; offline correction_identity (Gate B) FAILS in all 27 correction-bearing cells (counterfactual correction facts don't restate the prior text with full word coverage under the locked `_is_supersession` heuristic) → **gates_all_passed = False → adaptive_advances = False** (locked verdict logic; no gate weakening, no tuning); E20-certified Gate C passes
 6. Original E19/E20 artifacts + `config.yaml`/`memory_optimizer/`/`server.py` untouched; new artifacts `e19_coding_generalization_full.json` + `_full_report.md` force-committed; all 185 tests pass; commit `research: align E19 with validated history benchmark and run full grid`
+
+### Phase 19: Counterfactual Correction Metadata Repair and E19 Revalidation
+**Goal:** Restore the existing oracle-pre-extracted correction metadata in the counterfactual history adapter so the existing production supersession path receives the intended `supersedes_turn` relationship, then rerun E19 from fresh state.
+**Mode:** standard
+**Success Criteria:**
+1. `data/counterfactual_task_suite.py`: `build_variant()` enriches `history[*]["facts"]` with explicit correction metadata (`supersedes_turn`, `is_correction_target`, `is_current_correction`, `superseded_fact`, `superseded_prior_fact_id` on current fact; `superseded_by` on obsolete fact) without changing history text, workspace, prompt, hidden tests, or gold patches
+2. `experiments/e23_e19_correction_identity_repair.py` (new): thin runner with `--preflight` (27-cell offline correction/embedding gate) and `--full` (fresh 225-cell grid), delegating to `e19.main()`, no duplicated benchmark logic
+3. `experiments/e24_missing_negative_control.py` (new): narrow closure utility (`--identify` prints missing cell, `--run` reruns it) for the one timed-out negative-control cell
+4. `tests/test_phase19_closure.py` (new, 10 offline tests): grid dimensions, missing cell identity, recovery artifact schema, historical artifact immutability, primary grid completeness, GSD handoff/checkpoint verification
+5. Full grid: 225/225 cells (135 primary + 90 negative); 10/10 gates PASS; offline correction_identity = 27/27 PASS (explicit `supersedes_turn` enables production supersession); E20-certified Gate C PASS; **gates_all_passed = True → adaptive_advances = False** (adaptive ties vanilla_rag at 27/27; locked verdict logic; no gate weakening, no tuning)
+6. Original E19/E20 artifacts + `config.yaml`/`memory_optimizer/`/`server.py` untouched; new artifacts `e19_coding_generalization_full_repaired.json` + `_full_report.md` + `e24_missing_negative_control.json` force-committed; all 189 tests pass; commit `research: close phase 19 experiment accounting`
